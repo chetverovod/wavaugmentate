@@ -4,10 +4,12 @@ from audiostretchy.stretch import stretch_audio
 from scipy.io import wavfile
 
 
-def mcs_rms(mcs_data):
+def mcs_rms(mcs_data, last_index=-1):
+    """Return RMS of multichannel sound."""
+
     res = []
     for signal in mcs_data:
-        res.append(np.sqrt(np.mean(signal**2)))
+        res.append(np.sqrt(np.mean(signal[0:last_index]**2)))
     return res
 
 
@@ -121,12 +123,15 @@ def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=4410
     return multichannel_sound
 
 
-def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100):
+def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100, seed=-1):
     """ Add pink noise to channels of multichannel sound."""
 
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
-        pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        if seed != -1:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        else:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50., seed=seed)
         noise = pknoise.get_series(signal.shape[0])
         res = signal + level * np.array(noise)
         channels.append(res)
