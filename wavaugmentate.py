@@ -7,6 +7,8 @@ import os
 import pyplnoise
 from pathlib import Path
 
+def_fs = 44100  # Hz
+
 
 def mcs_rms(mcs_data, last_index=-1):
     """Return RMS of multichannel sound."""
@@ -17,7 +19,7 @@ def mcs_rms(mcs_data, last_index=-1):
     return res
 
 
-def mcs_generate(frequency_list, duration, sample_rate=44100):
+def mcs_generate(frequency_list, duration, sample_rate=def_fs):
     """Function generates multichannel sound as a set of sin-waves.
 
     return numpy array of shape [channels, samples]
@@ -64,7 +66,8 @@ def mcs_file_info(path):
     sample_rate, buf = wavfile.read(path)
     length = buf.shape[0] / sample_rate
 
-    return {"path": path, "channels_count": buf.shape[1], "sample_rate": sample_rate, "length_s": length}
+    return {"path": path, "channels_count": buf.shape[1],
+            "sample_rate": sample_rate, "length_s": length}
 
 
 # Audio augmentation functions
@@ -79,7 +82,7 @@ def mcs_amplitude_control(mcs_data, amplitude_list):
     return multichannel_sound
 
 
-def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=44100):
+def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=def_fs):
     """Add delays of channels of multichannel sound. Output data become longer."""
 
     channels = []
@@ -96,7 +99,7 @@ def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=44100):
     return multichannel_sound
 
 
-def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=44100):
+def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_fs):
     """Add echo to multichannel sound.
 
     Returns:
@@ -113,7 +116,7 @@ def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=4410
     return multichannel_sound
 
 
-def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100, seed=-1):
+def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     """ Add pink noise to channels of multichannel sound."""
 
     channels = []
@@ -129,7 +132,7 @@ def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100, seed=-1):
     return multichannel_sound
 
 
-def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=44100):
+def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=def_fs):
     """Add pink noise to channels of multichannel sound."""
 
     stretch_audio("input.wav", "output.wav", ratio=1.1)
@@ -146,26 +149,30 @@ def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=44100):
 # Chaining class
 
 class WavaugPipeline:
-    def __init__(self, _data=None):
+    def __init__(self, _data=None, fs=-1):
         self.data = _data
+        self.path = ''
+        self.sample_rate = fs
 
-    def put(self, data):
+    def put(self, data, fs=-1):
         self.data = data.copy()
+        self.sample_rate = fs
         return self
 
     def get(self):
         return self.data
 
-    def gen(self, f_list, t, fs):
+    def gen(self, f_list, t, fs=def_fs):
         self.data = mcs_generate(f_list, t, fs)
+        self.sample_rate = fs
         return self
 
     def rd(self, path):
-        _, self.data = mcs_read(path)
+        self.sample_rate, self.data = mcs_read(path)
         return self
 
-    def wr(self, path, fs=44100):
-        mcs_write(path, self.data, fs)
+    def wr(self, path):
+        mcs_write(path, self.data, self.sample_rate)
         return self
 
     def amp(self, amplitude_list):
@@ -176,19 +183,24 @@ class WavaugPipeline:
         self.data = mcs_delay_control(self.data, delay_list)
         return self
 
-    def ns(self, noise_level_list, sampling_rate=44100, seed=-1):
+    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1):
         self.data = mcs_noise_control(self.data, noise_level_list,
                                       sampling_rate, seed)
         return self
 
-    def echo(self, delay_us_list, amplitude_list, sampling_rate=44100):
+    def echo(self, delay_us_list, amplitude_list, sampling_rate=def_fs):
         self.data = mcs_echo_control(self.data, delay_us_list, amplitude_list,
                                      sampling_rate)
         return self
 
     def rms(self, last_index=-1):
         return mcs_rms(self.data, last_index)
-
+    
+    def info(self):
+        length = self.data.shape[1] / self.sample_rate
+        print(self.data.shape)
+        return {"path": self.path, "channels_count": self.data.shape[0],
+                "sample_rate": self.sample_rate, "length_s": length}
 
 
 # CLI interface functions
@@ -306,7 +318,6 @@ def delay_hdr(args):
     mcs_write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
-
 
 
 def parse_args():

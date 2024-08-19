@@ -4,7 +4,7 @@ import  string
 import subprocess as sp
 import wavaugmentate as wau
 
-fs = 44100
+fs = wau.def_fs
 t = 5
 f_list = [400, 1000, 2333, 3700]  # Frequencies list.
 
@@ -103,7 +103,7 @@ def test_mcs_file_info():
     info = wau.mcs_file_info(test_sound_1_file)
     assert info['path'] == test_sound_1_file
     assert info['channels_count'] == 4
-    assert info['sample_rate'] == 44100
+    assert info['sample_rate'] == wau.def_fs
     assert info['length_s'] == 5.0
 
 
@@ -398,10 +398,9 @@ def test_WavaugPipeline_wr_rd():
 def test_WavaugPipeline_echo():
     d_list = [1E6, 2E6, 3E6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-
     w = wau.WavaugPipeline()
     w.gen(f_list, t, fs).echo(d_list, a_list)
-    rms_list = np.round(wau.mcs_rms(w.data), decimals=3, out=None)
+    rms_list = np.round(w.rms(), decimals=3, out=None)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -416,3 +415,14 @@ def test_WavaugPipeline_noise():
     for r, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(r - ref) < 0.01
+
+
+def test_WavaugPipeline_info():
+    w = wau.WavaugPipeline()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+    print(w.info())
+
+    ref = {'path': '', 'channels_count': 4, 'sample_rate': 44100, 'length_s': 5.0}
+    assert w.info() == ref
