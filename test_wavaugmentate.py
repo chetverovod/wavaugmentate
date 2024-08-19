@@ -14,6 +14,9 @@ test_sound_1_delay_file = "./test_sounds/test_sound_1_delay.wav"
 test_sound_1_echo_file = "./test_sounds/test_sound_1_echo.wav"
 test_sound_1_noise_file = "./test_sounds/test_sound_1_noise.wav"
 
+output_file = './outputwav/out.wav' 
+
+prog = './' + wau.prog_name + '.py'
 
 def test_mcs_generate():
     """
@@ -245,12 +248,23 @@ def test_mcs_noise_control():
 
 
 def test_wavaugmentate_greeting():
-    res = sp.run(["./wavaugmentate.py"], capture_output=True, text=True)
-    print(res.stdout) 
+    cmd = [prog]
+    res = sp.run(cmd, capture_output=True, text=True)
     assert res.stdout == wau.application_info + "\n"
+
 
 def test_wavaugmentate_info_option():
 
-    res = sp.run(["./wavaugmentate.py"], capture_output=True, text=True)
-    print(res.stdout) 
+    cmd = [prog]
+    res = sp.run(cmd, capture_output=True, text=True)
     assert res.stdout == wau.application_info + "\n"
+
+
+def test_wavaugmentate_amplitude_option():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
+           "0.1, 0.3, 0.4"]
+    res = sp.run(cmd, capture_output=True, text=True)
+    ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
+Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
+    print(res.stdout) 
+    assert res.stdout == ref
