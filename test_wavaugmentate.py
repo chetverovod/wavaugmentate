@@ -263,25 +263,10 @@ def test_wavaugmentate_info_option():
     assert res.stdout == wau.application_info + "\n"
 
 
-def test_wavaugmentate_amplitude_option_fail_case():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.1, 0.3, 0.4']
-    print(' '.join(cmd))
-    res = sp.run(cmd, capture_output=True, text=True)
-    s = str(res.stdout)
-    out = s.translate(subst_table)
-    print('out:', out)
-    full_ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
-Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
-    ref = full_ref.translate(subst_table)
-    print('ref:', ref)
-    assert out == ref
-
-
 def test_wavaugmentate_amplitude_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
            '0.5, 0.6, 0.7, 0.1']
-    print(' '.join(cmd))
+    print('\n', ' '.join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
@@ -303,10 +288,41 @@ def test_wavaugmentate_amplitude_option():
         assert abs(r - ref) < 0.001
 
 
+def test_wavaugmentate_amplitude_option_fail_case1():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
+           '0.1, abc, 0.3, 0.4']
+    print('\n', ' '.join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = 'Error: Amplitude list contains non number element: < abc>.'
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
+
+
+def test_wavaugmentate_amplitude_option_fail_case2():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
+           '0.1, 0.3, 0.4']
+    print('\n', ' '.join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
+Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
+
+
+
+
 def test_wavaugmentate_delay_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
            "100, 200, 300, 0"]
-    print(' '.join(cmd))
+    print('\n', ' '.join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
@@ -330,3 +346,30 @@ def test_wavaugmentate_delay_option():
         assert abs(r - ref) < 0.001
 
 
+def test_wavaugmentate_delay_option_fail_case1():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
+           '100, 389.1, 999, 456']
+    print('\n', ' '.join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = 'Error: Delays list contains non integer element: <389.1>.\n'
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
+
+
+def test_wavaugmentate_delay_option_fail_case2():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
+           '100, 200, 300']
+    print('\n', ' '.join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = '\ndelays: [100, 200, 300]\n\
+Error: Delays list length <3> does not match number of channels. It should have <4> elements.\n'
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref

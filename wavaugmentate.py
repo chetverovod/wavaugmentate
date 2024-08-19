@@ -209,6 +209,13 @@ def amplitude_hdr(args):
         return
 
     amplitude_list = args.amplitude_list.split(',')
+    for n in amplitude_list:
+        try:
+            float(n)
+        except ValueError:
+            print(f"{error_mark}Amplitude list"
+                  f" contains non number element: <{n}>.")
+            exit(1)
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
     info = mcs_file_info(args.in_path)
@@ -216,7 +223,7 @@ def amplitude_hdr(args):
         print(f"{error_mark}Amplitude list length <{len(float_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
-        exit(1)
+        exit(2)
     _, mcs_data = mcs_read(args.in_path)
     res_data = mcs_amplitude_control(mcs_data, float_list)
     mcs_write(args.out_path, res_data, info['sample_rate'])
@@ -231,6 +238,14 @@ def delay_hdr(args):
         return
 
     delay_list = args.delay_list.split(',')
+    for n in delay_list:
+        try:
+            int(n)
+        except ValueError:
+            print(f"{error_mark}Delays list"
+                  f" contains non integer element: <{n}>.")
+            exit(1)
+
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
     info = mcs_file_info(args.in_path)
@@ -238,7 +253,7 @@ def delay_hdr(args):
         print(f"{error_mark}Delays list length <{len(int_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
-        exit(1)
+        exit(2)
     _, mcs_data = mcs_read(args.in_path)
     res_data = mcs_delay_control(mcs_data, int_list)
     mcs_write(args.out_path, res_data, info['sample_rate'])
@@ -268,7 +283,6 @@ def parse_args():
                         ' to channels in audio file. Provide delay for'
                         ' every channel in microseconds, example:\n\t \
                             -d "100, 200, 300, 0"')
-
 
     return parser.parse_args()
 
