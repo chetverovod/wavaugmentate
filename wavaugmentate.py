@@ -146,7 +146,7 @@ def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=44100):
 # Chaining class
 
 class WavaugPipeline:
-    def __init__(self, _data):
+    def __init__(self, _data=None):
         self.data = _data
 
     def put(self, data):
@@ -156,6 +156,18 @@ class WavaugPipeline:
     def get(self):
         return self.data
 
+    def gen(self, f_list, t, fs):
+        self.data = mcs_generate(f_list, t, fs)
+        return self
+
+    def rd(self, path):
+        _, self.data = mcs_read(path)
+        return self
+
+    def wr(self, path, fs=44100):
+        mcs_write(path, self.data, fs)
+        return self
+
     def amp(self, amplitude_list):
         self.data = mcs_amplitude_control(self.data, amplitude_list)
         return self
@@ -164,9 +176,22 @@ class WavaugPipeline:
         self.data = mcs_delay_control(self.data, delay_list)
         return self
 
+    def ns(self, noise_level_list, sampling_rate=44100, seed=-1):
+        self.data = mcs_noise_control(self.data, noise_level_list,
+                                      sampling_rate, seed)
+        return self
+
+    def echo(self, delay_us_list, amplitude_list, sampling_rate=44100):
+        self.data = mcs_echo_control(self.data, delay_us_list, amplitude_list,
+                                     sampling_rate)
+        return self
+
+    def rms(self, last_index=-1):
+        return mcs_rms(self.data, last_index)
+
+
 
 # CLI interface functions
-
 error_mark = "Error: "
 prog_name = os.path.basename(__file__).split('.')[0]
 

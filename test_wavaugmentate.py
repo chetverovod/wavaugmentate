@@ -207,14 +207,8 @@ def test_mcs_echo_control():
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
-    test_sound_1 = wau.mcs_generate(f_list, t, fs)
-    test_ec = wau.mcs_echo_control(test_sound_1, [1E6, 2E6, 3E6, 0], 
-                                  [-0.3, -0.4, -0.5, 0], fs)
-    wau.mcs_write(test_sound_1_echo_file, test_ec, fs)
-    rms_list = np.round(wau.mcs_rms(test_ec), decimals=3, out=None)
-    reference_list = [0.437, 0.461, 0.515, 0.559]
-    for r, ref in zip(rms_list, reference_list):
-        assert abs(r - ref) < 0.001
+
+   
 
 
 def test_mcs_noise_control():
@@ -373,7 +367,7 @@ Error: Delays list length <3> does not match number of channels. It should have 
     assert out == ref
 
 
-def test_WavaugPipeline():
+def test_WavaugPipeline_controls():
 
     test_sound_1 = wau.mcs_generate(f_list, t, fs)
     w = wau.WavaugPipeline(test_sound_1)
@@ -387,3 +381,38 @@ def test_WavaugPipeline():
     print(res2)
     assert np.array_equal(res1, res2)
 
+
+def test_WavaugPipeline_wr_rd():
+
+    w = wau.WavaugPipeline()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+
+    r = wau.WavaugPipeline()
+    r.rd(test_sound_1_file)
+
+    assert np.array_equal(w.data, r.data)
+
+
+def test_WavaugPipeline_echo():
+    d_list = [1E6, 2E6, 3E6, 0]
+    a_list = [-0.3, -0.4, -0.5, 0]
+
+    w = wau.WavaugPipeline()
+    w.gen(f_list, t, fs).echo(d_list, a_list)
+    rms_list = np.round(wau.mcs_rms(w.data), decimals=3, out=None)
+    reference_list = [0.437, 0.461, 0.515, 0.559]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
+
+
+def test_WavaugPipeline_noise():
+    n_list = [0.01, 0.02, 0.03, 0]
+    w = wau.WavaugPipeline()
+    w.gen(f_list, t, fs).ns(n_list, seed=42)
+    rms_list = np.round(w.rms(), decimals=3, out=None)
+    reference_list = [0.776, 0.952, 1.192, 0.707]
+    for r, ref in zip(rms_list, reference_list):
+        # Threshold increased, because noise is not repeatable with fixed seed.
+        assert abs(r - ref) < 0.01
