@@ -15,9 +15,10 @@ test_sound_1_delay_file = "./test_sounds/test_sound_1_delay.wav"
 test_sound_1_echo_file = "./test_sounds/test_sound_1_echo.wav"
 test_sound_1_noise_file = "./test_sounds/test_sound_1_noise.wav"
 
-output_file = './outputwav/out.wav' 
-
+output_file = './outputwav/out.wav'
 prog = './' + wau.prog_name + '.py'
+subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
+
 
 def test_mcs_generate():
     """
@@ -262,8 +263,6 @@ def test_wavaugmentate_info_option():
     assert res.stdout == wau.application_info + "\n"
 
 
-subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
-
 def test_wavaugmentate_amplitude_option_fail_case():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
            '0.1, 0.3, 0.4']
@@ -294,16 +293,16 @@ def test_wavaugmentate_amplitude_option():
     print('ref:', ref)
     assert out == ref
     assert os.path.exists(output_file)
-    _, test_ac = wau.mcs_read(output_file)
-    for ch in test_ac:
+    _, written_data = wau.mcs_read(output_file)
+    for ch in written_data:
         assert ch.shape[0] == 220500
-    rms_list = np.round(wau.mcs_rms(test_ac), decimals=3, out=None)
+    rms_list = np.round(wau.mcs_rms(written_data), decimals=3, out=None)
     print('rms_list:', rms_list)
     reference_list = [0.354, 0.424, 0.495, 0.071]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
-"""
+
 def test_wavaugmentate_delay_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
            "100, 200, 300, 0"]
@@ -311,9 +310,23 @@ def test_wavaugmentate_delay_option():
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
-    print(res.stdout)
-    ref = '\ndelays: [100, 200, 300, 0]\nDone.\n'
-    assert res.stdout == ref
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = '\ndelays: [100, 200, 300, 0]\nDone.\n'
+    assert res.stdout == full_ref
     assert os.path.exists(output_file)
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
+    assert os.path.exists(output_file)
+    _, written_data = wau.mcs_read(output_file)
+    for ch in written_data:
+        assert ch.shape[0] == 220513
+    rms_list = np.round(wau.mcs_rms(written_data), decimals=3, out=None)
+    print('rms_list:', rms_list)
+    reference_list = [0.707, 0.707, 0.707, 0.707]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
 
-"""
+
