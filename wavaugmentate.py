@@ -4,10 +4,11 @@ import numpy as np
 import argparse
 from scipy.io import wavfile
 import os
-import pyplnoise
 from pathlib import Path
 
 def_fs = 44100  # Hz
+
+random_noise_gen = np.random.default_rng()
 
 
 def mcs_rms(mcs_data, last_index=-1):
@@ -122,11 +123,13 @@ def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1)
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
-            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+            n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         else:
-            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50., seed=seed)
-        noise = pknoise.get_series(signal.shape[0])
-        res = signal + level * np.array(noise)
+            n_noise = random_noise_gen(seed).standard_normal(mcs_data.shape[1])
+        noise = n_noise
+        # print('noise.shape', noise.shape)
+        # print('noise=', noise[0:10])
+        res = signal + level * noise
         channels.append(res)
     multichannel_sound = np.array(channels).copy()
     return multichannel_sound
@@ -198,7 +201,6 @@ class WavaugPipeline:
     
     def info(self):
         length = self.data.shape[1] / self.sample_rate
-        print(self.data.shape)
         return {"path": self.path, "channels_count": self.data.shape[0],
                 "sample_rate": self.sample_rate, "length_s": length}
 
@@ -209,6 +211,7 @@ prog_name = os.path.basename(__file__).split('.')[0]
 
 application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
+
 
 def print_help_and_info():
     """Function prints info about application"""

@@ -234,11 +234,12 @@ def test_mcs_noise_control():
     """
 
     test_sound_1 = wau.mcs_generate(f_list, t, fs)
-    test_nc = wau.mcs_noise_control(test_sound_1, [0.01, 0.02, 0.03, 0],
+    test_nc = wau.mcs_noise_control(test_sound_1, [1, 0.2, 0.3, 0],
                                     fs, seed=42)
     wau.mcs_write(test_sound_1_noise_file, test_nc, fs)
     rms_list = np.round(wau.mcs_rms(test_nc), decimals=3, out=None)
-    reference_list = [0.776, 0.952, 1.192, 0.707]
+    reference_list = [1.224, 0.735, 0.769, 0.707]
+
     for r, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(r - ref) < 0.01
@@ -407,11 +408,12 @@ def test_WavaugPipeline_echo():
 
 
 def test_WavaugPipeline_noise():
-    n_list = [0.01, 0.02, 0.03, 0]
+    n_list = [1, 0.2, 0.3, 0]
+
     w = wau.WavaugPipeline()
     w.gen(f_list, t, fs).ns(n_list, seed=42)
     rms_list = np.round(w.rms(), decimals=3, out=None)
-    reference_list = [0.776, 0.952, 1.192, 0.707]
+    reference_list = [1.224, 0.735, 0.769, 0.707]
     for r, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(r - ref) < 0.01
