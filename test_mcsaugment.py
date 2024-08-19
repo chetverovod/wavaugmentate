@@ -244,7 +244,13 @@ def test_mcs_noise_control():
         assert (r - ref) < 0.01
 
 
-def test_wavaugmentate():
+def test_wavaugmentate_greeting():
+    res = sp.run(["./wavaugmentate.py"], capture_output=True, text=True)
+    print(res.stdout) 
+    assert res.stdout == wau.application_info + "\n"
+
+def test_wavaugmentate_info_option():
+
     res = sp.run(["./wavaugmentate.py"], capture_output=True, text=True)
     print(res.stdout) 
     assert res.stdout == wau.application_info + "\n"
