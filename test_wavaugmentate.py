@@ -38,7 +38,7 @@ def test_mcs_generate():
     assert test_sound_1.shape == (4, 220500)
     rms_list = np.round(wau.mcs_rms(test_sound_1), decimals=3, out=None)
     for r in rms_list:
-        assert (r - 0.707) < 0.001
+        assert abs(r - 0.707) < 0.001
 
 
 def test_mcs_write():
@@ -172,7 +172,7 @@ def test_mcs_delay_control():
     rms_list = np.round(wau.mcs_rms(test_dc, last_index=24), decimals=3, out=None)
     reference_list = [0.511, 0.627, 0.445, 0.705]
     for r, ref in zip(rms_list, reference_list):
-        assert (r - ref) < 0.001
+        assert abs(r - ref) < 0.001
 
 
 def test_mcs_echo_control():
@@ -205,7 +205,7 @@ def test_mcs_echo_control():
     rms_list = np.round(wau.mcs_rms(test_ec), decimals=3, out=None)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
-        assert (r - ref) < 0.001
+        assert abs(r - ref) < 0.001
     test_sound_1 = wau.mcs_generate(f_list, t, fs)
     test_ec = wau.mcs_echo_control(test_sound_1, [1E6, 2E6, 3E6, 0], 
                                   [-0.3, -0.4, -0.5, 0], fs)
@@ -213,7 +213,7 @@ def test_mcs_echo_control():
     rms_list = np.round(wau.mcs_rms(test_ec), decimals=3, out=None)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
-        assert (r - ref) < 0.001
+        assert abs(r - ref) < 0.001
 
 
 def test_mcs_noise_control():
@@ -246,7 +246,7 @@ def test_mcs_noise_control():
     reference_list = [0.776, 0.952, 1.192, 0.707]
     for r, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
-        assert (r - ref) < 0.01
+        assert abs(r - ref) < 0.01
 
 
 def test_wavaugmentate_greeting():
@@ -281,7 +281,7 @@ Error: Amplitude list length <3> does not match number of channels. It should ha
 
 def test_wavaugmentate_amplitude_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.13, 0.33, 0.43, 1']
+           '0.5, 0.6, 0.7, 0.1']
     print(' '.join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
@@ -289,18 +289,19 @@ def test_wavaugmentate_amplitude_option():
     s = str(res.stdout)
     out = s.translate(subst_table)
     print('out:', out)
-    full_ref = '\namplitudes: [0.1, 0.3, 0.4, 1.0]\nDone.\n'
+    full_ref = '\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
     ref = full_ref.translate(subst_table)
     print('ref:', ref)
     assert out == ref
     assert os.path.exists(output_file)
-    _, test_ac = wau.mcs_read(output_file) 
+    _, test_ac = wau.mcs_read(output_file)
     for ch in test_ac:
         assert ch.shape[0] == 220500
     rms_list = np.round(wau.mcs_rms(test_ac), decimals=3, out=None)
-    reference_list = [0.511, 0.627, 0.445, 0.705]
+    print('rms_list:', rms_list)
+    reference_list = [0.354, 0.424, 0.495, 0.071]
     for r, ref in zip(rms_list, reference_list):
-        assert (r - ref) < 0.001
+        assert abs(r - ref) < 0.001
 
 """
 def test_wavaugmentate_delay_option():
