@@ -260,11 +260,20 @@ def test_wavaugmentate_info_option():
     assert res.stdout == wau.application_info + "\n"
 
 
-def test_wavaugmentate_amplitude_option():
+def test_wavaugmentate_amplitude_option_fail_case():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
            "0.1, 0.3, 0.4"]
     res = sp.run(cmd, capture_output=True, text=True)
     ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
 Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
+    assert res.stdout == ref
+
+
+def test_wavaugmentate_amplitude_option():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
+           "0.1, 0.3, 0.4, 1"]
+    res = sp.run(cmd, capture_output=True, text=True)
+    ref = '\namplitudes: [0.1, 0.3, 0.4, 1.0]\nDone.\n'
     print(res.stdout) 
     assert res.stdout == ref
+
