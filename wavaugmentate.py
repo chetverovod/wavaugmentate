@@ -205,20 +205,42 @@ def file_info_hdr(args):
 
 def amplitude_hdr(args):
     """Function makes amplitude augmentation."""
-    if args.amplitude_list == '':
+    if args.amplitude_list is None:
         return
 
     amplitude_list = args.amplitude_list.split(',')
-    float_amplitude_list = [float(i) for i in amplitude_list]
-    print(f"amplitudes: {float_amplitude_list}")
+    float_list = [float(i) for i in amplitude_list]
+    print(f"amplitudes: {float_list}")
     info = mcs_file_info(args.in_path)
-    if info['channels_count'] != len(float_amplitude_list):
-        print(f"{error_mark}Amplitude list length <{len(float_amplitude_list)}>"
+    if info['channels_count'] != len(float_list):
+        print(f"{error_mark}Amplitude list length <{len(float_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(1)
-    fs, mcs_data = mcs_read(args.in_path)
-    res_data = mcs_amplitude_control(mcs_data, float_amplitude_list)
+    _, mcs_data = mcs_read(args.in_path)
+    res_data = mcs_amplitude_control(mcs_data, float_list)
+    mcs_write(args.out_path, res_data, info['sample_rate'])
+    print('Done.')
+    exit(0)
+
+
+def delay_hdr(args):
+    """Function makes delay augmentation."""
+
+    if args.delay_list is None:
+        return
+
+    delay_list = args.delay_list.split(',')
+    int_list = [int(i) for i in delay_list]
+    print(f"delays: {int_list}")
+    info = mcs_file_info(args.in_path)
+    if info['channels_count'] != len(int_list):
+        print(f"{error_mark}Delays list length <{len(int_list)}>"
+              " does not match number of channels. It should have"
+              f" <{info['channels_count']}> elements.")
+        exit(1)
+    _, mcs_data = mcs_read(args.in_path)
+    res_data = mcs_delay_control(mcs_data, int_list)
     mcs_write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
@@ -240,7 +262,13 @@ def parse_args():
     parser.add_argument('--amplitude', '-a', dest='amplitude_list',
                         help='Change amplitude (volume)'
                         ' of channels in audio file. Provide coefficients for'
-                        ' every channel, example: -a "0.1, 0.2, 0.3, -1"')
+                        ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"')
+    parser.add_argument('--delay', '-d', dest='delay_list', type=str,
+                        help='Add time delays'
+                        ' to channels in audio file. Provide delay for'
+                        ' every channel in microseconds, example:\n\t \
+                            -d "100, 200, 300, 0"')
+
 
     return parser.parse_args()
 
@@ -253,6 +281,7 @@ def main():
     file_info_hdr(args)
     output_path_hdr(args)
     amplitude_hdr(args)
+    delay_hdr(args)
 
 
 if __name__ == '__main__':

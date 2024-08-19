@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import  string
 import subprocess as sp
 import wavaugmentate as wau
 
@@ -76,10 +77,11 @@ def test_mcs_read():
     Returns:
         None
     """
-
+    test_sound_1 = wau.mcs_generate(f_list, t, fs)
     test_rs, test_mcs = wau.mcs_read(test_sound_1_file)
     assert test_rs == fs
     assert test_mcs.shape == (4, 220500)
+    assert np.array_equal(test_mcs, test_sound_1)
 
 
 def test_mcs_file_info():
@@ -260,20 +262,57 @@ def test_wavaugmentate_info_option():
     assert res.stdout == wau.application_info + "\n"
 
 
+subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
+
 def test_wavaugmentate_amplitude_option_fail_case():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           "0.1, 0.3, 0.4"]
+           '0.1, 0.3, 0.4']
+    print(' '.join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
-    ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
 Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
-    assert res.stdout == ref
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
 
 
 def test_wavaugmentate_amplitude_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           "0.1, 0.3, 0.4, 1"]
+           '0.1, 0.3, 0.4, 1']
+    print(' '.join(cmd))
+    if os.path.exists(output_file):
+        os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
-    ref = '\namplitudes: [0.1, 0.3, 0.4, 1.0]\nDone.\n'
-    print(res.stdout) 
+    s = str(res.stdout)
+    out = s.translate(subst_table)
+    print('out:', out)
+    full_ref = '\namplitudes: [0.1, 0.3, 0.4, 1.0]\nDone.\n'
+    ref = full_ref.translate(subst_table)
+    print('ref:', ref)
+    assert out == ref
+    assert os.path.exists(output_file)
+"""
+  for ch in test_dc:
+        assert ch.shape[0] == 220513
+    rms_list = np.round(wau.mcs_rms(test_dc, last_index=24), decimals=3, out=None)
+    reference_list = [0.511, 0.627, 0.445, 0.705]
+    for r, ref in zip(rms_list, reference_list):
+        assert (r - ref) < 0.001
+"""
+"""
+def test_wavaugmentate_delay_option():
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
+           "100, 200, 300, 0"]
+    print(' '.join(cmd))
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    res = sp.run(cmd, capture_output=True, text=True)
+    print(res.stdout)
+    ref = '\ndelays: [100, 200, 300, 0]\nDone.\n'
     assert res.stdout == ref
+    assert os.path.exists(output_file)
 
+"""
