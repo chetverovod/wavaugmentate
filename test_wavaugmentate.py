@@ -317,8 +317,6 @@ Error: Amplitude list length <3> does not match number of channels. It should ha
     assert out == ref
 
 
-
-
 def test_wavaugmentate_delay_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
            "100, 200, 300, 0"]
@@ -373,3 +371,19 @@ Error: Delays list length <3> does not match number of channels. It should have 
     ref = full_ref.translate(subst_table)
     print('ref:', ref)
     assert out == ref
+
+
+def test_WavaugPipeline():
+
+    test_sound_1 = wau.mcs_generate(f_list, t, fs)
+    w = wau.WavaugPipeline(test_sound_1)
+    print(w.data)
+
+    w.amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0])
+    res1 = w.data
+
+    w.put(np.zeros(1))
+    res2 = w.put(test_sound_1).amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0]).get()
+    print(res2)
+    assert np.array_equal(res1, res2)
+

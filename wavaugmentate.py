@@ -143,6 +143,28 @@ def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=44100):
     return multichannel_sound
 
 
+# Chaining class
+
+class WavaugPipeline:
+    def __init__(self, _data):
+        self.data = _data
+
+    def put(self, data):
+        self.data = data.copy()
+        return self
+
+    def get(self):
+        return self.data
+
+    def amp(self, amplitude_list):
+        self.data = mcs_amplitude_control(self.data, amplitude_list)
+        return self
+
+    def dly(self, delay_list):
+        self.data = mcs_delay_control(self.data, delay_list)
+        return self
+
+
 # CLI interface functions
 
 error_mark = "Error: "
@@ -259,6 +281,7 @@ def delay_hdr(args):
     mcs_write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
+
 
 
 def parse_args():
