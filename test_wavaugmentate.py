@@ -281,7 +281,7 @@ Error: Amplitude list length <3> does not match number of channels. It should ha
 
 def test_wavaugmentate_amplitude_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.1, 0.3, 0.4, 1']
+           '0.13, 0.33, 0.43, 1']
     print(' '.join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
@@ -294,14 +294,14 @@ def test_wavaugmentate_amplitude_option():
     print('ref:', ref)
     assert out == ref
     assert os.path.exists(output_file)
-"""
-  for ch in test_dc:
-        assert ch.shape[0] == 220513
-    rms_list = np.round(wau.mcs_rms(test_dc, last_index=24), decimals=3, out=None)
+    _, test_ac = wau.mcs_read(output_file) 
+    for ch in test_ac:
+        assert ch.shape[0] == 220500
+    rms_list = np.round(wau.mcs_rms(test_ac), decimals=3, out=None)
     reference_list = [0.511, 0.627, 0.445, 0.705]
     for r, ref in zip(rms_list, reference_list):
         assert (r - ref) < 0.001
-"""
+
 """
 def test_wavaugmentate_delay_option():
     cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
