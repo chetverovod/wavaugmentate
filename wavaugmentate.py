@@ -1,17 +1,160 @@
-import mcsaugment as ma
+#!/usr/bin/env python3
+
+import numpy as np
 import argparse
+from scipy.io import wavfile
 import os
+import pyplnoise
 from pathlib import Path
+
+
+def mcs_rms(mcs_data, last_index=-1):
+    """Return RMS of multichannel sound."""
+
+    res = []
+    for signal in mcs_data:
+        res.append(np.sqrt(np.mean(signal[0:last_index]**2)))
+    return res
+
+
+def mcs_generate(frequency_list, duration, sample_rate=44100):
+    """Function generates multichannel sound as a set of sin-waves.
+
+    return numpy array of shape [channels, samples]
+    """
+
+    samples = np.arange(duration * sample_rate) / sample_rate
+    channels = []
+    for f in frequency_list:
+        signal = np.sin(2 * np.pi * f * samples)
+        signal = np.float32(signal)
+        channels.append(signal)
+    multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+
+def mcs_write(path, mcs_data, sample_rate=44100):
+    """ Save multichannel sound to wav-file.
+
+    path : string or open file handle
+    Output wav file.
+
+    sample_rate : int
+    The sample rate (in samples/sec).
+    """
+    buf = mcs_data.T.copy()
+    wavfile.write(path, sample_rate, buf)
+
+
+def mcs_read(path):
+    """ Read multichannel sound from wav-file.
+
+    return sample_rate, mcs_data.
+    """
+    sample_rate, buf = wavfile.read(path)
+    mcs_data = buf.T.copy()
+    return sample_rate, mcs_data
+
+
+def mcs_file_info(path):
+    """ Return information about multichannel sound from wav-file.
+
+    return path, channels_count, sample_rate, length (in seconds) of file.
+    """
+    sample_rate, buf = wavfile.read(path)
+    length = buf.shape[0] / sample_rate
+
+    return {"path": path, "channels_count": buf.shape[1], "sample_rate": sample_rate, "length_s": length}
+
+
+# Audio augmentation functions
+
+
+def mcs_amplitude_control(mcs_data, amplitude_list):
+    """ Change amplitude of multichannel sound."""
+    channels = [] 
+    for signal, amplitude in zip(mcs_data, amplitude_list):
+        channels.append(signal * amplitude)
+        multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+
+def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=44100):
+    """Add delays of channels of multichannel sound. Output data become longer."""
+
+    channels = []
+    max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)  # In samples.
+
+    for signal, delay in zip(mcs_data, delay_us_list):
+        samples_delay = int(delay * 1.E-6 * sampling_rate)  # In samples.
+        res = np.zeros(samples_delay)
+        res = np.append(res, signal)
+        if samples_delay < max_samples_delay:
+            res = np.append(res, np.zeros(max_samples_delay - samples_delay))
+        channels.append(res)
+        multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+
+def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=44100):
+    """Add echo to multichannel sound.
+
+    Returns:
+        Output data become longer.
+    """
+    a = mcs_amplitude_control(mcs_data, amplitude_list)
+    e = mcs_delay_control(a, delay_us_list)
+    channels = []
+    for d in mcs_data:
+        zl = e.shape[1] - d.shape[0]
+        channels.append(np.append(d, np.zeros(zl)))
+    multichannel_sound = np.array(channels).copy() + e
+
+    return multichannel_sound
+
+
+def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100, seed=-1):
+    """ Add pink noise to channels of multichannel sound."""
+
+    channels = []
+    for signal, level in zip(mcs_data, noise_level_list):
+        if seed != -1:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        else:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50., seed=seed)
+        noise = pknoise.get_series(signal.shape[0])
+        res = signal + level * np.array(noise)
+        channels.append(res)
+    multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+
+def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=44100):
+    """Add pink noise to channels of multichannel sound."""
+
+    stretch_audio("input.wav", "output.wav", ratio=1.1)
+    channels = []
+    for signal, ratio in zip(mcs_data, ratio_list):
+        pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        noise = pknoise.get_series(signal.shape[0])
+        res = signal + ratio * np.array(noise)
+        channels.append(res)
+    multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+
+# CLI interface functions
 
 error_mark = "Error: "
 prog_name = os.path.basename(__file__).split('.')[0]
 
+application_info = f"{prog_name} application provides functions for \
+multichannel WAV audio data augmentation."
 
 def print_help_and_info():
     """Function prints info about application"""
 
-    print(f"{prog_name} application provides functions for"
-          " multichannel WAV audio data augmentation.")
+    print(application_info)
     exit(0)
 
 
@@ -55,7 +198,7 @@ def file_info_hdr(args):
 
     print()
     if args.info:
-        for key, value in ma.mcs_file_info(args.path).items():
+        for key, value in mcs_file_info(args.path).items():
             print(f"{key}: {value}")
         exit(0)
 
@@ -68,15 +211,15 @@ def amplitude_hdr(args):
     amplitude_list = args.amplitude_list.split(',')
     float_amplitude_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_amplitude_list}")
-    info = ma.mcs_file_info(args.in_path)
+    info = mcs_file_info(args.in_path)
     if info['channels_count'] != len(float_amplitude_list):
         print(f"{error_mark}Amplitude list length <{len(float_amplitude_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(1)
-    fs, mcs_data = ma.mcs_read(args.in_path)
-    res_data = ma.mcs_amplitude_control(mcs_data, float_amplitude_list)
-    ma.mcs_write(args.out_path, res_data, info['sample_rate'])
+    fs, mcs_data = mcs_read(args.in_path)
+    res_data = mcs_amplitude_control(mcs_data, float_amplitude_list)
+    mcs_write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
 
@@ -112,4 +255,5 @@ def main():
     amplitude_hdr(args)
 
 
-main()
+if __name__ == '__main__':
+    main()
