@@ -323,6 +323,29 @@ def amplitude_hdr(args):
     exit(0)
 
 
+def noise_hdr(args):
+    """Function makes noise augmentation."""
+
+    if args.noise_list is None:
+        return
+
+    noise_list = args.noise_list.split(',')
+    check_amp_list(noise_list)
+
+    float_list = [float(i) for i in noise_list]
+    print(f"noise levels: {float_list}")
+    info = mcs_file_info(args.in_path)
+    if info['channels_count'] != len(float_list):
+        print(f"{error_mark}Noise list length <{len(float_list)}>"
+              " does not match number of channels. It should have"
+              f" <{info['channels_count']}> elements.")
+        exit(2)
+    _, mcs_data = mcs_read(args.in_path)
+    res_data = mcs_noise_control(mcs_data, float_list)
+    mcs_write(args.out_path, res_data, info['sample_rate'])
+    print('Done.')
+    exit(0)
+
 def echo_hdr(args):
     """Function makes echo augmentation."""
 
@@ -415,6 +438,10 @@ def parse_args():
                         ' to channels in audio file. Provide delay for'
                         ' every channel in microseconds, example:\n\t \
                             -d "100, 200, 300, 0"')
+    parser.add_argument('--ns', '-n', dest='noise_list',
+                        help='Add normal noise'
+                        ' to channels in audio file. Provide coefficients for'
+                        ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"')                            
     parser.add_argument('--chain', '-c', dest='chain_code', type=str,
                         help='Execute chain of transformations.'
                         ' example:\n\t'
@@ -433,6 +460,7 @@ def main():
     file_info_hdr(args)
     output_path_hdr(args)
     amplitude_hdr(args)
+    noise_hdr(args)
     delay_hdr(args)
     echo_hdr(args)
 
