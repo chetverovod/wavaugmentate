@@ -216,6 +216,25 @@ prog_name = os.path.basename(__file__).split('.')[0]
 application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
 
+def check_amp_list(ls):
+ for n in ls:
+        try:
+            float(n)
+        except ValueError:
+            print(f"{error_mark}Amplitude list"
+                  f" contains non number element: <{n}>.")
+            exit(3)
+    
+def check_delay_list(ls):
+    for n in ls:
+        try:
+            int(n)
+        except ValueError:
+            print(f"{error_mark}Delays list"
+                  f" contains non integer element: <{n}>.")
+            exit(1)
+
+
 
 def print_help_and_info():
     """Function prints info about application"""
@@ -287,13 +306,8 @@ def amplitude_hdr(args):
         return
 
     amplitude_list = args.amplitude_list.split(',')
-    for n in amplitude_list:
-        try:
-            float(n)
-        except ValueError:
-            print(f"{error_mark}Amplitude list"
-                  f" contains non number element: <{n}>.")
-            exit(1)
+    check_amp_list(amplitude_list)
+
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
     info = mcs_file_info(args.in_path)
@@ -309,6 +323,46 @@ def amplitude_hdr(args):
     exit(0)
 
 
+def echo_hdr(args):
+    """Function makes echo augmentation."""
+
+    if args.echo_list is None:
+        return
+
+    lists = args.echo_list.split('/')
+    if len(lists) != 2:
+        print(f"{error_mark}Can't distinguish delay and amplitude lists <{args.echo_list}>.")
+        exit(1)
+    
+    delay_list = lists[0].split(',')
+    amplitude_list = lists[1].split(',')
+    if len(amplitude_list) != len(delay_list):
+        print(f"{error_mark}Can't delay and amplitude lists length differ <{args.echo_list}>.")
+        exit(2)
+
+    check_delay_list(delay_list)
+    check_amp_list(amplitude_list)
+
+    int_list = [int(i) for i in delay_list]
+    print(f"delays: {int_list}")
+    info = mcs_file_info(args.in_path)
+    if info['channels_count'] != len(int_list):
+        print(f"{error_mark}Delay list length <{len(int_list)}>"
+              " does not match number of channels. It should have"
+              f" <{info['channels_count']}> elements.")
+        exit(2)
+    
+    float_list = [float(i) for i in amplitude_list]
+    print(f"amplitudes: {float_list}")
+
+    _, mcs_data = mcs_read(args.in_path)
+    res_data = mcs_echo_control(mcs_data, int_list, float_list)
+
+    mcs_write(args.out_path, res_data, info['sample_rate'])
+    print('Done.')
+    exit(0)
+
+
 def delay_hdr(args):
     """Function makes delay augmentation."""
 
@@ -316,13 +370,7 @@ def delay_hdr(args):
         return
 
     delay_list = args.delay_list.split(',')
-    for n in delay_list:
-        try:
-            int(n)
-        except ValueError:
-            print(f"{error_mark}Delays list"
-                  f" contains non integer element: <{n}>.")
-            exit(1)
+    check_delay_list(delay_list)
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
@@ -356,6 +404,12 @@ def parse_args():
                         help='Change amplitude (volume)'
                         ' of channels in audio file. Provide coefficients for'
                         ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"')
+    parser.add_argument('--echo', '-e', dest='echo_list',
+                        help='Add echo to channels in audio file.'
+                        ' of channels in audio file. Provide coefficients'
+                        '  and delays (in microseconds) of '
+                        ' reflected signal for every channel, example:\n\t'
+                        '      -e "0.1, 0.2, 0.3, -1 / 100, 200, 0, 300"')
     parser.add_argument('--dly', '-d', dest='delay_list', type=str,
                         help='Add time delays'
                         ' to channels in audio file. Provide delay for'
@@ -380,6 +434,7 @@ def main():
     output_path_hdr(args)
     amplitude_hdr(args)
     delay_hdr(args)
+    echo_hdr(args)
 
 
 if __name__ == '__main__':

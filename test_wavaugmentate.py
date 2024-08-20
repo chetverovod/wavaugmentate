@@ -65,6 +65,8 @@ def test_mcs_write():
         os.remove(test_sound_1_file)
     test_sound_1 = wau.mcs_generate(f_list, t, fs)
     wau.mcs_write(test_sound_1_file, test_sound_1, fs)
+    exists = os.path.exists(test_sound_1_file)
+    assert exists is True
 
 
 def test_mcs_read():
@@ -212,7 +214,36 @@ def test_mcs_echo_control():
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
-   
+
+def test_mcs_echo_control_option():
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    test_sound_1 = wau.mcs_generate(f_list, t, fs)
+    wau.mcs_write(test_sound_1_file, test_sound_1, fs)
+
+    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-e',
+           '100, 300, 400, 500 / 0.5, 0.6, 0.7, 0.1 ']
+    print('\n', ' '.join(cmd))
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = shrink(s)
+    print('out:', out)
+    full_ref = '\ndelays: [100, 300, 400, 500]\n' + \
+               '\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
+    ref = shrink(full_ref)
+    print('ref:', ref)
+    assert out == ref
+    assert os.path.exists(output_file)
+    _, written_data = wau.mcs_read(output_file)
+    for ch in written_data:
+        assert ch.shape[0] == 220522
+    rms_list = np.round(wau.mcs_rms(written_data), decimals=3, out=None)
+    print('rms_list:', rms_list)
+    reference_list = [1.054, 0.716, 1.144, 0.749]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001    
 
 
 def test_mcs_noise_control():
