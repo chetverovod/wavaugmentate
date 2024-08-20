@@ -1,6 +1,6 @@
 import numpy as np
 import os
-import  string
+#import  string
 import subprocess as sp
 import wavaugmentate as wau
 
@@ -525,3 +525,33 @@ def test_chain_option():
     exists = os.path.exists(test_sound_1_file)
     assert exists is True
 
+
+def test_README_examples():
+    # preparations
+    fn = './sound.wav'
+    if os.path.exists(fn):
+        os.remove(fn)
+
+    test_sound_1 = wau.mcs_generate(f_list, t, fs)
+    wau.mcs_write(fn, test_sound_1, fs)
+
+    # examples code for  README.md
+
+    # Read WAV-file to array.
+    fsmp, mcs = wau.mcs_read('./sound.wav')
+
+    # Apply delays.
+    delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity. 
+    d = wau.mcs_delay_control(mcs, delay_list)
+
+    # Apply amplitude changes.
+    amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity. 
+    res = wau.mcs_amplitude_control(d, amplitude_list)
+
+    # Augmentation result saving.
+    wau.mcs_write('./sound_delayed.wav', res, fsmp)
+
+    # The same code in OOP approach:
+
+    w = wau.WaChain()
+    w.rd('./sound.wav').dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr('./sound_delayed.wav')

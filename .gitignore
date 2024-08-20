@@ -13,3 +13,5 @@ __pycache__/test_wavaugmentate.cpython-39-pytest-7.4.3.pyc
 __pycache__/test_wavaugmentate.cpython-39-pytest-7.4.3.pyc
 __pycache__/test_wavaugmentate.cpython-39-pytest-7.4.3.pyc
 __pycache__/test_wavaugmentate.cpython-39-pytest-7.4.3.pyc
+sound.wav
+sound_delayed.wav
