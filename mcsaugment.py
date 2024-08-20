@@ -4,7 +4,15 @@ from audiostretchy.stretch import stretch_audio
 from scipy.io import wavfile
 
 
-# Функции для создания тестовых данных.
+def mcs_rms(mcs_data, last_index=-1):
+    """Return RMS of multichannel sound."""
+
+    res = []
+    for signal in mcs_data:
+        res.append(np.sqrt(np.mean(signal[0:last_index]**2)))
+    return res
+
+
 def mcs_generate(frequency_list, duration, sample_rate=44100):
     """Function generates multichannel sound as a set of sin-waves.
 
@@ -83,6 +91,7 @@ def mcs_amplitude_control(mcs_data, amplitude_list):
 
 def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=44100):
     """Add delays of channels of multichannel sound. Output data become longer."""
+
     channels = []
     max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)  # In samples.
 
@@ -100,7 +109,8 @@ def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=44100):
 def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=44100):
     """Add echo to multichannel sound.
 
-    return   Output data become longer.
+    Returns:
+        Output data become longer.
     """
     a = mcs_amplitude_control(mcs_data, amplitude_list)
     e = mcs_delay_control(a, delay_us_list)
@@ -113,12 +123,15 @@ def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=4410
     return multichannel_sound
 
 
-def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100):
+def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=44100, seed=-1):
     """ Add pink noise to channels of multichannel sound."""
 
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
-        pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        if seed != -1:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
+        else:
+            pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50., seed=seed)
         noise = pknoise.get_series(signal.shape[0])
         res = signal + level * np.array(noise)
         channels.append(res)
