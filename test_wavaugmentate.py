@@ -17,7 +17,11 @@ test_sound_1_noise_file = "./test_sounds/test_sound_1_noise.wav"
 
 output_file = './outputwav/out.wav'
 prog = './' + wau.prog_name + '.py'
-subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
+
+
+def shrink(s: str):
+    subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
+    return s.translate(subst_table)
 
 
 def test_mcs_generate():
@@ -266,10 +270,10 @@ def test_wavaugmentate_amplitude_option():
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = '\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
     assert os.path.exists(output_file)
@@ -289,10 +293,10 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     print('\n', ' '.join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = 'Error: Amplitude list contains non number element: < abc>.'
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
 
@@ -303,11 +307,11 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     print('\n', ' '.join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
 Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
 
@@ -320,12 +324,12 @@ def test_wavaugmentate_delay_option():
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = '\ndelays: [100, 200, 300, 0]\nDone.\n'
     assert res.stdout == full_ref
     assert os.path.exists(output_file)
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
     assert os.path.exists(output_file)
@@ -345,10 +349,10 @@ def test_wavaugmentate_delay_option_fail_case1():
     print('\n', ' '.join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = 'Error: Delays list contains non integer element: <389.1>.\n'
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
 
@@ -359,11 +363,11 @@ def test_wavaugmentate_delay_option_fail_case2():
     print('\n', ' '.join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
-    out = s.translate(subst_table)
+    out = shrink(s)
     print('out:', out)
     full_ref = '\ndelays: [100, 200, 300]\n\
 Error: Delays list length <3> does not match number of channels. It should have <4> elements.\n'
-    ref = full_ref.translate(subst_table)
+    ref = shrink(full_ref)
     print('ref:', ref)
     assert out == ref
 
@@ -428,3 +432,18 @@ def test_WavaugPipeline_info():
 
     ref = {'path': '', 'channels_count': 4, 'sample_rate': 44100, 'length_s': 5.0}
     assert w.info() == ref
+
+
+def test_WavaugPipeline_chain():
+    w = wau.WavaugPipeline()
+
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    
+    cmd = "w.gen(f_list, t, fs).rms()"
+    s = str(eval(cmd))
+    out = shrink(s)
+    ref = '[0.70710844,0.7071083,0.707108,0.70710754]'
+
+    print(out)
+    assert out == ref

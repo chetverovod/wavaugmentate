@@ -198,11 +198,15 @@ class WavaugPipeline:
 
     def rms(self, last_index=-1):
         return mcs_rms(self.data, last_index)
-    
+
     def info(self):
-        length = self.data.shape[1] / self.sample_rate
-        return {"path": self.path, "channels_count": self.data.shape[0],
-                "sample_rate": self.sample_rate, "length_s": length}
+        res = {"path": self.path, "channels_count": -1,
+               "sample_rate": self.sample_rate, "length_s": -1}
+        if self.data is not None:
+            length = self.data.shape[1] / self.sample_rate
+            res["channels_count"] = self.data.shape[0]
+            res["length_s"] = length
+        return res
 
 
 # CLI interface functions
