@@ -151,7 +151,7 @@ def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=def_fs):
 
 # Chaining class
 
-class WavaugPipeline:
+class WaChain:
     def __init__(self, _data=None, fs=-1):
         self.data = _data
         self.path = ''
@@ -224,6 +224,18 @@ def print_help_and_info():
     exit(0)
 
 
+def chain_hdr(args):
+    if args.chain_code is None:
+        return
+    c = args.chain_code.strip()
+    print('chain:', c)
+    w = WaChain()
+    cmd_prefix = "w."
+    str(eval(cmd_prefix + c.strip()))
+    print('Done.')
+    exit(0)
+
+
 def input_path_hdr(args):
     """Function checks presence of input file"""
     if args.in_path is None:
@@ -234,7 +246,6 @@ def input_path_hdr(args):
 
 
 def is_file_creatable(fullpath: str) -> bool:
-    
     # Split the path
     path, _ = os.path.split(fullpath)
     isdir = os.path.isdir(path)
@@ -271,6 +282,7 @@ def file_info_hdr(args):
 
 def amplitude_hdr(args):
     """Function makes amplitude augmentation."""
+
     if args.amplitude_list is None:
         return
 
@@ -328,7 +340,7 @@ def delay_hdr(args):
 
 
 def parse_args():
-    """Настройка argparse"""
+    """CLI options parsing."""
 
     parser = argparse.ArgumentParser(
         prog=prog_name,
@@ -340,15 +352,20 @@ def parse_args():
     parser.add_argument('-o', dest='out_path', help='Output audio file path.')
     parser.add_argument('--info', dest='info', action='store_true',
                         help='Print info about input audio file.')
-    parser.add_argument('--amplitude', '-a', dest='amplitude_list',
+    parser.add_argument('--amp', '-a', dest='amplitude_list',
                         help='Change amplitude (volume)'
                         ' of channels in audio file. Provide coefficients for'
                         ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"')
-    parser.add_argument('--delay', '-d', dest='delay_list', type=str,
+    parser.add_argument('--dly', '-d', dest='delay_list', type=str,
                         help='Add time delays'
                         ' to channels in audio file. Provide delay for'
                         ' every channel in microseconds, example:\n\t \
                             -d "100, 200, 300, 0"')
+    parser.add_argument('--chain', '-c', dest='chain_code', type=str,
+                        help='Execute chain of transformations.'
+                        ' example:\n\t'
+                        '-c "gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
+                        '.wr("./sines.wav")"')
 
     return parser.parse_args()
 
@@ -357,6 +374,7 @@ def main():
     """Argument parsing."""
 
     args = parse_args()
+    chain_hdr(args)
     input_path_hdr(args)
     file_info_hdr(args)
     output_path_hdr(args)

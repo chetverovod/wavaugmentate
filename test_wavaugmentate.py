@@ -372,10 +372,10 @@ Error: Delays list length <3> does not match number of channels. It should have 
     assert out == ref
 
 
-def test_WavaugPipeline_controls():
+def test_WaChain_controls():
 
     test_sound_1 = wau.mcs_generate(f_list, t, fs)
-    w = wau.WavaugPipeline(test_sound_1)
+    w = wau.WaChain(test_sound_1)
     print(w.data)
 
     w.amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0])
@@ -387,23 +387,22 @@ def test_WavaugPipeline_controls():
     assert np.array_equal(res1, res2)
 
 
-def test_WavaugPipeline_wr_rd():
-
-    w = wau.WavaugPipeline()
+def test_WaChain_wr_rd():
+    w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
     w.gen(f_list, t, fs).wr(test_sound_1_file)
 
-    r = wau.WavaugPipeline()
+    r = wau.WaChain()
     r.rd(test_sound_1_file)
 
     assert np.array_equal(w.data, r.data)
 
 
-def test_WavaugPipeline_echo():
+def test_WaChain_echo():
     d_list = [1E6, 2E6, 3E6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.WavaugPipeline()
+    w = wau.WaChain()
     w.gen(f_list, t, fs).echo(d_list, a_list)
     rms_list = np.round(w.rms(), decimals=3, out=None)
     reference_list = [0.437, 0.461, 0.515, 0.559]
@@ -411,10 +410,10 @@ def test_WavaugPipeline_echo():
         assert abs(r - ref) < 0.001
 
 
-def test_WavaugPipeline_noise():
+def test_WaChain_noise():
     n_list = [1, 0.2, 0.3, 0]
 
-    w = wau.WavaugPipeline()
+    w = wau.WaChain()
     w.gen(f_list, t, fs).ns(n_list, seed=42)
     rms_list = np.round(w.rms(), decimals=3, out=None)
     reference_list = [1.224, 0.735, 0.769, 0.707]
@@ -423,8 +422,8 @@ def test_WavaugPipeline_noise():
         assert abs(r - ref) < 0.01
 
 
-def test_WavaugPipeline_info():
-    w = wau.WavaugPipeline()
+def test_WaChain_info():
+    w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
     w.gen(f_list, t, fs).wr(test_sound_1_file)
@@ -434,16 +433,33 @@ def test_WavaugPipeline_info():
     assert w.info() == ref
 
 
-def test_WavaugPipeline_chain():
-    w = wau.WavaugPipeline()
-
-    if os.path.exists(test_sound_1_file):
-        os.remove(test_sound_1_file)
-    
-    cmd = "w.gen(f_list, t, fs).rms()"
-    s = str(eval(cmd))
+def test_WaChain_chain_class():
+    w = wau.WaChain()
+    cmd_prefix = "w."
+    cmd = "gen(f_list, t, fs).rms()"
+    s = str(eval(cmd_prefix + cmd.strip()))
     out = shrink(s)
     ref = '[0.70710844,0.7071083,0.707108,0.70710754]'
 
     print(out)
     assert out == ref
+
+
+def test_chain_option():
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    cmd = [prog, '-c', 'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).wr("'
+           + test_sound_1_file + '")']
+    print('\n', ' '.join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True)
+    s = str(res.stdout)
+    out = shrink(s)
+    print('out:', out)
+    full_ref = 'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("' \
+               + test_sound_1_file + '")\nDone.\n'
+    ref = shrink(full_ref)
+    print('ref:', ref)
+    assert out == ref
+    exists = os.path.exists(test_sound_1_file)
+    assert exists is True
+
