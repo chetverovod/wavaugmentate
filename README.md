@@ -1,15 +1,15 @@
-# **Wavaugmentate**:  multichannel speech signal augmentation processor
+# **Wavaugmentate**:  Multichannel Speech Signal Augmentation Processor
 
-# Input data
+# Input Data
 
 Multichannel WAV-file or NumPy array.
 ```
 Array shape: (num_channels,num_samples).
 ```
-# Output data
+# Output Data
 Same types as in section [Input_data](#Input_data).
 
-# Methods 
+# Augmentation Methods 
 1. Amplitude (volume change, inversion).
 2. Time shift.
 3. Echo.
@@ -27,7 +27,7 @@ Signal augmentation can be applied by two ways:
 1. Python module methods.
 2. CLI interface options.
 
-## Python module
+## Python Module
 
 Example 1 (procedural approach):
 ```Python
@@ -47,7 +47,7 @@ res = wau.mcs_amplitude_control(d, amplitude_list)
 # Augmentation result saving.
 wau.mcs_write('./sound_delayed.wav', res, fsmp)
 ```
-The same code in OOP approach, Example 2:
+The same code as chain, Example 2 (OOP approach):
 
 ```Python
 import wavaugmentate as wau
@@ -63,21 +63,21 @@ use for details:
 ```
 
 command line interface  provides the same functionality.
-Proce
+
 Example 3 (procedural approach):
 ```shell
 ./wavaugmentate.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
 ./wavaugmentate.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
 
 ```
-OOP approach
-Example 4:
+
+Example 4 (OOP approach):
 ```shell
 ./wavaugmentate.py -c 'rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./sound_delayed.wav")'
 
 ```
 
-# Unit tests
+# Unit Tests
 
 Just run:
 ```shell
