@@ -125,7 +125,8 @@ def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1)
         if seed != -1:
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         else:
-            n_noise = random_noise_gen(seed).standard_normal(mcs_data.shape[1])
+            # TODO seed should be fixed for repeatable results
+            n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         noise = n_noise
         # print('noise.shape', noise.shape)
         # print('noise=', noise[0:10])
