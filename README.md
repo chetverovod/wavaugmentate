@@ -72,8 +72,10 @@ Example 4:
 
 ```
 
+# Unit tests
 
-
-
-
+Just run:
+```shell
+pytest
+```
 
