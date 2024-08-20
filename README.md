@@ -7,7 +7,7 @@ Multichannel WAV-file or NumPy array.
 Array shape: (num_channels,num_samples).
 ```
 # Output data
-Same types as in [section Input_data](#Input_data).
+Same types as in section [Input_data](#Input_data).
 
 # Methods 
 1. Amplitude (volume change, inversion).
@@ -27,7 +27,7 @@ Signal augmentation can be applied by two ways:
 1. Python module methods.
 2. CLI interface options.
 
-## Python module API
+## Python module
 
 Example 1 (procedural approach):
 ```Python
@@ -55,7 +55,12 @@ import wavaugmentate as wau
 w = wau.WaChain()
 w.rd('./sound.wav').dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr('./sound_delayed.wav')
 ```
-## Python module API
+## CLI
+
+use for details:
+```
+./wavaugmentate.py -h
+```
 
 command line interface  provides the same functionality.
 Proce
