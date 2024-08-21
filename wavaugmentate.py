@@ -6,21 +6,24 @@ from scipy.io import wavfile
 import os
 from pathlib import Path
 
-def_fs = 44100  # Hz
+def_fs = 44100  # Default sampling frequency, Hz.
 
 random_noise_gen = np.random.default_rng()
 
 
-def mcs_rms(mcs_data, last_index=-1):
+def rms(mcs_data, last_index=-1, digits=-1):
     """Return RMS of multichannel sound."""
 
     res = []
     for signal in mcs_data:
-        res.append(np.sqrt(np.mean(signal[0:last_index]**2)))
+        r = np.sqrt(np.mean(signal[0:last_index]**2))
+        if digits > 0:
+            r = round(r, digits)
+        res.append(r)
     return res
 
 
-def mcs_generate(frequency_list, duration, sample_rate=def_fs):
+def generate(frequency_list, duration, sample_rate=def_fs):
     """Function generates multichannel sound as a set of sin-waves.
 
     return numpy array of shape [channels, samples]
@@ -36,7 +39,7 @@ def mcs_generate(frequency_list, duration, sample_rate=def_fs):
     return multichannel_sound
 
 
-def mcs_write(path, mcs_data, sample_rate=44100):
+def write(path: str, mcs_data, sample_rate=44100):
     """ Save multichannel sound to wav-file.
 
     path : string or open file handle
@@ -49,7 +52,7 @@ def mcs_write(path, mcs_data, sample_rate=44100):
     wavfile.write(path, sample_rate, buf)
 
 
-def mcs_read(path):
+def read(path: str):
     """ Read multichannel sound from wav-file.
 
     return sample_rate, mcs_data.
@@ -59,7 +62,7 @@ def mcs_read(path):
     return sample_rate, mcs_data
 
 
-def mcs_file_info(path):
+def file_info(path):
     """ Return information about multichannel sound from wav-file.
 
     return path, channels_count, sample_rate, length (in seconds) of file.
@@ -74,7 +77,7 @@ def mcs_file_info(path):
 # Audio augmentation functions
 
 
-def mcs_amplitude_control(mcs_data, amplitude_list):
+def amplitude_ctrl(mcs_data, amplitude_list):
     """ Change amplitude of multichannel sound."""
     channels = [] 
     for signal, amplitude in zip(mcs_data, amplitude_list):
@@ -83,7 +86,7 @@ def mcs_amplitude_control(mcs_data, amplitude_list):
     return multichannel_sound
 
 
-def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=def_fs):
+def delay_ctrl(mcs_data, delay_us_list, sampling_rate=def_fs):
     """Add delays of channels of multichannel sound. Output data become longer."""
 
     channels = []
@@ -100,14 +103,14 @@ def mcs_delay_control(mcs_data, delay_us_list, sampling_rate=def_fs):
     return multichannel_sound
 
 
-def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_fs):
+def echo_ctrl(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_fs):
     """Add echo to multichannel sound.
 
     Returns:
         Output data become longer.
     """
-    a = mcs_amplitude_control(mcs_data, amplitude_list)
-    e = mcs_delay_control(a, delay_us_list)
+    a = amplitude_ctrl(mcs_data, amplitude_list)
+    e = delay_ctrl(a, delay_us_list)
     channels = []
     for d in mcs_data:
         zl = e.shape[1] - d.shape[0]
@@ -117,7 +120,7 @@ def mcs_echo_control(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_
     return multichannel_sound
 
 
-def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
+def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     """ Add pink noise to channels of multichannel sound."""
 
     channels = []
@@ -136,7 +139,45 @@ def mcs_noise_control(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1)
     return multichannel_sound
 
 
-def mcs_stratch_control(mcs_data, ratio_list, sampling_rate=def_fs):
+def split(mcs_data, channels_count):
+    """Split mono signal to several identical channels.
+
+    Returns:
+        Output data containing channels_count identical channels.
+    """
+    out_data = np.zeros(channels_count, mcs_data.shape[1], dtype=np.float32)
+    for i in range(0, channels_count):
+        out_data[i] = mcs_data
+
+    return out_data
+
+
+def merge(mcs_data):
+    """Mix mcs_data channels to single signal.
+
+    Returns:
+        Output data containing 1 channel  of mono signal.
+    """
+    out_data = np.zeros(1, mcs_data.shape[1], dtype=np.float32)
+    channels_count = mcs_data.shape[0]
+    for i in range(0, channels_count):
+        out_data += mcs_data[i]
+
+    return out_data
+
+
+def sum(mcs_data1, mcs_data2):
+    """Sum mcs_data1 and mcs_data2 signals.
+
+    Returns:
+        Output data containing sum of mcs_data1 and mcs_data2 signals.
+    """
+    out_data = mcs_data1 + mcs_data2
+
+    return out_data
+
+
+def stratch_ctrl(mcs_data, ratio_list, sampling_rate=def_fs):
     """Add pink noise to channels of multichannel sound."""
 
     stretch_audio("input.wav", "output.wav", ratio=1.1)
@@ -167,38 +208,38 @@ class WaChain:
         return self.data
 
     def gen(self, f_list, t, fs=def_fs):
-        self.data = mcs_generate(f_list, t, fs)
+        self.data = generate(f_list, t, fs)
         self.sample_rate = fs
         return self
 
     def rd(self, path):
-        self.sample_rate, self.data = mcs_read(path)
+        self.sample_rate, self.data = read(path)
         return self
 
     def wr(self, path):
-        mcs_write(path, self.data, self.sample_rate)
+        write(path, self.data, self.sample_rate)
         return self
 
     def amp(self, amplitude_list):
-        self.data = mcs_amplitude_control(self.data, amplitude_list)
+        self.data = amplitude_ctrl(self.data, amplitude_list)
         return self
 
     def dly(self, delay_list):
-        self.data = mcs_delay_control(self.data, delay_list)
+        self.data = delay_ctrl(self.data, delay_list)
         return self
 
     def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1):
-        self.data = mcs_noise_control(self.data, noise_level_list,
+        self.data = noise_ctrl(self.data, noise_level_list,
                                       sampling_rate, seed)
         return self
 
     def echo(self, delay_us_list, amplitude_list, sampling_rate=def_fs):
-        self.data = mcs_echo_control(self.data, delay_us_list, amplitude_list,
+        self.data = echo_ctrl(self.data, delay_us_list, amplitude_list,
                                      sampling_rate)
         return self
 
     def rms(self, last_index=-1):
-        return mcs_rms(self.data, last_index)
+        return rms(self.data, last_index)
 
     def info(self):
         res = {"path": self.path, "channels_count": -1,
@@ -217,15 +258,17 @@ prog_name = os.path.basename(__file__).split('.')[0]
 application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
 
+
 def check_amp_list(ls):
- for n in ls:
+    for n in ls:
         try:
             float(n)
         except ValueError:
             print(f"{error_mark}Amplitude list"
                   f" contains non number element: <{n}>.")
             exit(3)
-    
+
+
 def check_delay_list(ls):
     for n in ls:
         try:
@@ -234,7 +277,6 @@ def check_delay_list(ls):
             print(f"{error_mark}Delays list"
                   f" contains non integer element: <{n}>.")
             exit(1)
-
 
 
 def print_help_and_info():
@@ -295,7 +337,7 @@ def file_info_hdr(args):
 
     print()
     if args.info:
-        for key, value in mcs_file_info(args.path).items():
+        for key, value in file_info(args.path).items():
             print(f"{key}: {value}")
         exit(0)
 
@@ -311,15 +353,15 @@ def amplitude_hdr(args):
 
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
-    info = mcs_file_info(args.in_path)
+    info = file_info(args.in_path)
     if info['channels_count'] != len(float_list):
         print(f"{error_mark}Amplitude list length <{len(float_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(2)
-    _, mcs_data = mcs_read(args.in_path)
-    res_data = mcs_amplitude_control(mcs_data, float_list)
-    mcs_write(args.out_path, res_data, info['sample_rate'])
+    _, mcs_data = read(args.in_path)
+    res_data = amplitude_ctrl(mcs_data, float_list)
+    write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
 
@@ -335,15 +377,15 @@ def noise_hdr(args):
 
     float_list = [float(i) for i in noise_list]
     print(f"noise levels: {float_list}")
-    info = mcs_file_info(args.in_path)
+    info = file_info(args.in_path)
     if info['channels_count'] != len(float_list):
         print(f"{error_mark}Noise list length <{len(float_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(2)
-    _, mcs_data = mcs_read(args.in_path)
-    res_data = mcs_noise_control(mcs_data, float_list)
-    mcs_write(args.out_path, res_data, info['sample_rate'])
+    _, mcs_data = read(args.in_path)
+    res_data = noise_ctrl(mcs_data, float_list)
+    write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
 
@@ -369,7 +411,7 @@ def echo_hdr(args):
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
-    info = mcs_file_info(args.in_path)
+    info = file_info(args.in_path)
     if info['channels_count'] != len(int_list):
         print(f"{error_mark}Delay list length <{len(int_list)}>"
               " does not match number of channels. It should have"
@@ -379,10 +421,10 @@ def echo_hdr(args):
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
 
-    _, mcs_data = mcs_read(args.in_path)
-    res_data = mcs_echo_control(mcs_data, int_list, float_list)
+    _, mcs_data = read(args.in_path)
+    res_data = echo_ctrl(mcs_data, int_list, float_list)
 
-    mcs_write(args.out_path, res_data, info['sample_rate'])
+    write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
 
@@ -398,15 +440,15 @@ def delay_hdr(args):
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
-    info = mcs_file_info(args.in_path)
+    info = file_info(args.in_path)
     if info['channels_count'] != len(int_list):
         print(f"{error_mark}Delays list length <{len(int_list)}>"
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(2)
-    _, mcs_data = mcs_read(args.in_path)
-    res_data = mcs_delay_control(mcs_data, int_list)
-    mcs_write(args.out_path, res_data, info['sample_rate'])
+    _, mcs_data = read(args.in_path)
+    res_data = delay_ctrl(mcs_data, int_list)
+    write(args.out_path, res_data, info['sample_rate'])
     print('Done.')
     exit(0)
 
