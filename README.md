@@ -45,7 +45,7 @@ amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity.
 res = wau.amplitude_ctrl(d, amplitude_list)
 
 # Augmentation result saving.
-wau.mcs_write('./sound_delayed.wav', res, fsmp)
+wau.write('./sound_delayed.wav', res, fsmp)
 ```
 The same code as chain, Example 2 (OOP approach):
 
