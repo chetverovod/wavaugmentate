@@ -34,15 +34,15 @@ Example 1 (procedural approach):
 import wavaugmentate as wau
 
 # Read WAV-file to array.
-fsmp, mcs = wau.mcs_read('./sound.wav')
+fsmp, mcs = wau.read('./sound.wav')
 
 # Apply delays.
 delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity. 
-d = wau.mcs_delay_control(mcs, delay_list)
+d = wau.delay_ctrl(mcs, delay_list)
 
 # Apply amplitude changes.
 amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity. 
-res = wau.mcs_amplitude_control(d, amplitude_list)
+res = wau.amplitude_ctrl(d, amplitude_list)
 
 # Augmentation result saving.
 wau.mcs_write('./sound_delayed.wav', res, fsmp)
