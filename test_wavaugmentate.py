@@ -573,6 +573,17 @@ def test_merge():
     res = wau.merge(test_sound_1)
     wau.write(test_sound_1_file, res, fs, )
     ref_value = 1.
-    r = wau.rms([res], digits=3)
+    r = wau.rms(res, digits=3)
     print(r)
     assert abs(r[0] - ref_value) < 0.001
+
+
+def test_split():
+    test_sound_1 = wau.generate([300], t, fs)
+    res = wau.split(test_sound_1, 5)
+    wau.write(test_sound_1_file, res, fs, )
+    ref_value = 0.707
+    for i in range(0, test_sound_1.shape[0]):
+        r = wau.rms(test_sound_1[i], digits=3)
+        print(r)
+        assert abs(r[0] - ref_value) < 0.001    

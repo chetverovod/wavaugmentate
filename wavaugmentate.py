@@ -10,15 +10,23 @@ def_fs = 44100  # Default sampling frequency, Hz.
 
 random_noise_gen = np.random.default_rng()
 
-
+def _single_rms(signal_of_channel, digits):
+    r = np.sqrt(np.mean(signal_of_channel**2))
+    if digits > 0:
+        r = round(r, digits)
+    return r
+    
 def rms(mcs_data, last_index=-1, digits=-1):
     """Return RMS of multichannel sound."""
 
     res = []
-    for signal in mcs_data:
-        r = np.sqrt(np.mean(signal[0:last_index]**2))
-        if digits > 0:
-            r = round(r, digits)
+    shlen = len(mcs_data.shape)
+    if shlen > 1:
+        for i in range(0, mcs_data.shape[0]):
+            r = _single_rms(mcs_data[i, 0:last_index], digits)
+            res.append(r)
+    else:
+        r = _single_rms(mcs_data[0:last_index], digits)
         res.append(r)
     return res
 
@@ -77,7 +85,7 @@ def file_info(path):
 # Audio augmentation functions
 
 
-def amplitude_ctrl(mcs_data, amplitude_list):
+def amplitude_ctrl(mcs_data, amplitude_list: float):
     """ Change amplitude of multichannel sound."""
     channels = [] 
     for signal, amplitude in zip(mcs_data, amplitude_list):
@@ -86,7 +94,7 @@ def amplitude_ctrl(mcs_data, amplitude_list):
     return multichannel_sound
 
 
-def delay_ctrl(mcs_data, delay_us_list, sampling_rate=def_fs):
+def delay_ctrl(mcs_data, delay_us_list :int, sampling_rate=def_fs):
     """Add delays of channels of multichannel sound. Output data become longer."""
 
     channels = []
@@ -103,7 +111,7 @@ def delay_ctrl(mcs_data, delay_us_list, sampling_rate=def_fs):
     return multichannel_sound
 
 
-def echo_ctrl(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_fs):
+def echo_ctrl(mcs_data, delay_us_list: int, amplitude_list: float, sampling_rate=def_fs):
     """Add echo to multichannel sound.
 
     Returns:
@@ -139,13 +147,13 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     return multichannel_sound
 
 
-def split(mcs_data, channels_count):
+def split(mcs_data, channels_count: int):
     """Split mono signal to several identical channels.
 
     Returns:
         Output data containing channels_count identical channels.
     """
-    out_data = np.zeros(channels_count, mcs_data.shape[1], dtype=np.float32)
+    out_data = np.zeros((channels_count, mcs_data.shape[1]), dtype=np.float32)
     for i in range(0, channels_count):
         out_data[i] = mcs_data
 
