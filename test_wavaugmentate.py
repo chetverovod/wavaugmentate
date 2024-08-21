@@ -581,9 +581,65 @@ def test_merge():
 def test_split():
     test_sound_1 = wau.generate([300], t, fs)
     res = wau.split(test_sound_1, 5)
-    wau.write(test_sound_1_file, res, fs, )
+    wau.write(test_sound_1_file, res, fs)
     ref_value = 0.707
+    # for i in range(0, test_sound_1.shape[0]):
+    r = wau.rms(test_sound_1, decimals=3)
+    print(r)
     for i in range(0, test_sound_1.shape[0]):
-        r = wau.rms(test_sound_1[i], decimals=3)
+        assert abs(r[i] - ref_value) < 0.001
+
+
+def test_chain_sum():
+    w = wau.WaChain()
+    res = wau.WaChain()
+    w.gen([100], t, fs)
+    res = w.copy()
+    test_sound_2 = wau.generate([300], t, fs)
+    res.sum(test_sound_2).wr(test_sound_1_file)
+    ref = [0.707, 0.707, 1.0]
+    for s, ref_value in zip([w.data, test_sound_2, res.data], ref):
+        r = wau.rms(s, decimals=3)
         print(r)
-        assert abs(r[0] - ref_value) < 0.001    
+        assert abs(r[0] - ref_value) < 0.001          
+
+
+def test_chain_merge():
+    w = wau.WaChain()
+    r = w.gen([100, 300], t, fs).mrg().wr(test_sound_1_file).rms(decimals=3)
+    print(r)
+    ref_value = 1.
+    assert abs(r[0] - ref_value) < 0.001
+
+
+def test_chain_split():
+    w = wau.WaChain()
+    w.gen([300], t, fs).splt(5).wr(test_sound_1_file)
+    c = w.data.shape[0]
+    assert c == 5
+    ref_value = 0.707
+    r = w.rms(decimals=3)
+    print(r)
+    for i in range(0, c):
+        assert abs(r[0] - ref_value) < 0.001
+
+
+def test_side_by_side():
+    test_sound_1 = wau.generate([100], t, fs)
+    test_sound_1 = wau.amplitude_ctrl(test_sound_1, [0.3])
+    test_sound_2 = wau.generate([300], t, fs)
+    res = wau.side_by_side(test_sound_1, test_sound_2)
+    wau.write(test_sound_1_file, res, fs)
+    ref = [0.212, 0.707]
+    r = wau.rms(res, decimals=3)
+    for i in range(0, len(r)):
+        print(r[i])
+        assert abs(r[i] - ref[i]) < 0.001
+
+
+def test_pause_detect():
+    test_sound_1 = wau.generate([100, 400], t, fs)
+    mask = wau.pause_detect(test_sound_1)
+    res = wau.side_by_side(test_sound_1, mask)
+    print(res)
+    wau.write(test_sound_1_file, res, fs)

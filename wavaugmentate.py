@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import copy
 import argparse
 from scipy.io import wavfile
 import os
@@ -10,12 +11,14 @@ def_fs = 44100  # Default sampling frequency, Hz.
 
 random_noise_gen = np.random.default_rng()
 
+
 def _single_rms(signal_of_channel, decimals):
     r = np.sqrt(np.mean(signal_of_channel**2))
     if decimals > 0:
         r = round(r, decimals)
     return r
-    
+
+
 def rms(mcs_data, last_index=-1, decimals=-1):
     """Return RMS of multichannel sound."""
 
@@ -23,7 +26,9 @@ def rms(mcs_data, last_index=-1, decimals=-1):
     shlen = len(mcs_data.shape)
     if shlen > 1:
         for i in range(0, mcs_data.shape[0]):
-            r = _single_rms(mcs_data[i, 0:last_index], decimals)
+            ch = mcs_data[i]
+            #r = _single_rms(mcs_data[i][0:last_index], decimals)
+            r = _single_rms(ch[0:last_index], decimals)
             res.append(r)
     else:
         r = _single_rms(mcs_data[0:last_index], decimals)
@@ -147,6 +152,21 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     return multichannel_sound
 
 
+def pause_detect(mcs_data: np.ndarray, relative_level: float = 0.05):
+    """Detect pauses in multichannel sound."""
+    r = rms(mcs_data)
+    a = abs(mcs_data)
+    mask = np.zeros(mcs_data.shape)
+
+    for i in range(0, mcs_data.shape[0]):
+        ll = r[i]*relative_level
+        mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
+        mask[i] -= ll
+        mask[i] /= 0.09*ll 
+        mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
+    return mask
+
+
 def split(mcs_data, channels_count: int):
     """Split mono signal to several identical channels.
 
@@ -155,7 +175,7 @@ def split(mcs_data, channels_count: int):
     """
     out_data = np.zeros((channels_count, mcs_data.shape[1]), dtype=np.float32)
     for i in range(0, channels_count):
-        out_data[i] = mcs_data
+        out_data[i] = mcs_data.copy()
 
     return out_data
 
@@ -186,6 +206,19 @@ def sum(mcs_data1, mcs_data2):
     return out_data
 
 
+def side_by_side(mcs_data1, mcs_data2):
+    """Join mcs_data1 and mcs_data2 signals side by side.
+
+    Returns:
+        Output data containing mcs_data1 and mcs_data2 signals.
+    """
+    out_data = np.zeros((mcs_data1.shape[0] + mcs_data2.shape[0],
+                         mcs_data1.shape[1]), dtype=np.float32)
+    out_data[0:mcs_data1.shape[0], :] = mcs_data1
+    out_data[mcs_data1.shape[0]:, :] = mcs_data2
+    return out_data
+
+
 def stratch_ctrl(mcs_data, ratio_list, sampling_rate=def_fs):
     """Add pink noise to channels of multichannel sound."""
 
@@ -207,6 +240,9 @@ class WaChain:
         self.data = _data
         self.path = ''
         self.sample_rate = fs
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     def put(self, data, fs=-1):
         self.data = data.copy()
@@ -258,6 +294,18 @@ class WaChain:
             res["channels_count"] = self.data.shape[0]
             res["length_s"] = length
         return res
+
+    def sum(self, mcs_data):    
+        self.data = sum(self.data, mcs_data)
+        return self
+    
+    def mrg(self):
+        self.data = merge(self.data)
+        return self
+
+    def splt(self, channels_count):
+        self.data = split(self.data, channels_count)
+        return self    
 
 
 # CLI interface functions
