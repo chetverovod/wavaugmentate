@@ -247,8 +247,8 @@ class WaChain:
                                      sampling_rate)
         return self
 
-    def rms(self, last_index=-1):
-        return rms(self.data, last_index)
+    def rms(self, last_index=-1, digits=-1):
+        return rms(self.data, last_index, digits)
 
     def info(self):
         res = {"path": self.path, "channels_count": -1,
