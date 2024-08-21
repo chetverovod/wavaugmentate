@@ -40,7 +40,7 @@ def test_generate():
     """
     test_sound_1 = wau.generate(f_list, t, fs)
     assert test_sound_1.shape == (4, 220500)
-    rms_list = wau.rms(test_sound_1, digits=3)
+    rms_list = wau.rms(test_sound_1, decimals=3)
     for r in rms_list:
         assert abs(r - 0.707) < 0.001
 
@@ -175,7 +175,7 @@ def test_delay_ctrl():
     wau.write(test_sound_1_delay_file, test_dc, fs)
     for ch in test_dc:
         assert ch.shape[0] == 220513
-    rms_list = wau.rms(test_dc, last_index=24, digits=3)
+    rms_list = wau.rms(test_dc, last_index=24, decimals=3)
     reference_list = [0.511, 0.627, 0.445, 0.705]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -208,7 +208,7 @@ def test_echo_ctrl():
     amplitude_list = [-0.3, -0.4, -0.5, 0]
     test_ec = wau.echo_ctrl(test_sound_1, delay_list, amplitude_list, fs)
     wau.write(test_sound_1_echo_file, test_ec, fs)
-    rms_list = wau.rms(test_ec, digits=3)
+    rms_list = wau.rms(test_ec, decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -238,7 +238,7 @@ def test_echo_ctrl_option():
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220522
-    rms_list = wau.rms(written_data, digits=3)
+    rms_list = wau.rms(written_data, decimals=3)
     print('rms_list:', rms_list)
     reference_list = [1.054, 0.716, 1.144, 0.749]
     for r, ref in zip(rms_list, reference_list):
@@ -271,7 +271,7 @@ def test_noise_ctrl():
     test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0],
                              fs, seed=42)
     wau.write(test_sound_1_noise_file, test_nc, fs)
-    rms_list = wau.rms(test_nc, digits=3)
+    rms_list = wau.rms(test_nc, decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
 
     for r, ref in zip(rms_list, reference_list):
@@ -302,7 +302,7 @@ def test_wavaugmentate_noise_option():
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220500
-    rms_list = wau.rms(written_data, digits=3)
+    rms_list = wau.rms(written_data, decimals=3)
     print('rms_list:', rms_list)
     reference_list = [0.866, 0.927, 0.996, 0.714]
 
@@ -341,7 +341,7 @@ def test_wavaugmentate_amplitude_option():
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220500
-    rms_list = wau.rms(written_data, digits=3)
+    rms_list = wau.rms(written_data, decimals=3)
     print('rms_list:', rms_list)
     reference_list = [0.354, 0.424, 0.495, 0.071]
     for r, ref in zip(rms_list, reference_list):
@@ -397,7 +397,7 @@ def test_wavaugmentate_delay_option():
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220513
-    rms_list = wau.rms(written_data, digits=3)
+    rms_list = wau.rms(written_data, decimals=3)
     print('rms_list:', rms_list)
     reference_list = [0.707, 0.707, 0.707, 0.707]
     for r, ref in zip(rms_list, reference_list):
@@ -465,7 +465,7 @@ def test_WaChain_echo():
     a_list = [-0.3, -0.4, -0.5, 0]
     w = wau.WaChain()
     w.gen(f_list, t, fs).echo(d_list, a_list)
-    rms_list = w.rms(digits=3)
+    rms_list = w.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -476,7 +476,7 @@ def test_WaChain_noise():
 
     w = wau.WaChain()
     w.gen(f_list, t, fs).ns(n_list, seed=42)
-    rms_list = w.rms(digits=3)
+    rms_list = w.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
     for r, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
@@ -563,7 +563,7 @@ def test_sum():
     wau.write(test_sound_1_file, res, fs, )
     ref = [0.707, 0.707, 1.0]
     for s, ref_value in zip([test_sound_1, test_sound_2, res], ref):
-        r = wau.rms(s, digits=3)
+        r = wau.rms(s, decimals=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001
 
@@ -573,7 +573,7 @@ def test_merge():
     res = wau.merge(test_sound_1)
     wau.write(test_sound_1_file, res, fs, )
     ref_value = 1.
-    r = wau.rms(res, digits=3)
+    r = wau.rms(res, decimals=3)
     print(r)
     assert abs(r[0] - ref_value) < 0.001
 
@@ -584,6 +584,6 @@ def test_split():
     wau.write(test_sound_1_file, res, fs, )
     ref_value = 0.707
     for i in range(0, test_sound_1.shape[0]):
-        r = wau.rms(test_sound_1[i], digits=3)
+        r = wau.rms(test_sound_1[i], decimals=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001    

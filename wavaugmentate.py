@@ -10,23 +10,23 @@ def_fs = 44100  # Default sampling frequency, Hz.
 
 random_noise_gen = np.random.default_rng()
 
-def _single_rms(signal_of_channel, digits):
+def _single_rms(signal_of_channel, decimals):
     r = np.sqrt(np.mean(signal_of_channel**2))
-    if digits > 0:
-        r = round(r, digits)
+    if decimals > 0:
+        r = round(r, decimals)
     return r
     
-def rms(mcs_data, last_index=-1, digits=-1):
+def rms(mcs_data, last_index=-1, decimals=-1):
     """Return RMS of multichannel sound."""
 
     res = []
     shlen = len(mcs_data.shape)
     if shlen > 1:
         for i in range(0, mcs_data.shape[0]):
-            r = _single_rms(mcs_data[i, 0:last_index], digits)
+            r = _single_rms(mcs_data[i, 0:last_index], decimals)
             res.append(r)
     else:
-        r = _single_rms(mcs_data[0:last_index], digits)
+        r = _single_rms(mcs_data[0:last_index], decimals)
         res.append(r)
     return res
 
@@ -247,8 +247,8 @@ class WaChain:
                                      sampling_rate)
         return self
 
-    def rms(self, last_index=-1, digits=-1):
-        return rms(self.data, last_index, digits)
+    def rms(self, last_index=-1, decimals=-1):
+        return rms(self.data, last_index, decimals)
 
     def info(self):
         res = {"path": self.path, "channels_count": -1,
