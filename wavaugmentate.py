@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
+import copy
 import argparse
 from scipy.io import wavfile
 import os
@@ -11,14 +12,26 @@ def_fs = 44100  # Default sampling frequency, Hz.
 random_noise_gen = np.random.default_rng()
 
 
-def rms(mcs_data, last_index=-1, digits=-1):
+def _single_rms(signal_of_channel, decimals):
+    r = np.sqrt(np.mean(signal_of_channel**2))
+    if decimals > 0:
+        r = round(r, decimals)
+    return r
+
+
+def rms(mcs_data, last_index=-1, decimals=-1):
     """Return RMS of multichannel sound."""
 
     res = []
-    for signal in mcs_data:
-        r = np.sqrt(np.mean(signal[0:last_index]**2))
-        if digits > 0:
-            r = round(r, digits)
+    shlen = len(mcs_data.shape)
+    if shlen > 1:
+        for i in range(0, mcs_data.shape[0]):
+            ch = mcs_data[i]
+            #r = _single_rms(mcs_data[i][0:last_index], decimals)
+            r = _single_rms(ch[0:last_index], decimals)
+            res.append(r)
+    else:
+        r = _single_rms(mcs_data[0:last_index], decimals)
         res.append(r)
     return res
 
@@ -77,7 +90,7 @@ def file_info(path):
 # Audio augmentation functions
 
 
-def amplitude_ctrl(mcs_data, amplitude_list):
+def amplitude_ctrl(mcs_data, amplitude_list: float):
     """ Change amplitude of multichannel sound."""
     channels = [] 
     for signal, amplitude in zip(mcs_data, amplitude_list):
@@ -86,7 +99,7 @@ def amplitude_ctrl(mcs_data, amplitude_list):
     return multichannel_sound
 
 
-def delay_ctrl(mcs_data, delay_us_list, sampling_rate=def_fs):
+def delay_ctrl(mcs_data, delay_us_list :int, sampling_rate=def_fs):
     """Add delays of channels of multichannel sound. Output data become longer."""
 
     channels = []
@@ -103,7 +116,7 @@ def delay_ctrl(mcs_data, delay_us_list, sampling_rate=def_fs):
     return multichannel_sound
 
 
-def echo_ctrl(mcs_data, delay_us_list, amplitude_list, sampling_rate=def_fs):
+def echo_ctrl(mcs_data, delay_us_list: int, amplitude_list: float, sampling_rate=def_fs):
     """Add echo to multichannel sound.
 
     Returns:
@@ -139,26 +152,42 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     return multichannel_sound
 
 
-def split(mcs_data, channels_count):
+def pause_detect(mcs_data: np.ndarray, relative_level: float = 0.05):
+    """Detect pauses in multichannel sound."""
+    r = rms(mcs_data)
+    a = abs(mcs_data)
+    mask = np.zeros(mcs_data.shape)
+
+    for i in range(0, mcs_data.shape[0]):
+        ll = r[i]*relative_level
+        mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
+        mask[i] -= ll
+        mask[i] /= 0.09*ll 
+        mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
+    return mask
+
+
+def split(mcs_data, channels_count: int):
     """Split mono signal to several identical channels.
 
     Returns:
         Output data containing channels_count identical channels.
     """
-    out_data = np.zeros(channels_count, mcs_data.shape[1], dtype=np.float32)
+    out_data = np.zeros((channels_count, mcs_data.shape[1]), dtype=np.float32)
     for i in range(0, channels_count):
-        out_data[i] = mcs_data
+        out_data[i] = mcs_data.copy()
 
     return out_data
 
 
 def merge(mcs_data):
-    """Mix mcs_data channels to single signal.
+    """Mix mcs_data channels a to single signal.
 
     Returns:
-        Output data containing 1 channel  of mono signal.
+        Output data containing 1 channel of mono signal.
     """
-    out_data = np.zeros(1, mcs_data.shape[1], dtype=np.float32)
+    out_data = np.zeros(mcs_data.shape[1], dtype=np.float32)
+    print('outdata.shape:', out_data.shape)
     channels_count = mcs_data.shape[0]
     for i in range(0, channels_count):
         out_data += mcs_data[i]
@@ -174,6 +203,19 @@ def sum(mcs_data1, mcs_data2):
     """
     out_data = mcs_data1 + mcs_data2
 
+    return out_data
+
+
+def side_by_side(mcs_data1, mcs_data2):
+    """Join mcs_data1 and mcs_data2 signals side by side.
+
+    Returns:
+        Output data containing mcs_data1 and mcs_data2 signals.
+    """
+    out_data = np.zeros((mcs_data1.shape[0] + mcs_data2.shape[0],
+                         mcs_data1.shape[1]), dtype=np.float32)
+    out_data[0:mcs_data1.shape[0], :] = mcs_data1
+    out_data[mcs_data1.shape[0]:, :] = mcs_data2
     return out_data
 
 
@@ -198,6 +240,9 @@ class WaChain:
         self.data = _data
         self.path = ''
         self.sample_rate = fs
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     def put(self, data, fs=-1):
         self.data = data.copy()
@@ -238,8 +283,8 @@ class WaChain:
                                      sampling_rate)
         return self
 
-    def rms(self, last_index=-1):
-        return rms(self.data, last_index)
+    def rms(self, last_index=-1, decimals=-1):
+        return rms(self.data, last_index, decimals)
 
     def info(self):
         res = {"path": self.path, "channels_count": -1,
@@ -249,6 +294,18 @@ class WaChain:
             res["channels_count"] = self.data.shape[0]
             res["length_s"] = length
         return res
+
+    def sum(self, mcs_data):    
+        self.data = sum(self.data, mcs_data)
+        return self
+    
+    def mrg(self):
+        self.data = merge(self.data)
+        return self
+
+    def splt(self, channels_count):
+        self.data = split(self.data, channels_count)
+        return self    
 
 
 # CLI interface functions
