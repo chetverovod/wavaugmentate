@@ -153,12 +153,13 @@ def split(mcs_data, channels_count):
 
 
 def merge(mcs_data):
-    """Mix mcs_data channels to single signal.
+    """Mix mcs_data channels a to single signal.
 
     Returns:
-        Output data containing 1 channel  of mono signal.
+        Output data containing 1 channel of mono signal.
     """
-    out_data = np.zeros(1, mcs_data.shape[1], dtype=np.float32)
+    out_data = np.zeros(mcs_data.shape[1], dtype=np.float32)
+    print('outdata.shape:', out_data.shape)
     channels_count = mcs_data.shape[0]
     for i in range(0, channels_count):
         out_data += mcs_data[i]

@@ -566,3 +566,13 @@ def test_sum():
         r = wau.rms(s, digits=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001
+
+
+def test_merge():
+    test_sound_1 = wau.generate([100, 300], t, fs)
+    res = wau.merge(test_sound_1)
+    wau.write(test_sound_1_file, res, fs, )
+    ref_value = 1.
+    r = wau.rms([res], digits=3)
+    print(r)
+    assert abs(r[0] - ref_value) < 0.001
