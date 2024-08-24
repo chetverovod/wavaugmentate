@@ -298,7 +298,7 @@ class WaChain:
     def sum(self, mcs_data):    
         self.data = sum(self.data, mcs_data)
         return self
-    
+
     def mrg(self):
         self.data = merge(self.data)
         return self
