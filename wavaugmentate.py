@@ -152,14 +152,24 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     return multichannel_sound
 
 
-def pause_detect(mcs_data: np.ndarray, relative_level: float = 0.05):
-    """Detect pauses in multichannel sound."""
+def pause_detect(mcs_data: np.ndarray, relative_level: list[float]):
+    """Detect pauses in multichannel sound.
+
+    Args:
+    mcs_data - array of shape [channels, samples].
+    relative_level - list of relative levels of pause for each channel.
+
+    Returns:
+    mask - array of shape [channels, samples], containing zeros and ones.
+    0 - pause, 1 - not a pause.
+    """
+
     r = rms(mcs_data)
     a = abs(mcs_data)
     mask = np.zeros(mcs_data.shape)
 
     for i in range(0, mcs_data.shape[0]):
-        ll = r[i]*relative_level
+        ll = r[i]*relative_level[i]
         mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
         mask[i] -= ll
         mask[i] /= 0.09*ll 
@@ -309,6 +319,10 @@ class WaChain:
    
     def sbs(self, mcs_data):
         self.data = side_by_side(self.data, mcs_data)
+        return self
+    
+    def pdt(self, relative_level):
+        self.data = pause_detect(self.data, relative_level)
         return self
 
 # CLI interface functions
