@@ -650,10 +650,15 @@ def test_side_by_side():
 
 def test_pause_detect():
     test_sound_1 = wau.generate([100, 400], t, fs)
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.5])
+    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
     print(res)
     wau.write(test_sound_1_file, res, fs)
+    r = wau.rms(res, decimals=3)
+    ref = [0.707, 0.707, 0.865, 0.923]
+    for i in range(0, len(r)):
+        print(r[i])
+        assert abs(r[i] - ref[i]) < 0.001
 
 
 def test_chain_pause_detect():
@@ -661,4 +666,10 @@ def test_chain_pause_detect():
     w1 = wau.WaChain()
     w.gen([100, 400], t, fs)
     w1 = w.copy()
-    w.pdt([0.5, 0.5]).sbs(w1.data).wr(test_sound_1_file)
+    w.pdt([0.5, 0.3])
+    w1.sbs(w.data).wr(test_sound_1_file)
+    r = w1.rms(decimals=3)
+    ref = [0.707, 0.707, 0.865, 0.923]
+    for i in range(0, len(r)):
+        print(r[i])
+        assert abs(r[i] - ref[i]) < 0.001
