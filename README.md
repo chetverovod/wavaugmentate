@@ -84,3 +84,25 @@ Just run:
 pytest
 ```
 
+# Reference
+MCS - multi channel signal, numpy array with shape (M_channels, N_samples).
+| # |        Function        |       CLI option           |  Chain method   |        Description     |
+|---|------------------------|----------------------------|-----------------|------------------------|
+|1  | read(path)             | -c 'rd(path)'              | rd(path)        | Read MCS from WAV-file.|
+|2  | write(path, mcs_data, fs)  | -c 'wr(path)'              | wr(path)        | Save MCS to WAV-file.  |
+|3  | file_info(path)        | --info                     | info()          | Returns WAV-file info. |
+|4  |        -               | -i path                    |  -              | Input WAV-file path.   |
+|5  |        -               | -o path                    |  -              | Output WAV-file path.  |
+|6  | amplitude_ctrl(mcs_data.[c1,c2..Cm])| -a "c1,c2..Cm"             | amp([c1,c2..Cm])| Change amplitudes of channels. |
+|7  | delay_ctrl(mcs_data,[t1,t2..tm])    | -d "t1,t2..tm"             | dly([t1,t2..tm])| Add delays to channels.        |
+|8  | echo _ctrl(mcs_data,[t1,t2..tm],[c1,c2..Cm])|-d "t1,t2..tm / c1,c2..Cm"|dly([t1,t2..tm],[c1,c2..Cm])|Add echo to channels. |
+|9  | noise_ctrl(mcs_data,[c1,c2..Cm])| -n "c1,c2..Cm"             | ns([c1,c2..Cm]) | Add normal noise to channels. | 
+|3  | copy(mcs_data)         | -                          | cpy(mcs_data)   | copy MCS. |
+|3  | generate([f1,f2,f3 fm],duration,fs)|-|gen([f1,f2,f3 fm], duration, fs)|Creates MCS and generates sine signal for each channel.|
+|3  | merge(mcs_data) | -|mrg(mcs_data)| Merges all channels to single and returns  mono MCS.|
+|3  | pause_detect
+|3  | rms(mcs_data) | -| rms() | Returns list of RMS calculated for channels.|
+|3  | side_by_side(mcs_data1. mcs_data2)
+|3  | split
+|3  | sum
+

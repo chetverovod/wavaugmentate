@@ -624,6 +624,17 @@ def test_chain_split():
         assert abs(r[0] - ref_value) < 0.001
 
 
+def test_chain_side_by_side():
+    test_sound_1 = wau.generate([300], t, fs)
+    w = wau.WaChain()
+    r = w.gen([1000], t, fs).amp([0.3]).sbs(test_sound_1).wr(test_sound_1_file).rms(decimals=3)
+    print(r)
+    ref_value = [0.212, 0.707]
+    for r, ref in zip(r, ref_value):
+        print(r)
+        assert abs(r - ref) < 0.001
+
+
 def test_side_by_side():
     test_sound_1 = wau.generate([100], t, fs)
     test_sound_1 = wau.amplitude_ctrl(test_sound_1, [0.3])

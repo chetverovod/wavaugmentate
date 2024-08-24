@@ -305,8 +305,11 @@ class WaChain:
 
     def splt(self, channels_count):
         self.data = split(self.data, channels_count)
-        return self    
-
+        return self
+   
+    def sbs(self, mcs_data):
+        self.data = side_by_side(self.data, mcs_data)
+        return self
 
 # CLI interface functions
 error_mark = "Error: "
