@@ -6,6 +6,7 @@ import argparse
 from scipy.io import wavfile
 import os
 from pathlib import Path
+import random
 
 def_fs = 44100  # Default sampling frequency, Hz.
 
@@ -36,7 +37,9 @@ def rms(mcs_data, last_index=-1, decimals=-1):
     return res
 
 
-def generate(frequency_list, duration, sample_rate=def_fs):
+def generate(frequency_list: list[100, 200, 300, 400], duration,
+             sample_rate=def_fs, mode="sine", seed: int = -1):
+
     """Function generates multichannel sound as a set of sin-waves.
 
     return numpy array of shape [channels, samples]
@@ -44,11 +47,39 @@ def generate(frequency_list, duration, sample_rate=def_fs):
 
     samples = np.arange(duration * sample_rate) / sample_rate
     channels = []
-    for f in frequency_list:
-        signal = np.sin(2 * np.pi * f * samples)
-        signal = np.float32(signal)
-        channels.append(signal)
-    multichannel_sound = np.array(channels).copy()
+    if mode == "sine":
+        for f in frequency_list:
+            signal = np.sin(2 * np.pi * f * samples)
+            signal = np.float32(signal)
+            channels.append(signal)
+            multichannel_sound = np.array(channels).copy()
+
+    if mode == 'speech':
+
+        if seed != -1:
+            random.seed(seed)
+        for f in frequency_list:
+            if f > 300 or f < 60: 
+                print('Use basic tone from interval 600..300 Hz')
+                exit(1)
+            # Formants:
+            FBT = random.randint(f, 300)    # 60–300 Гц
+            F1 = random.randint(2*FBT, 850)    # 150–850 Гц
+            F2 = random.randint(3*FBT, 2500)   # 500–2500 Гц
+            F3 = random.randint(4*FBT, 3500)  # 1500–3500 Гц
+            F4 = random.randint(5*FBT, 4500)  # 2500–4500 Гц
+            F = [FBT, F1, F2, F3, F4]
+            signal = 0
+            amp = 1
+            for frm in F:
+                signal += amp * np.sin(2 * np.pi * frm * samples)
+                amp -= 0.1
+            p = np.max(np.abs(signal))
+            signal = signal / p
+            signal = np.float32(signal)
+            channels.append(signal)
+            multichannel_sound = np.array(channels).copy()
+
     return multichannel_sound
 
 
@@ -139,6 +170,7 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
+            random.seed(seed)
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         else:
             # TODO seed should be fixed for repeatable results
@@ -175,6 +207,27 @@ def pause_detect(mcs_data: np.ndarray, relative_level: list[float]):
         mask[i] /= 0.09*ll 
         mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
     return mask
+
+
+def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray, min_pause: list[int]):
+    """Shrink pauses in multichannel sound."""
+
+    chans = mcs_data.shape[0]
+    out_data = np.zeros_like(mcs_data, dtype=np.float32)
+    for i in range(0, chans):
+        k = 0
+        zero_count = 0
+        for j in range(0, mcs_data.shape[1]):
+            if mask[i][j] == 0:
+                zero_count += 1
+                if zero_count < min_pause[i]:
+                    out_data[i][k] = mcs_data[i][j]
+                    k += 1
+            else:
+                zero_count = 0
+                out_data[i][k] = mcs_data[i][j]
+                k += 1
+    return out_data
 
 
 def split(mcs_data, channels_count: int):
