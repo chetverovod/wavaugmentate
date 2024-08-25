@@ -740,3 +740,19 @@ def test_pause_measure():
     for res, ref in zip(res_list, ref_list):
         print(res)
         assert res == ref
+
+
+def test_pause_set():
+    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode='speech', seed=42)
+    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    pause_list = wau.pause_measure(mask)
+    res = wau.pause_set(test_sound_1, pause_list, [10, 150])
+    assert res.shape == (2, 1618)
+    print('res shape:', res.shape)
+    print('res:', type(res[0,1]))
+    wau.write(test_sound_1_file, res, fs)
+    r = wau.rms(res, decimals=3)
+    ref = [0.105, 0.113]
+    for r, ref in zip(r, ref):
+        print(r)
+        assert abs(r - ref) < 0.001

@@ -258,6 +258,39 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
 
     return out_list
 
+
+def pause_set(mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]):
+    """Shrink pauses in multichannel sound."""
+
+    chans = mcs_data.shape[0]
+    out_list = []
+    for i in range(0, chans):
+        prev_index = 0
+        local_list = []
+        for p in pause_map[i]:
+            index = p[0] + p[1]
+            delta = index - prev_index
+            if delta > 0:
+                local_list.append(mcs_data[i][prev_index:prev_index + delta])
+                stub = np.zeros(pause_sz[i])
+                local_list.append(stub)
+                prev_index = index
+        out_list.append(local_list)        
+        a = []
+        for L in out_list:
+            a.append(np.concatenate(L).copy())
+        max_len = -1    
+        for b in a:
+            if len(b) > max_len:
+                max_len = len(b)
+        c = []
+        for e in a:
+            e = np.concatenate([e, np.zeros(max_len - len(e))]).copy()
+            c.append(e)
+    res = np.stack(c, axis=0).copy()   
+    return res
+
+
 def split(mcs_data, channels_count: int):
     """Split mono signal to several identical channels.
 
