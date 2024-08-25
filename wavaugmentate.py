@@ -61,7 +61,7 @@ def generate(frequency_list: list[100, 200, 300, 400], duration,
             random.seed(seed)
         for f in frequency_list:
             if f > 300 or f < 60: 
-                print('Use basic tone from interval 600..300 Hz')
+                print(error_mark + 'Use basic tone from interval 600..300 Hz')
                 exit(1)
             # Formants:
             FBT = random.randint(f, 300)    # 60–300 Гц

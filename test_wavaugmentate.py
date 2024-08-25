@@ -663,11 +663,11 @@ def test_side_by_side():
     test_sound_2 = wau.generate([300], t, fs)
     res = wau.side_by_side(test_sound_1, test_sound_2)
     wau.write(test_sound_1_file, res, fs)
-    ref = [0.212, 0.707]
+    ref_list = [0.212, 0.707]
     r = wau.rms(res, decimals=3)
-    for i in range(0, len(r)):
-        print(r[i])
-        assert abs(r[i] - ref[i]) < 0.001
+    for r, ref in zip(r, ref_list):
+        print(r)
+        assert abs(r - ref) < 0.001
 
 
 def test_pause_detect():
@@ -677,10 +677,10 @@ def test_pause_detect():
     print(res)
     wau.write(test_sound_1_file, res, fs)
     r = wau.rms(res, decimals=3)
-    ref = [0.707, 0.707, 0.865, 0.923]
-    for i in range(0, len(r)):
-        print(r[i])
-        assert abs(r[i] - ref[i]) < 0.001
+    ref_list = [0.707, 0.707, 0.865, 0.923]
+    for r, ref in zip(r, ref_list):
+        print(r)
+        assert abs(r - ref) < 0.001
 
 
 def test_chain_pause_detect():
@@ -697,17 +697,29 @@ def test_chain_pause_detect():
         assert abs(r[i] - ref[i]) < 0.001
 
 
-def test_pause_shrink():
+def test_pause_shrink_sine():
     test_sound_1 = wau.generate([100, 400], t, fs)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
     print(res)
     res = wau.pause_shrink(test_sound_1, mask, [20, 4])
     wau.write(test_sound_1_file, res, fs)
-    """
     r = wau.rms(res, decimals=3)
-    ref = [0.707, 0.707, 0.865, 0.923]
-    for i in range(0, len(r)):
-        print(r[i])
-        assert abs(r[i] - ref[i]) < 0.001
-    """    
+    ref = [0.702, 0.706, 0.865, 0.923]
+    for r, ref in zip(r, ref):
+        print(r)
+        assert abs(r - ref) < 0.001
+
+
+def test_pause_shrink_speech():
+    test_sound_1 = wau.generate([100, 300], t, fs, mode='speech', seed=42)
+    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    res = wau.side_by_side(test_sound_1, mask)
+    print(res)
+    res = wau.pause_shrink(test_sound_1, mask, [20, 4])
+    wau.write(test_sound_1_file, res, fs)
+    r = wau.rms(res, decimals=3)
+    ref = [0.331, 0.324]
+    for r, ref in zip(r, ref):
+        print(r)
+        assert abs(r - ref) < 0.001
