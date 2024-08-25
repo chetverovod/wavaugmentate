@@ -40,7 +40,8 @@ def rms(mcs_data, last_index=-1, decimals=-1):
 def generate(frequency_list: list[100, 200, 300, 400], duration,
              sample_rate=def_fs, mode="sine", seed: int = -1):
 
-    """Function generates multichannel sound as a set of sin-waves.
+    """Function generates multichannel sound as a set of 
+    sine or speech-like waves.
 
     return numpy array of shape [channels, samples]
     """
