@@ -84,3 +84,25 @@ Just run:
 pytest
 ```
 
+# Reference
+MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples).
+| #|        Function        |            CLI option           |  Chain method   |     Description     |
+|--|------------------------|---------------------------------|-----------------|------------------------|
+|1 | read(path)             | -c 'rd(path)'              | rd(path)        | Read MCS from WAV-file.|
+|2 | write(path, mcs_data, fs)  | -c 'wr(path)'              | wr(path)        | Save MCS to WAV-file.  |
+|3 | file_info(path)        | --info                     | info()          | Returns WAV-file info. |
+|4 |        -               | -i path                    |  -              | Input WAV-file path.   |
+|5 |        -               | -o path                    |  -              | Output WAV-file path.  |
+|6 | amplitude_ctrl(mcs_data.[c1,c2..cm])| -a "c1,c2..Cm"             | amp([c1,c2..Cm])| Change amplitudes of channels. |
+|7 | delay_ctrl(mcs_data,[t1,t2..tm])    | -d "t1,t2..tm"             | dly([t1,t2..tm])| Add delays to channels.        |
+|8 | echo _ctrl(mcs_data,[t1,t2..tm],[c1,c2..cm])|-d "t1,t2..tm / c1,c2..Cm"|dly([t1,t2..tm],[c1,c2..Cm])|Add echo to channels. |
+|9 |noise_ctrl(mcs_data,[c1,c2..cm])| -n "c1,c2..Cm"             | ns([c1,c2..cm]) | Add normal noise to channels. | 
+|10|copy(mcs_data)         | -                          | cpy(mcs_data)   | Makes copy of MCS. |
+|11|generate([f1,f2,f3 fm],duration,fs)|-|gen([f1,f2,f3 fm], duration, fs)|Creates MCS and generates sine signal for each channel.|
+|12|merge(mcs_data) | -|mrg(mcs_data)| Merges all channels to single and returns  mono MCS.|
+|13|pause_detect|-|
+|14|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
+|15|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
+|16|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
+|17|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. |  
+

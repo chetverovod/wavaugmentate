@@ -6,6 +6,7 @@ import argparse
 from scipy.io import wavfile
 import os
 from pathlib import Path
+import random
 
 def_fs = 44100  # Default sampling frequency, Hz.
 
@@ -36,19 +37,50 @@ def rms(mcs_data, last_index=-1, decimals=-1):
     return res
 
 
-def generate(frequency_list, duration, sample_rate=def_fs):
-    """Function generates multichannel sound as a set of sin-waves.
+def generate(frequency_list: list[100, 200, 300, 400], duration: float,
+             sample_rate=def_fs, mode="sine", seed: int = -1):
+
+    """Function generates multichannel sound as a set of 
+    sine or speech-like waves.
 
     return numpy array of shape [channels, samples]
     """
 
     samples = np.arange(duration * sample_rate) / sample_rate
     channels = []
-    for f in frequency_list:
-        signal = np.sin(2 * np.pi * f * samples)
-        signal = np.float32(signal)
-        channels.append(signal)
-    multichannel_sound = np.array(channels).copy()
+    if mode == "sine":
+        for f in frequency_list:
+            signal = np.sin(2 * np.pi * f * samples)
+            signal = np.float32(signal)
+            channels.append(signal)
+            multichannel_sound = np.array(channels).copy()
+
+    if mode == 'speech':
+
+        if seed != -1:
+            random.seed(seed)
+        for f in frequency_list:
+            if f > 300 or f < 60: 
+                print(error_mark + 'Use basic tone from interval 600..300 Hz')
+                exit(1)
+            # Formants:
+            FBT = random.randint(f, 300)    # 60–300 Гц
+            F1 = random.randint(2*FBT, 850)    # 150–850 Гц
+            F2 = random.randint(3*FBT, 2500)   # 500–2500 Гц
+            F3 = random.randint(4*FBT, 3500)  # 1500–3500 Гц
+            F4 = random.randint(5*FBT, 4500)  # 2500–4500 Гц
+            F = [FBT, F1, F2, F3, F4]
+            signal = 0
+            amp = 1
+            for frm in F:
+                signal += amp * np.sin(2 * np.pi * frm * samples)
+                amp -= 0.1
+            p = np.max(np.abs(signal))
+            signal = signal / p
+            signal = np.float32(signal)
+            channels.append(signal)
+            multichannel_sound = np.array(channels).copy()
+
     return multichannel_sound
 
 
@@ -139,6 +171,7 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
+            random.seed(seed)
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         else:
             # TODO seed should be fixed for repeatable results
@@ -152,19 +185,110 @@ def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
     return multichannel_sound
 
 
-def pause_detect(mcs_data: np.ndarray, relative_level: float = 0.05):
-    """Detect pauses in multichannel sound."""
+def pause_detect(mcs_data: np.ndarray, relative_level: list[float]):
+    """Detect pauses in multichannel sound.
+
+    Args:
+    mcs_data - array of shape [channels, samples].
+    relative_level - list of relative levels of pause for each channel.
+
+    Returns:
+    mask - array of shape [channels, samples], containing zeros and ones.
+    0 - pause, 1 - not a pause.
+    """
+
     r = rms(mcs_data)
     a = abs(mcs_data)
     mask = np.zeros(mcs_data.shape)
 
     for i in range(0, mcs_data.shape[0]):
-        ll = r[i]*relative_level
+        ll = r[i]*relative_level[i]
         mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
         mask[i] -= ll
         mask[i] /= 0.09*ll 
         mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
     return mask
+
+
+def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray, min_pause: list[int]):
+    """Shrink pauses in multichannel sound."""
+
+    chans = mcs_data.shape[0]
+    out_data = np.zeros_like(mcs_data, dtype=np.float32)
+    for i in range(0, chans):
+        k = 0
+        zero_count = 0
+        for j in range(0, mcs_data.shape[1]):
+            if mask[i][j] == 0:
+                zero_count += 1
+                if zero_count < min_pause[i]:
+                    out_data[i][k] = mcs_data[i][j]
+                    k += 1
+            else:
+                zero_count = 0
+                out_data[i][k] = mcs_data[i][j]
+                k += 1
+    return out_data
+
+
+def pause_measure(mask: np.ndarray[int]) -> dict:
+    """Measure pauses in multichannel sound."""
+
+    chans = mask.shape[0]
+    pause_list = []
+    out_list = []
+    index = 0
+    for i in range(0, chans):
+        k = 0
+        zero_count = 0
+        prev_val = 1
+        for j in range(0, mask.shape[1]):
+            val = mask[i][j]
+            if val == 0:
+                if prev_val == 1:
+                    index = j
+                zero_count += 1
+            else:
+                if prev_val == 0:
+                    pause_list.append((index, zero_count))
+                    zero_count = 0
+            prev_val = val
+        out_list.append(pause_list)
+        pause_list = []
+
+    return out_list
+
+
+def pause_set(mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]):
+    """Shrink pauses in multichannel sound."""
+
+    chans = mcs_data.shape[0]
+    out_list = []
+    for i in range(0, chans):
+        prev_index = 0
+        local_list = []
+        for p in pause_map[i]:
+            index = p[0] + p[1]
+            delta = index - prev_index
+            if delta > 0:
+                local_list.append(mcs_data[i][prev_index:prev_index + delta])
+                stub = np.zeros(pause_sz[i])
+                local_list.append(stub)
+                prev_index = index
+        out_list.append(local_list)        
+        a = []
+        for L in out_list:
+            a.append(np.concatenate(L).copy())
+        max_len = -1    
+        for b in a:
+            if len(b) > max_len:
+                max_len = len(b)
+        c = []
+        for e in a:
+            e = np.concatenate([e, np.zeros(max_len - len(e))]).copy()
+            c.append(e)
+    res = np.stack(c, axis=0).copy()   
+    return res
 
 
 def split(mcs_data, channels_count: int):
@@ -298,15 +422,22 @@ class WaChain:
     def sum(self, mcs_data):    
         self.data = sum(self.data, mcs_data)
         return self
-    
+
     def mrg(self):
         self.data = merge(self.data)
         return self
 
     def splt(self, channels_count):
         self.data = split(self.data, channels_count)
-        return self    
-
+        return self
+   
+    def sbs(self, mcs_data):
+        self.data = side_by_side(self.data, mcs_data)
+        return self
+    
+    def pdt(self, relative_level):
+        self.data = pause_detect(self.data, relative_level)
+        return self
 
 # CLI interface functions
 error_mark = "Error: "
