@@ -37,7 +37,7 @@ def rms(mcs_data, last_index=-1, decimals=-1):
     return res
 
 
-def generate(frequency_list: list[100, 200, 300, 400], duration,
+def generate(frequency_list: list[100, 200, 300, 400], duration: float,
              sample_rate=def_fs, mode="sine", seed: int = -1):
 
     """Function generates multichannel sound as a set of 
@@ -230,6 +230,33 @@ def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray, min_pause: list[int]):
                 k += 1
     return out_data
 
+
+def pause_measure(mask: np.ndarray[int]) -> dict:
+    """Measure pauses in multichannel sound."""
+
+    chans = mask.shape[0]
+    pause_list = []
+    out_list = []
+    index = 0
+    for i in range(0, chans):
+        k = 0
+        zero_count = 0
+        prev_val = 1
+        for j in range(0, mask.shape[1]):
+            val = mask[i][j]
+            if val == 0:
+                if prev_val == 1:
+                    index = j
+                zero_count += 1
+            else:
+                if prev_val == 0:
+                    pause_list.append((index, zero_count))
+                    zero_count = 0
+            prev_val = val
+        out_list.append(pause_list)
+        pause_list = []
+
+    return out_list
 
 def split(mcs_data, channels_count: int):
     """Split mono signal to several identical channels.

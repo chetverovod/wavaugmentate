@@ -715,7 +715,6 @@ def test_pause_shrink_speech():
     test_sound_1 = wau.generate([100, 300], t, fs, mode='speech', seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
-    print(res)
     res = wau.pause_shrink(test_sound_1, mask, [20, 4])
     wau.write(test_sound_1_file, res, fs)
     r = wau.rms(res, decimals=3)
@@ -723,3 +722,21 @@ def test_pause_shrink_speech():
     for r, ref in zip(r, ref):
         print(r)
         assert abs(r - ref) < 0.001
+
+
+def test_pause_measure():
+    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode='speech', seed=42)
+    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    res_list = wau.pause_measure(mask)
+    print(res_list)
+
+    # res = wau.pause_shrink(test_sound_1, mask, [20, 4])
+    #wau.write(test_sound_1_file, res, fs)
+    ref_list = [[(0, 2), (31, 4), (37, 5), (47, 5), (56, 4), (70, 10),
+                (86, 5), (97, 15), (117, 7)],
+                [(0, 1), (16, 3), (45, 2), (53, 2), (66, 2), (73, 2),
+                (79, 4), (88, 5), (98, 1), (114, 4)]]
+
+    for res, ref in zip(res_list, ref_list):
+        print(res)
+        assert res == ref
