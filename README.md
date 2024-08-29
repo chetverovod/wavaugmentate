@@ -17,7 +17,7 @@ Same types as in section [Input_data](#Input_data).
 6. Time stretching. (**not implemented**)
 7. Tempo change. (**not implemented**)
 8. ​​Pitch shift. (**not implemented**)
-9. Adding silence. (**not implemented**)
+9. Adding silence. 
 10. Frequency masking. (**not implemented**)
 11. Time masking. (**not implemented**)
 12. Combinations of methods.
@@ -100,9 +100,11 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |10|copy(mcs_data)         | -                          | cpy(mcs_data)   | Makes copy of MCS. |
 |11|generate([f1,f2,f3 fm],duration,fs)|-|gen([f1,f2,f3 fm], duration, fs)|Creates MCS and generates sine signal for each channel.|
 |12|merge(mcs_data) | -|mrg(mcs_data)| Merges all channels to single and returns  mono MCS.|
-|13|pause_detect|-|
-|14|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
-|15|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
-|16|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
-|17|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. |  
+|13|pause_detect(mcs_data,relative_level)|-| - | Searchs pauses by selected levels. Returns array-mask.|
+|14|pause_measure(mcs_mask)|-| - | Measure lengths of pauses. Returns list of lists containing pairs(index, length).|
+|15|pause_set(pause_set(mcs_data,pause_map,pause_sz)|-| - | Set pauses length to selected values. Returns updated MCS.|
+|16|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
+|17|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
+|18|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
+|19|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. |  
 
