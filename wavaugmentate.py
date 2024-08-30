@@ -8,7 +8,10 @@ import os
 from pathlib import Path
 import random
 
-def_fs = 44100  # Default sampling frequency, Hz.
+"""
+ Default sampling frequency, Hz.
+"""
+def_fs = 44100
 
 random_noise_gen = np.random.default_rng()
 
@@ -37,9 +40,9 @@ def rms(mcs_data: np.ndarray, last_index: int = -1, decimals: int = -1):
 
     Parameters:
         mcs_data (array): Input multichannel sound data.
-        last_index (int): The last index to consider when calculating the RMS. 
+        last_index (int): The last index to consider when calculating the RMS.
             If -1, consider the entire array. Defaults to -1.
-        decimals (int): Number of decimal places to round the RMS value. 
+        decimals (int): Number of decimal places to round the RMS value.
             If -1, do not round. Defaults to -1.
 
     Returns:
@@ -67,7 +70,7 @@ def generate(frequency_list: list[100, 200, 300, 400], duration: float,
     output will be a list of speech like signals. In this mode input
     frequencies list will be used as basic tone frequency for corresponding
     channel, it should be in interval 600..300.
-    
+
     Parameters:
     frequency_list (list): A list of frequencies to generate sound for.
     duration (float): The duration of the sound in seconds.
@@ -129,7 +132,7 @@ def write(path: str, mcs_data: np.ndarray, sample_rate: int = 44100):
         mcs_data (np.ndarray): The multichannel sound data to write. The shape
         of the array should be (num_channels, num_samples).  sample_rate (int,
         optional): The sample rate of the sound data. Defaults to 44100.
-        
+
     Returns:
         None
     """
@@ -180,17 +183,43 @@ def file_info(path: str) -> dict:
 # Audio augmentation functions
 
 
-def amplitude_ctrl(mcs_data, amplitude_list: float):
-    """ Change amplitude of multichannel sound."""
-    channels = [] 
+def amplitude_ctrl(mcs_data: np.ndarray,
+                   amplitude_list: list[float]) -> np.ndarray:
+    """
+    Apply amplitude control to a multichannel sound.
+
+    Args:
+        mcs_data (np.ndarray): The multichannel sound data.
+        amplitude_list (list[float]): The list of amplitude coefficients to
+        apply to each channel.
+
+    Returns:
+        np.ndarray: The amplitude-controlled multichannel sound.
+    """
+
+    channels = []
     for signal, amplitude in zip(mcs_data, amplitude_list):
         channels.append(signal * amplitude)
         multichannel_sound = np.array(channels).copy()
     return multichannel_sound
 
 
-def delay_ctrl(mcs_data, delay_us_list :int, sampling_rate=def_fs):
-    """Add delays of channels of multichannel sound. Output data become longer."""
+def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
+               sampling_rate: int = def_fs) -> np.ndarray:
+    """
+    Add delays of channels of multichannel sound. Output data become longer.
+    Values of delay will be converted to count of samples.
+
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        delay_us_list (list[int]): The list of delay values in microseconds to
+        apply to each channel. Each value should be a positive integer. 
+        sampling_rate (int): The sampling rate of the
+        sound data. Defaults to def_fs.
+
+    Returns:
+        np.ndarray: The delayed multichannel sound.
+    """
 
     channels = []
     max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)  # In samples.
@@ -206,12 +235,26 @@ def delay_ctrl(mcs_data, delay_us_list :int, sampling_rate=def_fs):
     return multichannel_sound
 
 
-def echo_ctrl(mcs_data, delay_us_list: int, amplitude_list: float, sampling_rate=def_fs):
-    """Add echo to multichannel sound.
-
-    Returns:
-        Output data become longer.
+def echo_ctrl(mcs_data, delay_us_list: list[int], amplitude_list: list[float],
+              sampling_rate: int = def_fs) -> np.ndarray:
     """
+    Add echo to multichannel sound. The output data become longer. To each
+    channel will be added it's copy with corresponding delay delay and
+    amplitude.  It looks like acoustic wave was reflected from the hard wall.
+
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        delay_us_list (list[int]): The list of delay values in microseconds to
+            apply to each channel. Each value should be a positive integer.
+        amplitude_list (list[float]): The list of amplitude coefficients to
+            apply to each channel.
+        sampling_rate (int): The sampling rate of the sound data. Defaults to
+        def_fs.
+        
+    Returns:
+        np.ndarray: The echoed multichannel sound.
+    """
+
     a = amplitude_ctrl(mcs_data, amplitude_list)
     e = delay_ctrl(a, delay_us_list)
     channels = []
@@ -223,8 +266,22 @@ def echo_ctrl(mcs_data, delay_us_list: int, amplitude_list: float, sampling_rate
     return multichannel_sound
 
 
-def noise_ctrl(mcs_data, noise_level_list, sampling_rate=def_fs, seed=-1):
-    """ Add pink noise to channels of multichannel sound."""
+def noise_ctrl(mcs_data: np.ndarray, noise_level_list: list[float],
+               sampling_rate: int = def_fs, seed: int = -1) -> np.ndarray:
+    """
+    Apply noise to a multichannel sound.
+
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        noise_level_list (list[float]): The list of noise levels to apply to
+        each channel.
+        sampling_rate (int): The sampling rate of the sound data. Defaults to
+        def_fs.
+        seed (int): The seed for random number generation. Defaults to -1.
+
+    Returns:
+        np.ndarray: The noise-controlled multichannel sound.
+    """
 
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
