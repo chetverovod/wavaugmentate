@@ -98,7 +98,7 @@ def generate(frequency_list: list[100, 200, 300, 400], duration: float,
         if seed != -1:
             random.seed(seed)
         for f in frequency_list:
-            if f > 300 or f < 60: 
+            if f > 300 or f < 60:
                 print(error_mark + 'Use basic tone from interval 600..300 Hz')
                 exit(1)
             # Formants:
@@ -213,7 +213,7 @@ def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
         delay_us_list (list[int]): The list of delay values in microseconds to
-        apply to each channel. Each value should be a positive integer. 
+        apply to each channel. Each value should be a positive integer.
         sampling_rate (int): The sampling rate of the
         sound data. Defaults to def_fs.
 
@@ -222,7 +222,8 @@ def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
     """
 
     channels = []
-    max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)  # In samples.
+    # In samples.
+    max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)
 
     for signal, delay in zip(mcs_data, delay_us_list):
         samples_delay = int(delay * 1.E-6 * sampling_rate)  # In samples.
@@ -250,7 +251,7 @@ def echo_ctrl(mcs_data, delay_us_list: list[int], amplitude_list: list[float],
             apply to each channel.
         sampling_rate (int): The sampling rate of the sound data. Defaults to
         def_fs.
-        
+
     Returns:
         np.ndarray: The echoed multichannel sound.
     """
@@ -292,24 +293,26 @@ def noise_ctrl(mcs_data: np.ndarray, noise_level_list: list[float],
             # TODO seed should be fixed for repeatable results
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         noise = n_noise
-        # print('noise.shape', noise.shape)
-        # print('noise=', noise[0:10])
         res = signal + level * noise
         channels.append(res)
     multichannel_sound = np.array(channels).copy()
     return multichannel_sound
 
 
-def pause_detect(mcs_data: np.ndarray, relative_level: list[float]):
-    """Detect pauses in multichannel sound.
+def pause_detect(mcs_data: np.ndarray,
+                 relative_level: list[float]) -> np.ndarray[int]:
+    """
+    Detects pauses in a multichannel sound.
 
-    Args:
-    mcs_data - array of shape [channels, samples].
-    relative_level - list of relative levels of pause for each channel.
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        relative_level (list[float]): The list of relative levels for each
+        channel, signal below this level will be marked as pause.
 
     Returns:
-    mask - array of shape [channels, samples], containing zeros and ones.
-    0 - pause, 1 - not a pause.
+        np.ndarray: The mask indicating the pauses in the multichannel sound.
+        The mask has the same shape as the input sound. It contains zeros and
+        ones 0 - pause, 1 - not a pause.
     """
 
     r = rms(mcs_data)
@@ -320,13 +323,26 @@ def pause_detect(mcs_data: np.ndarray, relative_level: list[float]):
         ll = r[i]*relative_level[i]
         mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
         mask[i] -= ll
-        mask[i] /= 0.09*ll 
+        mask[i] /= 0.09*ll
         mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
     return mask
 
 
-def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray, min_pause: list[int]):
-    """Shrink pauses in multichannel sound."""
+def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray[int],
+                 min_pause: list[int]) -> np.ndarray:
+    """
+    Shrink pauses in multichannel sound.
+
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        mask (np.ndarray): The mask indicating the pauses in the multichannel
+        sound.
+        min_pause (list[int]): The list of minimum pause lengths for
+        each channel in samples.
+
+    Returns:
+        np.ndarray: The multichannel sound with pauses shrunk.
+    """
 
     chans = mcs_data.shape[0]
     out_data = np.zeros_like(mcs_data, dtype=np.float32)
@@ -347,14 +363,22 @@ def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray, min_pause: list[int]):
 
 
 def pause_measure(mask: np.ndarray[int]) -> dict:
-    """Measure pauses in multichannel sound."""
+    """
+    Measures pauses in multichannel sound.
+
+    Parameters:
+        mask (np.ndarray): A mask indicating the pauses in the multichannel
+        sound.
+
+    Returns:
+        list: A list of lists containing pairs of (index, length) of pauses for
+        each channel.  Length is in samples.  """
 
     chans = mask.shape[0]
     pause_list = []
     out_list = []
     index = 0
     for i in range(0, chans):
-        k = 0
         zero_count = 0
         prev_val = 1
         for j in range(0, mask.shape[1]):
@@ -374,9 +398,20 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
     return out_list
 
 
-def pause_set(mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]):
-    """Shrink pauses in multichannel sound."""
+def pause_set(mcs_data: np.ndarray, pause_map: list,
+              pause_sz: list[int]) -> np.ndarray:
+    """
+    Set pauses lengths in multichannel sound to selected values.
 
+    Parameters:
+        mcs_data (np.ndarray): The multichannel sound data.
+        pause_map (list): A list of dictionaries containing pairs of (index,
+        length) of pauses for each channel.
+        pause_sz (list[int]): A list of pause sizes for each channel.
+
+    Returns:
+        np.ndarray: The multichannel sound with pauses shrunk.
+    """
     chans = mcs_data.shape[0]
     out_list = []
     for i in range(0, chans):
@@ -390,11 +425,11 @@ def pause_set(mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]):
                 stub = np.zeros(pause_sz[i])
                 local_list.append(stub)
                 prev_index = index
-        out_list.append(local_list)        
+        out_list.append(local_list)
         a = []
         for L in out_list:
             a.append(np.concatenate(L).copy())
-        max_len = -1    
+        max_len = -1
         for b in a:
             if len(b) > max_len:
                 max_len = len(b)
@@ -402,16 +437,23 @@ def pause_set(mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]):
         for e in a:
             e = np.concatenate([e, np.zeros(max_len - len(e))]).copy()
             c.append(e)
-    res = np.stack(c, axis=0).copy()   
+    res = np.stack(c, axis=0).copy()
     return res
 
 
-def split(mcs_data, channels_count: int):
-    """Split mono signal to several identical channels.
+def split(mcs_data: np.ndarray, channels_count: int) -> np.ndarray:
+    """
+    Splits a multichannel signal (containing single channel) into multiple
+    identical channels.
+
+    Args:
+        mcs_data (np.ndarray): The multichannel signal data.
+        channels_count (int): The number of channels to split the signal into.
 
     Returns:
-        Output data containing channels_count identical channels.
+        np.ndarray: The split multichannel signal, with each channel identical.
     """
+
     out_data = np.zeros((channels_count, mcs_data.shape[1]), dtype=np.float32)
     for i in range(0, channels_count):
         out_data[i] = mcs_data.copy()
@@ -419,14 +461,18 @@ def split(mcs_data, channels_count: int):
     return out_data
 
 
-def merge(mcs_data):
-    """Mix mcs_data channels a to single signal.
+def merge(mcs_data: np.ndarray) -> np.ndarray:
+    """
+    Mixes channels of a multichannel sound into a single channel.
+
+    Args:
+        mcs_data (np.ndarray): The multichannel sound data.
 
     Returns:
-        Output data containing 1 channel of mono signal.
+        np.ndarray: The merged sound data, containing a single channel.
     """
+
     out_data = np.zeros(mcs_data.shape[1], dtype=np.float32)
-    print('outdata.shape:', out_data.shape)
     channels_count = mcs_data.shape[0]
     for i in range(0, channels_count):
         out_data += mcs_data[i]
@@ -434,98 +480,202 @@ def merge(mcs_data):
     return out_data
 
 
-def sum(mcs_data1, mcs_data2):
-    """Sum mcs_data1 and mcs_data2 signals.
+def sum(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
+    """
+    Sums two multichannel sound signals side by side.
+
+    Parameters:
+        mcs_data1 (np.ndarray): The first multichannel sound signal.
+        mcs_data2 (np.ndarray): The second multichannel sound signal.
 
     Returns:
-        Output data containing sum of mcs_data1 and mcs_data2 signals.
-    """
+        np.ndarray: The sum of mcs_data1 and mcs_data2 signals.
+"""
+
     out_data = mcs_data1 + mcs_data2
 
-    return out_data
+    return out_data.copy()
 
 
-def side_by_side(mcs_data1, mcs_data2):
-    """Join mcs_data1 and mcs_data2 signals side by side.
+def side_by_side(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
+    """
+    Concatenates two multichannel sound signals side by side.
+
+    Parameters:
+        mcs_data1 (np.ndarray): The first multichannel sound signal.
+        mcs_data2 (np.ndarray): The second multichannel sound signal.
 
     Returns:
-        Output data containing mcs_data1 and mcs_data2 signals.
+        np.ndarray: The concatenated sound signal containing channels of both
+        MCS.
     """
+
     out_data = np.zeros((mcs_data1.shape[0] + mcs_data2.shape[0],
                          mcs_data1.shape[1]), dtype=np.float32)
     out_data[0:mcs_data1.shape[0], :] = mcs_data1
     out_data[mcs_data1.shape[0]:, :] = mcs_data2
-    return out_data
+    return out_data.copy()
 
 
-def stratch_ctrl(mcs_data, ratio_list, sampling_rate=def_fs):
-    """Add pink noise to channels of multichannel sound."""
-
-    stretch_audio("input.wav", "output.wav", ratio=1.1)
-    channels = []
-    for signal, ratio in zip(mcs_data, ratio_list):
-        pknoise = pyplnoise.PinkNoise(sampling_rate, 1e-2, 50.)
-        noise = pknoise.get_series(signal.shape[0])
-        res = signal + ratio * np.array(noise)
-        channels.append(res)
-    multichannel_sound = np.array(channels).copy()
-    return multichannel_sound
-
-
-# Chaining class
+#  Chaining class
 
 class WaChain:
-    def __init__(self, _data=None, fs=-1):
-        self.data = _data
-        self.path = ''
+    def __init__(self, mcs_data: np.ndarray = None, fs: int = -1):
+        """
+        Initializes a new instance of the WaChain class.
+
+        Args:
+            mcs_data (np.ndarray, optional): The multichannel sound data.
+            Defaults to None.
+            fs (int, optional): The sample rate of the sound data. Defaults to -1.
+
+        Returns:
+            None
+        """
+
+        self.data = mcs_data  # Multichannel sound data field
+        self.path = ''  # Path to the sound file, from which the data was read.
         self.sample_rate = fs
 
-    def copy(self):
+    def copy(self) -> 'WaChain':
+        """
+        Creates a deep copy of the WaChain instance.
+
+        Returns:
+            WaChain: A deep copy of the WaChain instance.
+        """
         return copy.deepcopy(self)
 
-    def put(self, data, fs=-1):
-        self.data = data.copy()
+    def put(self, mcs_data: np.ndarray, fs: int = -1) -> 'WaChain':
+        """
+        Updates the multichannel sound data and sample rate of the WaChain
+        instance.
+
+        Args:
+            mcs_data (np.ndarray): source of multichannel sound data.
+            fs (int, optional): The new sample rate. Defaults to -1.
+
+        Returns:
+            WaChain: The updated WaChain instance.
+        """
+
+        self.data = mcs_data.copy()
         self.sample_rate = fs
         return self
 
     def get(self):
+        """
+        Returns the multichannel sound data stored in the WaChain instance.
+
+        Returns:
+            np.ndarray: The multichannel sound data.
+        """
         return self.data
 
-    def gen(self, f_list, t, fs=def_fs):
-        self.data = generate(f_list, t, fs)
+    def gen(self, f_list: list[int], t: float, fs: int = def_fs,
+            mode="sine", seed: int = -1) -> 'WaChain':
+        """
+        Generates a multichannel sound using the given frequency list,
+        duration, and sampling rate.
+
+        Args:
+            f_list (list[int]): The list of frequencies to generate the sound
+            for each channel.
+            t (float): The duration of the sound in seconds.
+            fs (int, optional): The sampling rate of the sound data. Defaults
+            to def_fs.
+            mode (str, optional): The mode of sound generation. Can be
+            'sine' or 'speech'. Defaults to 'sine'.
+            seed (int, optional): The seed for random number generation.
+            Defaults to -1.
+
+        Returns:
+            WaChain: The updated WaChain instance with the generated
+            multichannel sound, allowing for method chaining.
+        """
+
+        self.data = generate(f_list, t, fs, mode, seed)
         self.sample_rate = fs
         return self
 
-    def rd(self, path):
+    def rd(self, path: str) -> 'WaChain':
+        """
+        Reads data from a file at the specified path and updates the sample
+        rate and data attributes.
+
+        Args:
+            path (str): Path to the file containing the data.
+
+        Returns:
+            sWaChain: The updated WaChain instance itself, allowing for method
+            chaining.
+        """
+
         self.sample_rate, self.data = read(path)
         return self
 
-    def wr(self, path):
+    def wr(self, path: str) -> 'WaChain':
+        """
+        Writes the audio data to a file at the specified path.
+
+        Args:
+            path (str): The path to write the audio data to.
+
+        Returns:
+            WaChain: The current instance of WaChain, allowing for method
+            chaining.
+        """
+
         write(path, self.data, self.sample_rate)
         return self
 
-    def amp(self, amplitude_list):
+    def amp(self, amplitude_list: list[float]) -> 'WaChain':
+        """
+        Amplifies the audio data based on a custom amplitude control.
+
+        Args:
+            amplitude_list (list[float]): A list of amplitudes to apply to each
+            corresponding chunk of audio data.
+
+        Returns:
+            WaChain: The current instance of WaChain, allowing for method
+            chaining.
+        """
+
         self.data = amplitude_ctrl(self.data, amplitude_list)
         return self
 
-    def dly(self, delay_list):
+    def dly(self, delay_list: list[int]) -> 'WaChain':
+        """
+        Delays the audio data based on a custom delay control.
+
+        Args:
+            delay_list (list[int]): A list of delays to apply to each
+            corresponding chunk of audio data.
+
+        Returns:
+            WaChain: The current instance of WaChain, allowing for method
+            chaining.
+    """
+
         self.data = delay_ctrl(self.data, delay_list)
         return self
 
-    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1):
+    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1) -> 'WaChain':
         self.data = noise_ctrl(self.data, noise_level_list,
-                                      sampling_rate, seed)
+                               sampling_rate, seed)
         return self
 
-    def echo(self, delay_us_list, amplitude_list, sampling_rate=def_fs):
+    def echo(self, delay_us_list: list[int], amplitude_list: list[float],
+             sampling_rate: int = def_fs) -> 'WaChain':
         self.data = echo_ctrl(self.data, delay_us_list, amplitude_list,
-                                     sampling_rate)
+                              sampling_rate)
         return self
 
-    def rms(self, last_index=-1, decimals=-1):
+    def rms(self, last_index: int = -1, decimals: int = -1) -> list[float]:
         return rms(self.data, last_index, decimals)
 
-    def info(self):
+    def info(self) -> dict:
         res = {"path": self.path, "channels_count": -1,
                "sample_rate": self.sample_rate, "length_s": -1}
         if self.data is not None:
@@ -534,25 +684,26 @@ class WaChain:
             res["length_s"] = length
         return res
 
-    def sum(self, mcs_data):    
+    def sum(self, mcs_data: np.ndarray) -> 'WaChain':
         self.data = sum(self.data, mcs_data)
         return self
 
-    def mrg(self):
+    def mrg(self) -> 'WaChain':
         self.data = merge(self.data)
         return self
 
-    def splt(self, channels_count):
+    def splt(self, channels_count: int) -> 'WaChain':
         self.data = split(self.data, channels_count)
         return self
-   
-    def sbs(self, mcs_data):
+
+    def sbs(self, mcs_data: np.ndarray) -> 'WaChain':
         self.data = side_by_side(self.data, mcs_data)
         return self
-    
-    def pdt(self, relative_level):
+
+    def pdt(self, relative_level: list[float]) -> 'WaChain':
         self.data = pause_detect(self.data, relative_level)
         return self
+
 
 # CLI interface functions
 error_mark = "Error: "
