@@ -13,22 +13,43 @@ def_fs = 44100  # Default sampling frequency, Hz.
 random_noise_gen = np.random.default_rng()
 
 
-def _single_rms(signal_of_channel, decimals):
+def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
+    """
+    Calculate the root mean square (RMS) of a single channel signal.
+
+    Parameters:
+        signal_of_channel (array): Input signal of a single channel.
+        decimals (int): Number of decimal places to round the RMS value.
+
+    Returns:
+        float: The RMS value of the input signal.
+    """
+
     r = np.sqrt(np.mean(signal_of_channel**2))
     if decimals > 0:
         r = round(r, decimals)
     return r
 
 
-def rms(mcs_data, last_index=-1, decimals=-1):
-    """Return RMS of multichannel sound."""
+def rms(mcs_data: np.ndarray, last_index: int = -1, decimals: int = -1):
+    """
+    Calculate the root mean square (RMS) of a multichannel sound.
 
+    Parameters:
+        mcs_data (array): Input multichannel sound data.
+        last_index (int): The last index to consider when calculating the RMS. 
+            If -1, consider the entire array. Defaults to -1.
+        decimals (int): Number of decimal places to round the RMS value. 
+            If -1, do not round. Defaults to -1.
+
+    Returns:
+        list: A list of RMS values for each channel in the multichannel sound.
+    """
     res = []
     shlen = len(mcs_data.shape)
     if shlen > 1:
         for i in range(0, mcs_data.shape[0]):
             ch = mcs_data[i]
-            #r = _single_rms(mcs_data[i][0:last_index], decimals)
             r = _single_rms(ch[0:last_index], decimals)
             res.append(r)
     else:
@@ -39,11 +60,25 @@ def rms(mcs_data, last_index=-1, decimals=-1):
 
 def generate(frequency_list: list[100, 200, 300, 400], duration: float,
              sample_rate=def_fs, mode="sine", seed: int = -1):
+    """
+    Generate a multichannel sound based on the given frequency list, duration,
+    sample rate, and mode. The mode can be 'sine' or 'speech'. In 'sine' mode,
+    output multichannel sound will be a list of sine waves. In 'speech' mode,
+    output will be a list of speech like signals. In this mode input
+    frequencies list will be used as basic tone frequency for corresponding
+    channel, it should be in interval 600..300.
+    
+    Parameters:
+    frequency_list (list): A list of frequencies to generate sound for.
+    duration (float): The duration of the sound in seconds.
+    sample_rate (int): The sample rate of the sound. Defaults to def_fs.
+    mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
+    Defaults to 'sine'.
+    seed (int): The seed for random number generation. Defaults to -1.
 
-    """Function generates multichannel sound as a set of 
-    sine or speech-like waves.
-
-    return numpy array of shape [channels, samples]
+    Returns:
+    multichannel_sound (numpy array): A numpy array representing the generated
+    multichannel sound.
     """
 
     samples = np.arange(duration * sample_rate) / sample_rate
@@ -84,34 +119,57 @@ def generate(frequency_list: list[100, 200, 300, 400], duration: float,
     return multichannel_sound
 
 
-def write(path: str, mcs_data, sample_rate=44100):
-    """ Save multichannel sound to wav-file.
-
-    path : string or open file handle
-    Output wav file.
-
-    sample_rate : int
-    The sample rate (in samples/sec).
+def write(path: str, mcs_data: np.ndarray, sample_rate: int = 44100):
     """
+    Writes the given multichannel sound data to a WAV file at the specified
+    path.
+
+    Args:
+        path (str): The path to the WAV file.
+        mcs_data (np.ndarray): The multichannel sound data to write. The shape
+        of the array should be (num_channels, num_samples).  sample_rate (int,
+        optional): The sample rate of the sound data. Defaults to 44100.
+        
+    Returns:
+        None
+    """
+
     buf = mcs_data.T.copy()
     wavfile.write(path, sample_rate, buf)
 
 
-def read(path: str):
-    """ Read multichannel sound from wav-file.
-
-    return sample_rate, mcs_data.
+def read(path: str) -> tuple[int, np.ndarray]:
     """
+    Reads a multichannel sound from a WAV file.
+
+    Args:
+        path (str): The path to the WAV file.
+
+    Returns:
+        tuple[int, np.ndarray]: A tuple containing the sample rate and the
+        multichannel sound data.
+    """
+
     sample_rate, buf = wavfile.read(path)
     mcs_data = buf.T.copy()
     return sample_rate, mcs_data
 
 
-def file_info(path):
-    """ Return information about multichannel sound from wav-file.
-
-    return path, channels_count, sample_rate, length (in seconds) of file.
+def file_info(path: str) -> dict:
     """
+    Returns a dictionary containing information about a WAV file.
+
+    Args:
+        path (str): The path to the WAV file.
+
+    Returns:
+        dict: A dictionary containing the following keys:
+            - path (str): The path to the WAV file.
+            - channels_count (int): The number of channels in the WAV file.
+            - sample_rate (int): The sample rate of the WAV file.
+            - length_s (float): The length of the WAV file in seconds.
+    """
+
     sample_rate, buf = wavfile.read(path)
     length = buf.shape[0] / sample_rate
 

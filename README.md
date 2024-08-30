@@ -102,7 +102,7 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |12|merge(mcs_data) | -|mrg(mcs_data)| Merges all channels to single and returns  mono MCS.|
 |13|pause_detect(mcs_data,relative_level)|-| - | Searchs pauses by selected levels. Returns array-mask.|
 |14|pause_measure(mcs_mask)|-| - | Measure lengths of pauses. Returns list of lists containing pairs(index, length).|
-|15|pause_set(pause_set(mcs_data,pause_map,pause_sz)|-| - | Set pauses length to selected values. Returns updated MCS.|
+|15|pause_set(mcs_data,pause_map,pause_sz)|-| - | Set pauses length to selected values. Returns updated MCS.|
 |16|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
 |17|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
 |18|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
