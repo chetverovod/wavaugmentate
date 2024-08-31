@@ -378,7 +378,7 @@ def test_wavaugmentate_amplitude_option():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n"
+    full_ref = f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -454,7 +454,7 @@ def test_wavaugmentate_delay_option():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "\ndelays: [100, 200, 300, 0]\nDone.\n"
+    full_ref = f"\ndelays: [100, 200, 300, 0]\n{wau.success_mark}\n"
     assert res.stdout == full_ref
     assert os.path.exists(output_file)
     ref = shrink(full_ref)
@@ -615,7 +615,7 @@ def test_chain_option():
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
         + test_sound_1_file
-        + '")\nDone.\n'
+        + '")\n' + f'{wau.success_mark}\n'
     )
     ref = shrink(full_ref)
     print("ref:", ref)
