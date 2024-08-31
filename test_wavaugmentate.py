@@ -408,7 +408,8 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = f"{wau.error_mark}Amplitude list contains non number element: < abc>."
+    full_ref = f"{wau.error_mark}Amplitude list contains non number element:"
+    full_ref += " < abc>."
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -486,7 +487,8 @@ def test_wavaugmentate_delay_option_fail_case1():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = f"{wau.error_mark}Delays list contains non integer element: <389.1>.\n"
+    full_ref = f"{wau.error_mark}Delays list contains non integer element:"
+    full_ref += " <389.1>.\n"
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -594,6 +596,7 @@ def test_WaChain_chain_class():
     ref = "[0.70710844,0.7071083,0.707108,0.70710754]"
 
     print(out)
+    w.info()
     assert out == ref
 
 
