@@ -527,7 +527,8 @@ class WaChain:
         Args:
             mcs_data (np.ndarray, optional): The multichannel sound data.
             Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults to -1.
+            fs (int, optional): The sample rate of the sound data. Defaults
+            to -1.
 
         Returns:
             None
@@ -662,20 +663,86 @@ class WaChain:
         return self
 
     def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1) -> 'WaChain':
+        """
+        Adds custom noise to the audio data.
+
+        Args:
+            noise_level_list (list[float]): A list of noise levels to apply to
+            each corresponding chunk of audio data.
+            sampling_rate (int): The sampling rate at which to add noise.
+            Defaults to `def_fs`.
+            seed (int): An optional random seed for reproducibility. Defaults
+            to -1.
+
+        Returns:
+            WaChain: The current instance of WaChain, allowing for method
+            chaining.
+        """
+
         self.data = noise_ctrl(self.data, noise_level_list,
                                sampling_rate, seed)
         return self
 
     def echo(self, delay_us_list: list[int], amplitude_list: list[float],
              sampling_rate: int = def_fs) -> 'WaChain':
+        """
+        Adds an echo effect to the audio data.
+
+        Args:
+            delay_us_list (list[int]): A list of delays in microseconds for
+            each corresponding chunk of audio data.
+            amplitude_list (list[float]): A list of amplitudes to apply to each
+            corresponding chunk of echo data.
+            sampling_rate (int): The sampling rate at which to add the echo
+            effect.  Defaults to `def_fs`.
+
+        Returns:
+            WaChain: The current instance of WaChain, allowing for method
+            chaining.
+        """
+
         self.data = echo_ctrl(self.data, delay_us_list, amplitude_list,
                               sampling_rate)
         return self
 
     def rms(self, last_index: int = -1, decimals: int = -1) -> list[float]:
+        """
+        Calculates the root mean square (RMS) of the audio data.
+
+        Args:
+            last_index (int): The index up to which to calculate the RMS.
+            Defaults to -1, meaning all data.
+            decimals (int): The number of decimal places to round the
+            result to.
+            Defaults to -1, meaning no rounding.
+
+        Returns:
+            list[float]: A list containing the RMS values for each
+            corresponding chunk of audio data.
+        """
+
         return rms(self.data, last_index, decimals)
 
     def info(self) -> dict:
+        """
+        Returns a dictionary containing metadata about the audio data.
+
+            The dictionary contains the following information:
+
+            * path: The file path where the audio data was loaded from.
+            * channels_count: The number of audio channels in the data
+              (1 for mono, 2 and more for stereo and other).
+            * sample_rate: The sampling rate at which the audio data is stored.
+            * length_s: The duration of the audio data in seconds.
+
+            If the data is not loaded, the `path`, `channels_count`, and
+            `length_s` values will be -1. Otherwise, 
+            they will be populated with actual values.
+
+        Returns:
+        dict: A dictionary containing metadata about the audio data.
+    """
+
         res = {"path": self.path, "channels_count": -1,
                "sample_rate": self.sample_rate, "length_s": -1}
         if self.data is not None:
@@ -685,35 +752,107 @@ class WaChain:
         return res
 
     def sum(self, mcs_data: np.ndarray) -> 'WaChain':
+        """
+        Sums two multichannel sound signals side by side.
+
+        Args:
+            mcs_data (np.ndarray): The second multichannel sound signal.
+
+        Returns:
+            WaChain: The updated WaChain instance with the summed multichannel
+            sound, allowing for method chaining.
+        """
+
         self.data = sum(self.data, mcs_data)
         return self
 
     def mrg(self) -> 'WaChain':
+        """
+        Merges all channels to single and returns mono MCS.
+
+        Returns:
+            WaChain: The updated WaChain instance with the merged multichannel
+            sound, allowing for method chaining.
+        """
+
         self.data = merge(self.data)
         return self
 
     def splt(self, channels_count: int) -> 'WaChain':
+        """
+        Splits a multichannel signal (containing single channel) into multiple
+        identical channels.
+
+        Args:
+            channels_count (int): The number of channels to split the signal
+            into.
+
+        Returns:
+            WaChain: The updated WaChain instance with the split multichannel
+            sound, allowing for method chaining.
+        """
+
         self.data = split(self.data, channels_count)
         return self
 
     def sbs(self, mcs_data: np.ndarray) -> 'WaChain':
+        """
+        Concatenates two multichannel sound signals side by side.
+
+        Args:
+            mcs_data (np.ndarray): The second multichannel sound signal.
+
+        Returns:
+            WaChain: The updated WaChain instance with the concatenated
+            multichannel sound, allowing for method chaining.
+        """
+
         self.data = side_by_side(self.data, mcs_data)
         return self
 
     def pdt(self, relative_level: list[float]) -> 'WaChain':
+        """
+        Detects pauses in a multichannel sound based on a custom
+        relative level value.
+
+        Args:
+            relative_level (list[float]): A list of relative levels for each
+            corresponding channel, signal below this level will be marked as
+            pause.
+
+        Returns:
+            WaChain: The updated WaChain instance with the pause detection
+            result, allowing for method chaining.
+        """
         self.data = pause_detect(self.data, relative_level)
         return self
 
 
 # CLI interface functions
 error_mark = "Error: "
+success_mark = "Done."
+
 prog_name = os.path.basename(__file__).split('.')[0]
 
 application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
 
 
-def check_amp_list(ls):
+def check_amp_list(ls: list[str]) -> None:
+    """
+    Checks if all elements in the given amplitudes list are valid numbers.
+
+    Args:
+        ls (list): The list of elements to check.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If the list contains a non-number element.
+        SystemExit: Exits the program with a status code of 3 if a non-number
+        element is found.
+    """
     for n in ls:
         try:
             float(n)
@@ -723,7 +862,21 @@ def check_amp_list(ls):
             exit(3)
 
 
-def check_delay_list(ls):
+def check_delay_list(ls: list[str]) -> None:
+    """
+    Checks if all elements in the given delays list are valid integers.
+
+    Args:
+        ls (list): The list of elements to check.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If the list contains a non-integer element.
+        SystemExit: Exits the program with a status code of 1 if a non-integer
+        element is found.
+    """
     for n in ls:
         try:
             int(n)
@@ -741,6 +894,20 @@ def print_help_and_info():
 
 
 def chain_hdr(args):
+    """
+    Processes the chain code from the given arguments and executes the 
+    corresponding WaChain commands.
+
+    Args:
+        args: The arguments containing the chain code to be executed.
+
+    Returns:
+        None
+
+    Raises:
+        SystemExit: Exits the program with a status code of 0 after 
+        successful execution.
+    """
     if args.chain_code is None:
         return
     c = args.chain_code.strip()
@@ -748,7 +915,8 @@ def chain_hdr(args):
     w = WaChain()
     cmd_prefix = "w."
     str(eval(cmd_prefix + c.strip()))
-    print('Done.')
+    print(success_mark)
+    w.info()
     exit(0)
 
 
@@ -762,6 +930,20 @@ def input_path_hdr(args):
 
 
 def is_file_creatable(fullpath: str) -> bool:
+    """
+    Checks if a file can be created at the given full path.
+
+    Args:
+        fullpath (str): The full path where the file is to be created.
+
+    Returns:
+        bool: True if the file can be created, False otherwise.
+
+    Raises:
+        Exception: If the file cannot be created.
+        SystemExit: If the path does not exist.
+    """
+        
     # Split the path
     path, _ = os.path.split(fullpath)
     isdir = os.path.isdir(path)
@@ -797,7 +979,7 @@ def file_info_hdr(args):
 
 
 def amplitude_hdr(args):
-    """Function makes amplitude augmentation."""
+    """Function makes CLI amplitude augmentation."""
 
     if args.amplitude_list is None:
         return
@@ -816,12 +998,12 @@ def amplitude_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = amplitude_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info['sample_rate'])
-    print('Done.')
+    print(success_mark)
     exit(0)
 
 
 def noise_hdr(args):
-    """Function makes noise augmentation."""
+    """Function makes CLI noise augmentation."""
 
     if args.noise_list is None:
         return
@@ -840,24 +1022,27 @@ def noise_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = noise_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info['sample_rate'])
-    print('Done.')
+    print(success_mark)
     exit(0)
 
+
 def echo_hdr(args):
-    """Function makes echo augmentation."""
+    """Function makes CLI echo augmentation."""
 
     if args.echo_list is None:
         return
 
     lists = args.echo_list.split('/')
     if len(lists) != 2:
-        print(f"{error_mark}Can't distinguish delay and amplitude lists <{args.echo_list}>.")
+        print(f"{error_mark}Can't distinguish delay and amplitude"
+              f"lists <{args.echo_list}>.")
         exit(1)
-    
+
     delay_list = lists[0].split(',')
     amplitude_list = lists[1].split(',')
     if len(amplitude_list) != len(delay_list):
-        print(f"{error_mark}Can't delay and amplitude lists length differ <{args.echo_list}>.")
+        print(f"{error_mark}Can't delay and amplitude lists lengths"
+              f"differ <{args.echo_list}>.")
         exit(2)
 
     check_delay_list(delay_list)
@@ -871,7 +1056,7 @@ def echo_hdr(args):
               " does not match number of channels. It should have"
               f" <{info['channels_count']}> elements.")
         exit(2)
-    
+
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
 
@@ -879,12 +1064,12 @@ def echo_hdr(args):
     res_data = echo_ctrl(mcs_data, int_list, float_list)
 
     write(args.out_path, res_data, info['sample_rate'])
-    print('Done.')
+    print(success_mark)
     exit(0)
 
 
 def delay_hdr(args):
-    """Function makes delay augmentation."""
+    """Function makes CLIdelay augmentation."""
 
     if args.delay_list is None:
         return
@@ -903,7 +1088,7 @@ def delay_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = delay_ctrl(mcs_data, int_list)
     write(args.out_path, res_data, info['sample_rate'])
-    print('Done.')
+    print(success_mark)
     exit(0)
 
 
@@ -938,7 +1123,7 @@ def parse_args():
     parser.add_argument('--ns', '-n', dest='noise_list',
                         help='Add normal noise'
                         ' to channels in audio file. Provide coefficients for'
-                        ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"')                            
+                        ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"')
     parser.add_argument('--chain', '-c', dest='chain_code', type=str,
                         help='Execute chain of transformations.'
                         ' example:\n\t'
@@ -949,7 +1134,7 @@ def parse_args():
 
 
 def main():
-    """Argument parsing."""
+    """CLI arguments parsing."""
 
     args = parse_args()
     chain_hdr(args)
