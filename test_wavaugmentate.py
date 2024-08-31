@@ -6,7 +6,7 @@ import wavaugmentate as wau
 fs = wau.def_fs
 t = 5
 f_list = [400, 1000, 2333, 3700]  # Frequencies list.
-frm_list = [60, 140, 230, 300]  # Formants list.
+frm_list = [60, 140, 230, 300]  # Speech formants list.
 
 # Output files names.
 test_sound_1_file = "./test_sounds/test_sound_1.wav"
@@ -15,14 +15,16 @@ test_sound_1_delay_file = "./test_sounds/test_sound_1_delay.wav"
 test_sound_1_echo_file = "./test_sounds/test_sound_1_echo.wav"
 test_sound_1_noise_file = "./test_sounds/test_sound_1_noise.wav"
 
-output_file = './outputwav/out.wav'
-prog = './' + wau.prog_name + '.py'
+output_file = "./outputwav/out.wav"
+prog = "./" + wau.prog_name + ".py"
 
 
 def shrink(s: str):
     """Drops white spaces, newlines, and tabs from a string."""
 
-    subst_table = str.maketrans({' ': None, '\n': None, '\t': None, '\r': None})
+    subst_table = str.maketrans(
+        {" ": None, "\n": None, "\t": None, "\r": None}
+    )
     return s.translate(subst_table)
 
 
@@ -58,7 +60,7 @@ def test_generate_speech():
     Returns:
         None
     """
-    test_sound_1 = wau.generate(frm_list, t, fs, mode='speech', seed=42)
+    test_sound_1 = wau.generate(frm_list, t, fs, mode="speech", seed=42)
     wau.write(test_sound_1_file, test_sound_1, fs)
     assert test_sound_1.shape == (4, 220500)
     rms_list = wau.rms(test_sound_1, decimals=3)
@@ -75,7 +77,7 @@ def test_write():
     given `test_sound_1_file`, `test_sound_1`, and `fs` parameters.  It first
     generates a multichannel sound using the `generate` function and then
     writes it to a file using the `write` function.
-    
+
     Parameters:
         None
 
@@ -128,10 +130,10 @@ def test_file_info():
     """
 
     info = wau.file_info(test_sound_1_file)
-    assert info['path'] == test_sound_1_file
-    assert info['channels_count'] == 4
-    assert info['sample_rate'] == wau.def_fs
-    assert info['length_s'] == 5.0
+    assert info["path"] == test_sound_1_file
+    assert info["channels_count"] == 4
+    assert info["sample_rate"] == wau.def_fs
+    assert info["length_s"] == 5.0
 
 
 def test_amplitude_ctrl():
@@ -180,7 +182,7 @@ def test_delay_ctrl():
     `delay_ctrl` function from the `ma` module with the given
     `test_sound_1` and `delay_list` parameters.  It asserts that the shape of
     the delayed multichannel sound is equal to `(4, 220500)`.  It writes the
-    delayed multichannel sound to a file using the `write` function from 
+    delayed multichannel sound to a file using the `write` function from
     the `ma` module with the given file path and `fs` parameters.
 
     Parameters:
@@ -212,13 +214,13 @@ def test_echo_ctrl():
     function from the `ma` module with the given `f_list`, `t`, and `fs`
     parameters.  It then applies echo control to the generated sound using the
     `echo_ctrl` function from the `ma` module with the given
-    `test_sound_1`, `delay_us_list`, and `amplitude_list` parameters.  It writes
-    the echoed multichannel sound to a file using the `write` function from
-    the `ma` module with the given file path and `fs` parameters.  Finally, it
-    calculates the root mean square (RMS) values of the echoed sound and
-    compares them to the expected values in the `reference_list`.
+    `test_sound_1`, `delay_us_list`, and `amplitude_list` parameters.
+    It writes the echoed multichannel sound to a file using the `write`
+    function from the `ma` module with the given file path and `fs` parameters.
+    Finally, it calculates the root mean square (RMS) values of the echoed
+    sound and compares them to the expected values in the `reference_list`.
 
-    Parameters:
+    Args:
         None
 
     Returns:
@@ -226,7 +228,7 @@ def test_echo_ctrl():
     """
 
     test_sound_1 = wau.generate(f_list, t, fs)
-    delay_list = [1E6, 2E6, 3E6, 0]
+    delay_list = [1e6, 2e6, 3e6, 0]
     amplitude_list = [-0.3, -0.4, -0.5, 0]
     test_ec = wau.echo_ctrl(test_sound_1, delay_list, amplitude_list, fs)
     wau.write(test_sound_1_echo_file, test_ec, fs)
@@ -242,29 +244,38 @@ def test_echo_ctrl_option():
     test_sound_1 = wau.generate(f_list, t, fs)
     wau.write(test_sound_1_file, test_sound_1, fs)
 
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-e',
-           '100, 300, 400, 500 / 0.5, 0.6, 0.7, 0.1 ']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-e",
+        "100, 300, 400, 500 / 0.5, 0.6, 0.7, 0.1 ",
+    ]
+    print("\n", " ".join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\ndelays: [100, 300, 400, 500]\n' + \
-               '\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
+    print("out:", out)
+    full_ref = (
+        "\ndelays: [100, 300, 400, 500]\n"
+        + f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
+    )
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
     assert os.path.exists(output_file)
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220522
     rms_list = wau.rms(written_data, decimals=3)
-    print('rms_list:', rms_list)
+    print("rms_list:", rms_list)
     reference_list = [1.054, 0.716, 1.144, 0.749]
     for r, ref in zip(rms_list, reference_list):
-        assert abs(r - ref) < 0.001    
+        assert abs(r - ref) < 0.001
 
 
 def test_noise_ctrl():
@@ -277,7 +288,7 @@ def test_noise_ctrl():
     parameters.  It then applies noise control to the generated sound using the
     `noise_ctrl` function from the `ma` module with the given
     `test_sound_1`, `noise_level_list`, and `fs` parameters.  It writes the
-    noise-controlled multichannel sound to a file using the `write` 
+    noise-controlled multichannel sound to a file using the `write`
     from the `ma` module with the given file path and `fs` parameters. Finally,
     it calculates the root mean square (RMS) values of the noise-controlled
     sound and compares them to the expected values in the `reference_list`.
@@ -290,8 +301,7 @@ def test_noise_ctrl():
     """
 
     test_sound_1 = wau.generate(f_list, t, fs)
-    test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0],
-                             fs, seed=42)
+    test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0], fs, seed=42)
     wau.write(test_sound_1_noise_file, test_nc, fs)
     rms_list = wau.rms(test_nc, decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
@@ -307,25 +317,32 @@ def test_wavaugmentate_noise_option():
     test_sound_1 = wau.generate(f_list, t, fs)
     wau.write(test_sound_1_file, test_sound_1, fs)
 
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-n',
-           '0.5, 0.6, 0.7, 0.1']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-n",
+        "0.5, 0.6, 0.7, 0.1",
+    ]
+    print("\n", " ".join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\nnoise levels: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
+    print("out:", out)
+    full_ref = f"\nnoise levels: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
     assert os.path.exists(output_file)
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220500
     rms_list = wau.rms(written_data, decimals=3)
-    print('rms_list:', rms_list)
+    print("rms_list:", rms_list)
     reference_list = [0.866, 0.927, 0.996, 0.714]
 
     for r, ref in zip(rms_list, reference_list):
@@ -339,124 +356,168 @@ def test_wavaugmentate_greeting():
 
 
 def test_wavaugmentate_info_option():
-
     cmd = [prog]
     res = sp.run(cmd, capture_output=True, text=True)
     assert res.stdout == wau.application_info + "\n"
 
 
 def test_wavaugmentate_amplitude_option():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.5, 0.6, 0.7, 0.1']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-a",
+        "0.5, 0.6, 0.7, 0.1",
+    ]
+    print("\n", " ".join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n'
+    print("out:", out)
+    full_ref = f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
     assert os.path.exists(output_file)
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220500
     rms_list = wau.rms(written_data, decimals=3)
-    print('rms_list:', rms_list)
+    print("rms_list:", rms_list)
     reference_list = [0.354, 0.424, 0.495, 0.071]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
 
 def test_wavaugmentate_amplitude_option_fail_case1():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.1, abc, 0.3, 0.4']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-a",
+        "0.1, abc, 0.3, 0.4",
+    ]
+    print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = 'Error: Amplitude list contains non number element: < abc>.'
+    print("out:", out)
+    full_ref = f"{wau.error_mark}Amplitude list contains non number element:"
+    full_ref += " < abc>."
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
 
 
 def test_wavaugmentate_amplitude_option_fail_case2():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-a',
-           '0.1, 0.3, 0.4']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-a",
+        "0.1, 0.3, 0.4",
+    ]
+    print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\namplitudes: [0.1, 0.3, 0.4]\n\
-Error: Amplitude list length <3> does not match number of channels. It should have <4> elements.\n'
+    print("out:", out)
+    full_ref = f"\namplitudes: [0.1, 0.3, 0.4]\n\
+    {wau.error_mark}Amplitude list length <3> does not match number of\n\
+      channels. It should have <4> elements.\n"
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
 
 
 def test_wavaugmentate_delay_option():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
-           "100, 200, 300, 0"]
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-d",
+        "100, 200, 300, 0",
+    ]
+    print("\n", " ".join(cmd))
     if os.path.exists(output_file):
         os.remove(output_file)
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\ndelays: [100, 200, 300, 0]\nDone.\n'
+    print("out:", out)
+    full_ref = f"\ndelays: [100, 200, 300, 0]\n{wau.success_mark}\n"
     assert res.stdout == full_ref
     assert os.path.exists(output_file)
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
     assert os.path.exists(output_file)
     _, written_data = wau.read(output_file)
     for ch in written_data:
         assert ch.shape[0] == 220513
     rms_list = wau.rms(written_data, decimals=3)
-    print('rms_list:', rms_list)
+    print("rms_list:", rms_list)
     reference_list = [0.707, 0.707, 0.707, 0.707]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
 
 def test_wavaugmentate_delay_option_fail_case1():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
-           '100, 389.1, 999, 456']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-d",
+        "100, 389.1, 999, 456",
+    ]
+    print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = 'Error: Delays list contains non integer element: <389.1>.\n'
+    print("out:", out)
+    full_ref = f"{wau.error_mark}Delays list contains non integer element:"
+    full_ref += " <389.1>.\n"
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
 
 
 def test_wavaugmentate_delay_option_fail_case2():
-    cmd = [prog, '-i', test_sound_1_file, '-o', output_file, '-d',
-           '100, 200, 300']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-i",
+        test_sound_1_file,
+        "-o",
+        output_file,
+        "-d",
+        "100, 200, 300",
+    ]
+    print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = '\ndelays: [100, 200, 300]\n\
-Error: Delays list length <3> does not match number of channels. It should have <4> elements.\n'
+    print("out:", out)
+    full_ref = f"\ndelays: [100, 200, 300]\n\
+{wau.error_mark}Delays list length <3> does not match number of\
+ channels. It should have <4> elements.\n"
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
 
 
 def test_WaChain_controls():
-
     test_sound_1 = wau.generate(f_list, t, fs)
     w = wau.WaChain(test_sound_1)
     print(w.data)
@@ -465,7 +526,12 @@ def test_WaChain_controls():
     res1 = w.data
 
     w.put(np.zeros(1))
-    res2 = w.put(test_sound_1).amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0]).get()
+    res2 = (
+        w.put(test_sound_1)
+        .amp([0.1, 0.3, 0.4, 1])
+        .dly([100, 200, 300, 0])
+        .get()
+    )
     print(res2)
     assert np.array_equal(res1, res2)
 
@@ -483,7 +549,7 @@ def test_WaChain_wr_rd():
 
 
 def test_WaChain_echo():
-    d_list = [1E6, 2E6, 3E6, 0]
+    d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     w = wau.WaChain()
     w.gen(f_list, t, fs).echo(d_list, a_list)
@@ -512,7 +578,12 @@ def test_WaChain_info():
     w.gen(f_list, t, fs).wr(test_sound_1_file)
     print(w.info())
 
-    ref = {'path': '', 'channels_count': 4, 'sample_rate': 44100, 'length_s': 5.0}
+    ref = {
+        "path": "",
+        "channels_count": 4,
+        "sample_rate": 44100,
+        "length_s": 5.0,
+    }
     assert w.info() == ref
 
 
@@ -522,26 +593,35 @@ def test_WaChain_chain_class():
     cmd = "gen(f_list, t, fs).rms()"
     s = str(eval(cmd_prefix + cmd.strip()))
     out = shrink(s)
-    ref = '[0.70710844,0.7071083,0.707108,0.70710754]'
+    ref = "[0.70710844,0.7071083,0.707108,0.70710754]"
 
     print(out)
+    w.info()
     assert out == ref
 
 
 def test_chain_option():
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
-    cmd = [prog, '-c', 'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).wr("'
-           + test_sound_1_file + '")']
-    print('\n', ' '.join(cmd))
+    cmd = [
+        prog,
+        "-c",
+        'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).wr("'
+        + test_sound_1_file
+        + '")',
+    ]
+    print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True)
     s = str(res.stdout)
     out = shrink(s)
-    print('out:', out)
-    full_ref = 'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("' \
-               + test_sound_1_file + '")\nDone.\n'
+    print("out:", out)
+    full_ref = (
+        'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
+        + test_sound_1_file
+        + '")\n' + f'{wau.success_mark}\n'
+    )
     ref = shrink(full_ref)
-    print('ref:', ref)
+    print("ref:", ref)
     assert out == ref
     exists = os.path.exists(test_sound_1_file)
     assert exists is True
@@ -549,7 +629,7 @@ def test_chain_option():
 
 def test_README_examples():
     # preparations
-    fn = './sound.wav'
+    fn = "./sound.wav"
     if os.path.exists(fn):
         os.remove(fn)
 
@@ -559,30 +639,36 @@ def test_README_examples():
     # examples code for  README.md
 
     # Read WAV-file to array.
-    fsmp, mcs = wau.read('./sound.wav')
+    fsmp, mcs = wau.read("./sound.wav")
 
     # Apply delays.
-    delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity. 
+    delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity.
     d = wau.delay_ctrl(mcs, delay_list)
 
     # Apply amplitude changes.
-    amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity. 
+    amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity.
     res = wau.amplitude_ctrl(d, amplitude_list)
 
     # Augmentation result saving.
-    wau.write('./sound_delayed.wav', res, fsmp)
+    wau.write("./sound_delayed.wav", res, fsmp)
 
     # The same code in OOP approach:
 
     w = wau.WaChain()
-    w.rd('./sound.wav').dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr('./sound_delayed.wav')
+    w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
+        "./sound_delayed.wav"
+    )
 
 
 def test_sum():
     test_sound_1 = wau.generate([100], t, fs)
     test_sound_2 = wau.generate([300], t, fs)
     res = wau.sum(test_sound_1, test_sound_2)
-    wau.write(test_sound_1_file, res, fs, )
+    wau.write(
+        test_sound_1_file,
+        res,
+        fs,
+    )
     ref = [0.707, 0.707, 1.0]
     for s, ref_value in zip([test_sound_1, test_sound_2, res], ref):
         r = wau.rms(s, decimals=3)
@@ -593,8 +679,12 @@ def test_sum():
 def test_merge():
     test_sound_1 = wau.generate([100, 300], t, fs)
     res = wau.merge(test_sound_1)
-    wau.write(test_sound_1_file, res, fs, )
-    ref_value = 1.
+    wau.write(
+        test_sound_1_file,
+        res,
+        fs,
+    )
+    ref_value = 1.0
     r = wau.rms(res, decimals=3)
     print(r)
     assert abs(r[0] - ref_value) < 0.001
@@ -623,14 +713,14 @@ def test_chain_sum():
     for s, ref_value in zip([w.data, test_sound_2, res.data], ref):
         r = wau.rms(s, decimals=3)
         print(r)
-        assert abs(r[0] - ref_value) < 0.001          
+        assert abs(r[0] - ref_value) < 0.001
 
 
 def test_chain_merge():
     w = wau.WaChain()
     r = w.gen([100, 300], t, fs).mrg().wr(test_sound_1_file).rms(decimals=3)
     print(r)
-    ref_value = 1.
+    ref_value = 1.0
     assert abs(r[0] - ref_value) < 0.001
 
 
@@ -649,7 +739,13 @@ def test_chain_split():
 def test_chain_side_by_side():
     test_sound_1 = wau.generate([300], t, fs)
     w = wau.WaChain()
-    r = w.gen([1000], t, fs).amp([0.3]).sbs(test_sound_1).wr(test_sound_1_file).rms(decimals=3)
+    r = (
+        w.gen([1000], t, fs)
+        .amp([0.3])
+        .sbs(test_sound_1)
+        .wr(test_sound_1_file)
+        .rms(decimals=3)
+    )
     print(r)
     ref_value = [0.212, 0.707]
     for r, ref in zip(r, ref_value):
@@ -712,7 +808,7 @@ def test_pause_shrink_sine():
 
 
 def test_pause_shrink_speech():
-    test_sound_1 = wau.generate([100, 300], t, fs, mode='speech', seed=42)
+    test_sound_1 = wau.generate([100, 300], t, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
     res = wau.pause_shrink(test_sound_1, mask, [20, 4])
@@ -725,17 +821,38 @@ def test_pause_shrink_speech():
 
 
 def test_pause_measure():
-    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode='speech', seed=42)
+    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res_list = wau.pause_measure(mask)
     print(res_list)
 
     # res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    #wau.write(test_sound_1_file, res, fs)
-    ref_list = [[(0, 2), (31, 4), (37, 5), (47, 5), (56, 4), (70, 10),
-                (86, 5), (97, 15), (117, 7)],
-                [(0, 1), (16, 3), (45, 2), (53, 2), (66, 2), (73, 2),
-                (79, 4), (88, 5), (98, 1), (114, 4)]]
+    # wau.write(test_sound_1_file, res, fs)
+    ref_list = [
+        [
+            (0, 2),
+            (31, 4),
+            (37, 5),
+            (47, 5),
+            (56, 4),
+            (70, 10),
+            (86, 5),
+            (97, 15),
+            (117, 7),
+        ],
+        [
+            (0, 1),
+            (16, 3),
+            (45, 2),
+            (53, 2),
+            (66, 2),
+            (73, 2),
+            (79, 4),
+            (88, 5),
+            (98, 1),
+            (114, 4),
+        ],
+    ]
 
     for res, ref in zip(res_list, ref_list):
         print(res)
@@ -743,13 +860,13 @@ def test_pause_measure():
 
 
 def test_pause_set():
-    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode='speech', seed=42)
+    test_sound_1 = wau.generate([100, 300], 0.003, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     pause_list = wau.pause_measure(mask)
     res = wau.pause_set(test_sound_1, pause_list, [10, 150])
     assert res.shape == (2, 1618)
-    print('res shape:', res.shape)
-    print('res:', type(res[0,1]))
+    print("res shape:", res.shape)
+    print("res:", type(res[0, 1]))
     wau.write(test_sound_1_file, res, fs)
     r = wau.rms(res, decimals=3)
     ref = [0.105, 0.113]
