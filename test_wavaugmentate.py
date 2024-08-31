@@ -262,7 +262,7 @@ def test_echo_ctrl_option():
     print("out:", out)
     full_ref = (
         "\ndelays: [100, 300, 400, 500]\n"
-        + "\namplitudes: [0.5, 0.6, 0.7, 0.1]\nDone.\n"
+        + f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
     )
     ref = shrink(full_ref)
     print("ref:", ref)
@@ -333,7 +333,7 @@ def test_wavaugmentate_noise_option():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "\nnoise levels: [0.5, 0.6, 0.7, 0.1]\nDone.\n"
+    full_ref = f"\nnoise levels: [0.5, 0.6, 0.7, 0.1]\n{wau.success_mark}\n"
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -507,8 +507,8 @@ def test_wavaugmentate_delay_option_fail_case2():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "\ndelays: [100, 200, 300]\n\
-Error: Delays list length <3> does not match number of\
+    full_ref = f"\ndelays: [100, 200, 300]\n\
+{wau.error_mark}Delays list length <3> does not match number of\
  channels. It should have <4> elements.\n"
     ref = shrink(full_ref)
     print("ref:", ref)
