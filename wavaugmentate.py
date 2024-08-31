@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-import numpy as np
-import copy
-import argparse
-from scipy.io import wavfile
-import os
-from pathlib import Path
-import random
+"""This module does multichannel audio flies augmentation."""
 
-"""
- Default sampling frequency, Hz.
-"""
-def_fs = 44100
+import argparse
+import copy
+from pathlib import Path
+import os
+import random
+from scipy.io import wavfile
+import numpy as np
+
+# Default sampling frequency, Hz.
+DEF_FS = 44100
 
 random_noise_gen = np.random.default_rng()
 
@@ -64,7 +64,7 @@ def rms(mcs_data: np.ndarray, last_index: int = -1, decimals: int = -1):
 def generate(
     frequency_list: list[100, 200, 300, 400],
     duration: float,
-    sample_rate=def_fs,
+    sample_rate=DEF_FS,
     mode="sine",
     seed: int = -1,
 ):
@@ -214,7 +214,7 @@ def amplitude_ctrl(
 
 
 def delay_ctrl(
-    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = def_fs
+    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = DEF_FS
 ) -> np.ndarray:
     """
     Add delays of channels of multichannel sound. Output data become longer.
@@ -250,7 +250,7 @@ def echo_ctrl(
     mcs_data,
     delay_us_list: list[int],
     amplitude_list: list[float],
-    sampling_rate: int = def_fs,
+    sampling_rate: int = DEF_FS,
 ) -> np.ndarray:
     """
     Add echo to multichannel sound. The output data become longer. To each
@@ -271,7 +271,7 @@ def echo_ctrl(
     """
 
     a = amplitude_ctrl(mcs_data, amplitude_list)
-    e = delay_ctrl(a, delay_us_list)
+    e = delay_ctrl(a, delay_us_list, sampling_rate)
     channels = []
     for d in mcs_data:
         zl = e.shape[1] - d.shape[0]
@@ -284,7 +284,6 @@ def echo_ctrl(
 def noise_ctrl(
     mcs_data: np.ndarray,
     noise_level_list: list[float],
-    sampling_rate: int = def_fs,
     seed: int = -1,
 ) -> np.ndarray:
     """
@@ -294,8 +293,6 @@ def noise_ctrl(
         mcs_data (np.ndarray): The multichannel sound data.
         noise_level_list (list[float]): The list of noise levels to apply to
         each channel.
-        sampling_rate (int): The sampling rate of the sound data. Defaults to
-        def_fs.
         seed (int): The seed for random number generation. Defaults to -1.
 
     Returns:
@@ -306,7 +303,7 @@ def noise_ctrl(
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
             random.seed(seed)
-            n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
+            n_noise = random_noise_gen.standard_normal(mcs_data.shape[1],)
         else:
             # TODO seed should be fixed for repeatable results
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
@@ -503,14 +500,15 @@ def merge(mcs_data: np.ndarray) -> np.ndarray:
 
 def sum(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
     """
-    Sums two multichannel sound signals side by side.
+    Sums two multichannel sound signals.
 
     Parameters:
         mcs_data1 (np.ndarray): The first multichannel sound signal.
         mcs_data2 (np.ndarray): The second multichannel sound signal.
 
     Returns:
-        np.ndarray: The sum of mcs_data1 and mcs_data2 signals."""
+        np.ndarray: The sum of mcs_data1 and mcs_data2 signals.
+    """
 
     out_data = mcs_data1 + mcs_data2
 
@@ -543,6 +541,11 @@ def side_by_side(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
 
 
 class WaChain:
+    """
+    Class provides support of chain operations with multichannel sound
+    data.
+    """
+
     def __init__(self, mcs_data: np.ndarray = None, fs: int = -1):
         """
         Initializes a new instance of the WaChain class.
@@ -600,7 +603,7 @@ class WaChain:
         self,
         f_list: list[int],
         t: float,
-        fs: int = def_fs,
+        fs: int = DEF_FS,
         mode="sine",
         seed: int = -1,
     ) -> "WaChain":
@@ -691,15 +694,13 @@ class WaChain:
         self.data = delay_ctrl(self.data, delay_list)
         return self
 
-    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1) -> "WaChain":
+    def ns(self, noise_level_list, seed=-1) -> "WaChain":
         """
         Adds custom noise to the audio data.
 
         Args:
             noise_level_list (list[float]): A list of noise levels to apply to
             each corresponding chunk of audio data.
-            sampling_rate (int): The sampling rate at which to add noise.
-            Defaults to `def_fs`.
             seed (int): An optional random seed for reproducibility. Defaults
             to -1.
 
@@ -708,16 +709,14 @@ class WaChain:
             chaining.
         """
 
-        self.data = noise_ctrl(
-            self.data, noise_level_list, sampling_rate, seed
-        )
+        self.data = noise_ctrl(self.data, noise_level_list, seed)
         return self
 
     def echo(
         self,
         delay_us_list: list[int],
         amplitude_list: list[float],
-        sampling_rate: int = def_fs,
+        sampling_rate: int = DEF_FS,
     ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
