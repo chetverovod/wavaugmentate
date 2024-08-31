@@ -3,7 +3,7 @@ import os
 import subprocess as sp
 import wavaugmentate as wau
 
-fs = wau.def_fs
+fs = wau.DEF_FS
 t = 5
 f_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
@@ -132,7 +132,7 @@ def test_file_info():
     info = wau.file_info(test_sound_1_file)
     assert info["path"] == test_sound_1_file
     assert info["channels_count"] == 4
-    assert info["sample_rate"] == wau.def_fs
+    assert info["sample_rate"] == wau.DEF_FS
     assert info["length_s"] == 5.0
 
 
@@ -301,7 +301,7 @@ def test_noise_ctrl():
     """
 
     test_sound_1 = wau.generate(f_list, t, fs)
-    test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0], fs, seed=42)
+    test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0], seed=42)
     wau.write(test_sound_1_noise_file, test_nc, fs)
     rms_list = wau.rms(test_nc, decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
