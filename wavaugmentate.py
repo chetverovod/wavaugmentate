@@ -61,8 +61,13 @@ def rms(mcs_data: np.ndarray, last_index: int = -1, decimals: int = -1):
     return res
 
 
-def generate(frequency_list: list[100, 200, 300, 400], duration: float,
-             sample_rate=def_fs, mode="sine", seed: int = -1):
+def generate(
+    frequency_list: list[100, 200, 300, 400],
+    duration: float,
+    sample_rate=def_fs,
+    mode="sine",
+    seed: int = -1,
+):
     """
     Generate a multichannel sound based on the given frequency list, duration,
     sample rate, and mode. The mode can be 'sine' or 'speech'. In 'sine' mode,
@@ -71,7 +76,7 @@ def generate(frequency_list: list[100, 200, 300, 400], duration: float,
     frequencies list will be used as basic tone frequency for corresponding
     channel, it should be in interval 600..300.
 
-    Parameters:
+    Args:
     frequency_list (list): A list of frequencies to generate sound for.
     duration (float): The duration of the sound in seconds.
     sample_rate (int): The sample rate of the sound. Defaults to def_fs.
@@ -93,20 +98,19 @@ def generate(frequency_list: list[100, 200, 300, 400], duration: float,
             channels.append(signal)
             multichannel_sound = np.array(channels).copy()
 
-    if mode == 'speech':
-
+    if mode == "speech":
         if seed != -1:
             random.seed(seed)
         for f in frequency_list:
             if f > 300 or f < 60:
-                print(error_mark + 'Use basic tone from interval 600..300 Hz')
+                print(error_mark + "Use basic tone from interval 600..300 Hz")
                 exit(1)
             # Formants:
-            FBT = random.randint(f, 300)    # 60–300 Гц
-            F1 = random.randint(2*FBT, 850)    # 150–850 Гц
-            F2 = random.randint(3*FBT, 2500)   # 500–2500 Гц
-            F3 = random.randint(4*FBT, 3500)  # 1500–3500 Гц
-            F4 = random.randint(5*FBT, 4500)  # 2500–4500 Гц
+            FBT = random.randint(f, 300)  # 60–300 Гц
+            F1 = random.randint(2 * FBT, 850)  # 150–850 Гц
+            F2 = random.randint(3 * FBT, 2500)  # 500–2500 Гц
+            F3 = random.randint(4 * FBT, 3500)  # 1500–3500 Гц
+            F4 = random.randint(5 * FBT, 4500)  # 2500–4500 Гц
             F = [FBT, F1, F2, F3, F4]
             signal = 0
             amp = 1
@@ -176,15 +180,20 @@ def file_info(path: str) -> dict:
     sample_rate, buf = wavfile.read(path)
     length = buf.shape[0] / sample_rate
 
-    return {"path": path, "channels_count": buf.shape[1],
-            "sample_rate": sample_rate, "length_s": length}
+    return {
+        "path": path,
+        "channels_count": buf.shape[1],
+        "sample_rate": sample_rate,
+        "length_s": length,
+    }
 
 
 # Audio augmentation functions
 
 
-def amplitude_ctrl(mcs_data: np.ndarray,
-                   amplitude_list: list[float]) -> np.ndarray:
+def amplitude_ctrl(
+    mcs_data: np.ndarray, amplitude_list: list[float]
+) -> np.ndarray:
     """
     Apply amplitude control to a multichannel sound.
 
@@ -204,8 +213,9 @@ def amplitude_ctrl(mcs_data: np.ndarray,
     return multichannel_sound
 
 
-def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
-               sampling_rate: int = def_fs) -> np.ndarray:
+def delay_ctrl(
+    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = def_fs
+) -> np.ndarray:
     """
     Add delays of channels of multichannel sound. Output data become longer.
     Values of delay will be converted to count of samples.
@@ -223,10 +233,10 @@ def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
 
     channels = []
     # In samples.
-    max_samples_delay = int(max(delay_us_list) * 1.E-6 * sampling_rate)
+    max_samples_delay = int(max(delay_us_list) * 1.0e-6 * sampling_rate)
 
     for signal, delay in zip(mcs_data, delay_us_list):
-        samples_delay = int(delay * 1.E-6 * sampling_rate)  # In samples.
+        samples_delay = int(delay * 1.0e-6 * sampling_rate)  # In samples.
         res = np.zeros(samples_delay)
         res = np.append(res, signal)
         if samples_delay < max_samples_delay:
@@ -236,8 +246,12 @@ def delay_ctrl(mcs_data: np.ndarray, delay_us_list: list[int],
     return multichannel_sound
 
 
-def echo_ctrl(mcs_data, delay_us_list: list[int], amplitude_list: list[float],
-              sampling_rate: int = def_fs) -> np.ndarray:
+def echo_ctrl(
+    mcs_data,
+    delay_us_list: list[int],
+    amplitude_list: list[float],
+    sampling_rate: int = def_fs,
+) -> np.ndarray:
     """
     Add echo to multichannel sound. The output data become longer. To each
     channel will be added it's copy with corresponding delay delay and
@@ -267,8 +281,12 @@ def echo_ctrl(mcs_data, delay_us_list: list[int], amplitude_list: list[float],
     return multichannel_sound
 
 
-def noise_ctrl(mcs_data: np.ndarray, noise_level_list: list[float],
-               sampling_rate: int = def_fs, seed: int = -1) -> np.ndarray:
+def noise_ctrl(
+    mcs_data: np.ndarray,
+    noise_level_list: list[float],
+    sampling_rate: int = def_fs,
+    seed: int = -1,
+) -> np.ndarray:
     """
     Apply noise to a multichannel sound.
 
@@ -299,8 +317,9 @@ def noise_ctrl(mcs_data: np.ndarray, noise_level_list: list[float],
     return multichannel_sound
 
 
-def pause_detect(mcs_data: np.ndarray,
-                 relative_level: list[float]) -> np.ndarray[int]:
+def pause_detect(
+    mcs_data: np.ndarray, relative_level: list[float]
+) -> np.ndarray[int]:
     """
     Detects pauses in a multichannel sound.
 
@@ -320,16 +339,17 @@ def pause_detect(mcs_data: np.ndarray,
     mask = np.zeros(mcs_data.shape)
 
     for i in range(0, mcs_data.shape[0]):
-        ll = r[i]*relative_level[i]
-        mask[i] = np.clip(a[i], a_min=ll, a_max=1.1*ll)
+        ll = r[i] * relative_level[i]
+        mask[i] = np.clip(a[i], a_min=ll, a_max=1.1 * ll)
         mask[i] -= ll
-        mask[i] /= 0.09*ll
+        mask[i] /= 0.09 * ll
         mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
     return mask
 
 
-def pause_shrink(mcs_data: np.ndarray, mask: np.ndarray[int],
-                 min_pause: list[int]) -> np.ndarray:
+def pause_shrink(
+    mcs_data: np.ndarray, mask: np.ndarray[int], min_pause: list[int]
+) -> np.ndarray:
     """
     Shrink pauses in multichannel sound.
 
@@ -372,7 +392,7 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
 
     Returns:
         list: A list of lists containing pairs of (index, length) of pauses for
-        each channel.  Length is in samples.  """
+        each channel.  Length is in samples."""
 
     chans = mask.shape[0]
     pause_list = []
@@ -398,8 +418,9 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
     return out_list
 
 
-def pause_set(mcs_data: np.ndarray, pause_map: list,
-              pause_sz: list[int]) -> np.ndarray:
+def pause_set(
+    mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]
+) -> np.ndarray:
     """
     Set pauses lengths in multichannel sound to selected values.
 
@@ -421,7 +442,7 @@ def pause_set(mcs_data: np.ndarray, pause_map: list,
             index = p[0] + p[1]
             delta = index - prev_index
             if delta > 0:
-                local_list.append(mcs_data[i][prev_index:prev_index + delta])
+                local_list.append(mcs_data[i][prev_index : prev_index + delta])
                 stub = np.zeros(pause_sz[i])
                 local_list.append(stub)
                 prev_index = index
@@ -489,8 +510,7 @@ def sum(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
         mcs_data2 (np.ndarray): The second multichannel sound signal.
 
     Returns:
-        np.ndarray: The sum of mcs_data1 and mcs_data2 signals.
-"""
+        np.ndarray: The sum of mcs_data1 and mcs_data2 signals."""
 
     out_data = mcs_data1 + mcs_data2
 
@@ -510,14 +530,17 @@ def side_by_side(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
         MCS.
     """
 
-    out_data = np.zeros((mcs_data1.shape[0] + mcs_data2.shape[0],
-                         mcs_data1.shape[1]), dtype=np.float32)
-    out_data[0:mcs_data1.shape[0], :] = mcs_data1
-    out_data[mcs_data1.shape[0]:, :] = mcs_data2
+    out_data = np.zeros(
+        (mcs_data1.shape[0] + mcs_data2.shape[0], mcs_data1.shape[1]),
+        dtype=np.float32,
+    )
+    out_data[0 : mcs_data1.shape[0], :] = mcs_data1
+    out_data[mcs_data1.shape[0] :, :] = mcs_data2
     return out_data.copy()
 
 
 #  Chaining class
+
 
 class WaChain:
     def __init__(self, mcs_data: np.ndarray = None, fs: int = -1):
@@ -535,10 +558,10 @@ class WaChain:
         """
 
         self.data = mcs_data  # Multichannel sound data field
-        self.path = ''  # Path to the sound file, from which the data was read.
+        self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs
 
-    def copy(self) -> 'WaChain':
+    def copy(self) -> "WaChain":
         """
         Creates a deep copy of the WaChain instance.
 
@@ -547,7 +570,7 @@ class WaChain:
         """
         return copy.deepcopy(self)
 
-    def put(self, mcs_data: np.ndarray, fs: int = -1) -> 'WaChain':
+    def put(self, mcs_data: np.ndarray, fs: int = -1) -> "WaChain":
         """
         Updates the multichannel sound data and sample rate of the WaChain
         instance.
@@ -573,8 +596,14 @@ class WaChain:
         """
         return self.data
 
-    def gen(self, f_list: list[int], t: float, fs: int = def_fs,
-            mode="sine", seed: int = -1) -> 'WaChain':
+    def gen(
+        self,
+        f_list: list[int],
+        t: float,
+        fs: int = def_fs,
+        mode="sine",
+        seed: int = -1,
+    ) -> "WaChain":
         """
         Generates a multichannel sound using the given frequency list,
         duration, and sampling rate.
@@ -599,7 +628,7 @@ class WaChain:
         self.sample_rate = fs
         return self
 
-    def rd(self, path: str) -> 'WaChain':
+    def rd(self, path: str) -> "WaChain":
         """
         Reads data from a file at the specified path and updates the sample
         rate and data attributes.
@@ -615,7 +644,7 @@ class WaChain:
         self.sample_rate, self.data = read(path)
         return self
 
-    def wr(self, path: str) -> 'WaChain':
+    def wr(self, path: str) -> "WaChain":
         """
         Writes the audio data to a file at the specified path.
 
@@ -630,7 +659,7 @@ class WaChain:
         write(path, self.data, self.sample_rate)
         return self
 
-    def amp(self, amplitude_list: list[float]) -> 'WaChain':
+    def amp(self, amplitude_list: list[float]) -> "WaChain":
         """
         Amplifies the audio data based on a custom amplitude control.
 
@@ -646,7 +675,7 @@ class WaChain:
         self.data = amplitude_ctrl(self.data, amplitude_list)
         return self
 
-    def dly(self, delay_list: list[int]) -> 'WaChain':
+    def dly(self, delay_list: list[int]) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
 
@@ -657,12 +686,12 @@ class WaChain:
         Returns:
             WaChain: The current instance of WaChain, allowing for method
             chaining.
-    """
+        """
 
         self.data = delay_ctrl(self.data, delay_list)
         return self
 
-    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1) -> 'WaChain':
+    def ns(self, noise_level_list, sampling_rate=def_fs, seed=-1) -> "WaChain":
         """
         Adds custom noise to the audio data.
 
@@ -679,12 +708,17 @@ class WaChain:
             chaining.
         """
 
-        self.data = noise_ctrl(self.data, noise_level_list,
-                               sampling_rate, seed)
+        self.data = noise_ctrl(
+            self.data, noise_level_list, sampling_rate, seed
+        )
         return self
 
-    def echo(self, delay_us_list: list[int], amplitude_list: list[float],
-             sampling_rate: int = def_fs) -> 'WaChain':
+    def echo(
+        self,
+        delay_us_list: list[int],
+        amplitude_list: list[float],
+        sampling_rate: int = def_fs,
+    ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
 
@@ -701,8 +735,9 @@ class WaChain:
             chaining.
         """
 
-        self.data = echo_ctrl(self.data, delay_us_list, amplitude_list,
-                              sampling_rate)
+        self.data = echo_ctrl(
+            self.data, delay_us_list, amplitude_list, sampling_rate
+        )
         return self
 
     def rms(self, last_index: int = -1, decimals: int = -1) -> list[float]:
@@ -736,22 +771,26 @@ class WaChain:
             * length_s: The duration of the audio data in seconds.
 
             If the data is not loaded, the `path`, `channels_count`, and
-            `length_s` values will be -1. Otherwise, 
+            `length_s` values will be -1. Otherwise,
             they will be populated with actual values.
 
         Returns:
         dict: A dictionary containing metadata about the audio data.
-    """
+        """
 
-        res = {"path": self.path, "channels_count": -1,
-               "sample_rate": self.sample_rate, "length_s": -1}
+        res = {
+            "path": self.path,
+            "channels_count": -1,
+            "sample_rate": self.sample_rate,
+            "length_s": -1,
+        }
         if self.data is not None:
             length = self.data.shape[1] / self.sample_rate
             res["channels_count"] = self.data.shape[0]
             res["length_s"] = length
         return res
 
-    def sum(self, mcs_data: np.ndarray) -> 'WaChain':
+    def sum(self, mcs_data: np.ndarray) -> "WaChain":
         """
         Sums two multichannel sound signals side by side.
 
@@ -766,7 +805,7 @@ class WaChain:
         self.data = sum(self.data, mcs_data)
         return self
 
-    def mrg(self) -> 'WaChain':
+    def mrg(self) -> "WaChain":
         """
         Merges all channels to single and returns mono MCS.
 
@@ -778,7 +817,7 @@ class WaChain:
         self.data = merge(self.data)
         return self
 
-    def splt(self, channels_count: int) -> 'WaChain':
+    def splt(self, channels_count: int) -> "WaChain":
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -795,7 +834,7 @@ class WaChain:
         self.data = split(self.data, channels_count)
         return self
 
-    def sbs(self, mcs_data: np.ndarray) -> 'WaChain':
+    def sbs(self, mcs_data: np.ndarray) -> "WaChain":
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -810,7 +849,7 @@ class WaChain:
         self.data = side_by_side(self.data, mcs_data)
         return self
 
-    def pdt(self, relative_level: list[float]) -> 'WaChain':
+    def pdt(self, relative_level: list[float]) -> "WaChain":
         """
         Detects pauses in a multichannel sound based on a custom
         relative level value.
@@ -832,7 +871,7 @@ class WaChain:
 error_mark = "Error: "
 success_mark = "Done."
 
-prog_name = os.path.basename(__file__).split('.')[0]
+prog_name = os.path.basename(__file__).split(".")[0]
 
 application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
@@ -857,8 +896,10 @@ def check_amp_list(ls: list[str]) -> None:
         try:
             float(n)
         except ValueError:
-            print(f"{error_mark}Amplitude list"
-                  f" contains non number element: <{n}>.")
+            print(
+                f"{error_mark}Amplitude list"
+                f" contains non number element: <{n}>."
+            )
             exit(3)
 
 
@@ -881,8 +922,10 @@ def check_delay_list(ls: list[str]) -> None:
         try:
             int(n)
         except ValueError:
-            print(f"{error_mark}Delays list"
-                  f" contains non integer element: <{n}>.")
+            print(
+                f"{error_mark}Delays list"
+                f" contains non integer element: <{n}>."
+            )
             exit(1)
 
 
@@ -895,7 +938,7 @@ def print_help_and_info():
 
 def chain_hdr(args):
     """
-    Processes the chain code from the given arguments and executes the 
+    Processes the chain code from the given arguments and executes the
     corresponding WaChain commands.
 
     Args:
@@ -905,13 +948,13 @@ def chain_hdr(args):
         None
 
     Raises:
-        SystemExit: Exits the program with a status code of 0 after 
+        SystemExit: Exits the program with a status code of 0 after
         successful execution.
     """
     if args.chain_code is None:
         return
     c = args.chain_code.strip()
-    print('chain:', c)
+    print("chain:", c)
     w = WaChain()
     cmd_prefix = "w."
     str(eval(cmd_prefix + c.strip()))
@@ -943,7 +986,7 @@ def is_file_creatable(fullpath: str) -> bool:
         Exception: If the file cannot be created.
         SystemExit: If the path does not exist.
     """
-        
+
     # Split the path
     path, _ = os.path.split(fullpath)
     isdir = os.path.isdir(path)
@@ -984,20 +1027,22 @@ def amplitude_hdr(args):
     if args.amplitude_list is None:
         return
 
-    amplitude_list = args.amplitude_list.split(',')
+    amplitude_list = args.amplitude_list.split(",")
     check_amp_list(amplitude_list)
 
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
     info = file_info(args.in_path)
-    if info['channels_count'] != len(float_list):
-        print(f"{error_mark}Amplitude list length <{len(float_list)}>"
-              " does not match number of channels. It should have"
-              f" <{info['channels_count']}> elements.")
+    if info["channels_count"] != len(float_list):
+        print(
+            f"{error_mark}Amplitude list length <{len(float_list)}>"
+            " does not match number of channels. It should have"
+            f" <{info['channels_count']}> elements."
+        )
         exit(2)
     _, mcs_data = read(args.in_path)
     res_data = amplitude_ctrl(mcs_data, float_list)
-    write(args.out_path, res_data, info['sample_rate'])
+    write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
     exit(0)
 
@@ -1008,20 +1053,22 @@ def noise_hdr(args):
     if args.noise_list is None:
         return
 
-    noise_list = args.noise_list.split(',')
+    noise_list = args.noise_list.split(",")
     check_amp_list(noise_list)
 
     float_list = [float(i) for i in noise_list]
     print(f"noise levels: {float_list}")
     info = file_info(args.in_path)
-    if info['channels_count'] != len(float_list):
-        print(f"{error_mark}Noise list length <{len(float_list)}>"
-              " does not match number of channels. It should have"
-              f" <{info['channels_count']}> elements.")
+    if info["channels_count"] != len(float_list):
+        print(
+            f"{error_mark}Noise list length <{len(float_list)}>"
+            " does not match number of channels. It should have"
+            f" <{info['channels_count']}> elements."
+        )
         exit(2)
     _, mcs_data = read(args.in_path)
     res_data = noise_ctrl(mcs_data, float_list)
-    write(args.out_path, res_data, info['sample_rate'])
+    write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
     exit(0)
 
@@ -1032,17 +1079,21 @@ def echo_hdr(args):
     if args.echo_list is None:
         return
 
-    lists = args.echo_list.split('/')
+    lists = args.echo_list.split("/")
     if len(lists) != 2:
-        print(f"{error_mark}Can't distinguish delay and amplitude"
-              f"lists <{args.echo_list}>.")
+        print(
+            f"{error_mark}Can't distinguish delay and amplitude"
+            f"lists <{args.echo_list}>."
+        )
         exit(1)
 
-    delay_list = lists[0].split(',')
-    amplitude_list = lists[1].split(',')
+    delay_list = lists[0].split(",")
+    amplitude_list = lists[1].split(",")
     if len(amplitude_list) != len(delay_list):
-        print(f"{error_mark}Can't delay and amplitude lists lengths"
-              f"differ <{args.echo_list}>.")
+        print(
+            f"{error_mark}Can't delay and amplitude lists lengths"
+            f"differ <{args.echo_list}>."
+        )
         exit(2)
 
     check_delay_list(delay_list)
@@ -1051,10 +1102,12 @@ def echo_hdr(args):
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
-    if info['channels_count'] != len(int_list):
-        print(f"{error_mark}Delay list length <{len(int_list)}>"
-              " does not match number of channels. It should have"
-              f" <{info['channels_count']}> elements.")
+    if info["channels_count"] != len(int_list):
+        print(
+            f"{error_mark}Delay list length <{len(int_list)}>"
+            " does not match number of channels. It should have"
+            f" <{info['channels_count']}> elements."
+        )
         exit(2)
 
     float_list = [float(i) for i in amplitude_list]
@@ -1063,7 +1116,7 @@ def echo_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = echo_ctrl(mcs_data, int_list, float_list)
 
-    write(args.out_path, res_data, info['sample_rate'])
+    write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
     exit(0)
 
@@ -1074,20 +1127,22 @@ def delay_hdr(args):
     if args.delay_list is None:
         return
 
-    delay_list = args.delay_list.split(',')
+    delay_list = args.delay_list.split(",")
     check_delay_list(delay_list)
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
-    if info['channels_count'] != len(int_list):
-        print(f"{error_mark}Delays list length <{len(int_list)}>"
-              " does not match number of channels. It should have"
-              f" <{info['channels_count']}> elements.")
+    if info["channels_count"] != len(int_list):
+        print(
+            f"{error_mark}Delays list length <{len(int_list)}>"
+            " does not match number of channels. It should have"
+            f" <{info['channels_count']}> elements."
+        )
         exit(2)
     _, mcs_data = read(args.in_path)
     res_data = delay_ctrl(mcs_data, int_list)
-    write(args.out_path, res_data, info['sample_rate'])
+    write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
     exit(0)
 
@@ -1097,38 +1152,64 @@ def parse_args():
 
     parser = argparse.ArgumentParser(
         prog=prog_name,
-        description='WAV audio files augmentation utility.',
-        epilog='Text at the bottom of help')
+        description="WAV audio files augmentation utility.",
+        epilog="Text at the bottom of help",
+    )
 
-    parser.add_argument('-i', dest='in_path', help='Input audio'
-                        ' file path.')
-    parser.add_argument('-o', dest='out_path', help='Output audio file path.')
-    parser.add_argument('--info', dest='info', action='store_true',
-                        help='Print info about input audio file.')
-    parser.add_argument('--amp', '-a', dest='amplitude_list',
-                        help='Change amplitude (volume)'
-                        ' of channels in audio file. Provide coefficients for'
-                        ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"')
-    parser.add_argument('--echo', '-e', dest='echo_list',
-                        help='Add echo to channels in audio file.'
-                        ' of channels in audio file. Provide coefficients'
-                        '  and delays (in microseconds) of '
-                        ' reflected signal for every channel, example:\n\t'
-                        '      -e "0.1, 0.2, 0.3, -1 / 100, 200, 0, 300"')
-    parser.add_argument('--dly', '-d', dest='delay_list', type=str,
-                        help='Add time delays'
-                        ' to channels in audio file. Provide delay for'
-                        ' every channel in microseconds, example:\n\t \
-                            -d "100, 200, 300, 0"')
-    parser.add_argument('--ns', '-n', dest='noise_list',
-                        help='Add normal noise'
-                        ' to channels in audio file. Provide coefficients for'
-                        ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"')
-    parser.add_argument('--chain', '-c', dest='chain_code', type=str,
-                        help='Execute chain of transformations.'
-                        ' example:\n\t'
-                        '-c "gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
-                        '.wr("./sines.wav")"')
+    parser.add_argument("-i", dest="in_path", help="Input audio" " file path.")
+    parser.add_argument("-o", dest="out_path", help="Output audio file path.")
+    parser.add_argument(
+        "--info",
+        dest="info",
+        action="store_true",
+        help="Print info about input audio file.",
+    )
+    parser.add_argument(
+        "--amp",
+        "-a",
+        dest="amplitude_list",
+        help="Change amplitude (volume)"
+        " of channels in audio file. Provide coefficients for"
+        ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"',
+    )
+    parser.add_argument(
+        "--echo",
+        "-e",
+        dest="echo_list",
+        help="Add echo to channels in audio file."
+        " of channels in audio file. Provide coefficients"
+        "  and delays (in microseconds) of "
+        " reflected signal for every channel, example:\n\t"
+        '      -e "0.1, 0.2, 0.3, -1 / 100, 200, 0, 300"',
+    )
+    parser.add_argument(
+        "--dly",
+        "-d",
+        dest="delay_list",
+        type=str,
+        help="Add time delays"
+        " to channels in audio file. Provide delay for"
+        ' every channel in microseconds, example:\n\t \
+                            -d "100, 200, 300, 0"',
+    )
+    parser.add_argument(
+        "--ns",
+        "-n",
+        dest="noise_list",
+        help="Add normal noise"
+        " to channels in audio file. Provide coefficients for"
+        ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"',
+    )
+    parser.add_argument(
+        "--chain",
+        "-c",
+        dest="chain_code",
+        type=str,
+        help="Execute chain of transformations."
+        " example:\n\t"
+        '-c "gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
+        '.wr("./sines.wav")"',
+    )
 
     return parser.parse_args()
 
@@ -1147,5 +1228,5 @@ def main():
     echo_hdr(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
