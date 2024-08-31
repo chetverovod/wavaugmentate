@@ -408,7 +408,7 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "Error: Amplitude list contains non number element: < abc>."
+    full_ref = f"{wau.error_mark}Amplitude list contains non number element: < abc>."
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -486,7 +486,7 @@ def test_wavaugmentate_delay_option_fail_case1():
     s = str(res.stdout)
     out = shrink(s)
     print("out:", out)
-    full_ref = "Error: Delays list contains non integer element: <389.1>.\n"
+    full_ref = f"{wau.error_mark}Delays list contains non integer element: <389.1>.\n"
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
@@ -508,7 +508,8 @@ def test_wavaugmentate_delay_option_fail_case2():
     out = shrink(s)
     print("out:", out)
     full_ref = "\ndelays: [100, 200, 300]\n\
-Error: Delays list length <3> does not match number of channels. It should have <4> elements.\n"
+Error: Delays list length <3> does not match number of\
+ channels. It should have <4> elements.\n"
     ref = shrink(full_ref)
     print("ref:", ref)
     assert out == ref
