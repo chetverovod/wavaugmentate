@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
-"""This module does multichannel audio flies augmentation."""
+"""
+This module does multichannel audio flies augmentation.
+"""
 
 import argparse
 import copy
 from pathlib import Path
 import os
+import sys
 import random
 from scipy.io import wavfile
 import numpy as np
@@ -104,7 +107,7 @@ def generate(
         for f in frequency_list:
             if f > 300 or f < 60:
                 print(error_mark + "Use basic tone from interval 600..300 Hz")
-                exit(1)
+                sys.exit(1)
             # Formants:
             FBT = random.randint(f, 300)  # 60–300 Гц
             F1 = random.randint(2 * FBT, 850)  # 150–850 Гц
@@ -899,7 +902,7 @@ def check_amp_list(ls: list[str]) -> None:
                 f"{error_mark}Amplitude list"
                 f" contains non number element: <{n}>."
             )
-            exit(3)
+            sys.exit(3)
 
 
 def check_delay_list(ls: list[str]) -> None:
@@ -925,14 +928,14 @@ def check_delay_list(ls: list[str]) -> None:
                 f"{error_mark}Delays list"
                 f" contains non integer element: <{n}>."
             )
-            exit(1)
+            sys.exit(1)
 
 
 def print_help_and_info():
     """Function prints info about application"""
 
     print(application_info)
-    exit(0)
+    sys.exit(0)
 
 
 def chain_hdr(args):
@@ -959,7 +962,7 @@ def chain_hdr(args):
     str(eval(cmd_prefix + c.strip()))
     print(success_mark)
     w.info()
-    exit(0)
+    sys.exit(0)
 
 
 def input_path_hdr(args):
@@ -968,7 +971,7 @@ def input_path_hdr(args):
         print_help_and_info()
     if not os.path.exists(args.in_path) or not os.path.isfile(args.in_path):
         print(f"{error_mark}Input file <{args.in_path}> not found.")
-        exit(1)
+        sys.exit(1)
 
 
 def is_file_creatable(fullpath: str) -> bool:
@@ -997,7 +1000,7 @@ def is_file_creatable(fullpath: str) -> bool:
             raise
     else:
         print(f"{error_mark}Path <{path}> is not exists.")
-        exit(1)
+        sys.exit(1)
 
     return True
 
@@ -1007,7 +1010,7 @@ def output_path_hdr(args):
 
     if not is_file_creatable(args.out_path):
         print(f"{error_mark}Can't create file <{args.out_path}>.")
-        exit(1)
+        sys.exit(1)
 
 
 def file_info_hdr(args):
@@ -1017,7 +1020,7 @@ def file_info_hdr(args):
     if args.info:
         for key, value in file_info(args.path).items():
             print(f"{key}: {value}")
-        exit(0)
+        sys.exit(0)
 
 
 def amplitude_hdr(args):
@@ -1038,12 +1041,12 @@ def amplitude_hdr(args):
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
-        exit(2)
+        sys.exit(2)
     _, mcs_data = read(args.in_path)
     res_data = amplitude_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
-    exit(0)
+    sys.exit(0)
 
 
 def noise_hdr(args):
@@ -1064,12 +1067,12 @@ def noise_hdr(args):
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
-        exit(2)
+        sys.exit(2)
     _, mcs_data = read(args.in_path)
     res_data = noise_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
-    exit(0)
+    sys.exit(0)
 
 
 def echo_hdr(args):
@@ -1084,7 +1087,7 @@ def echo_hdr(args):
             f"{error_mark}Can't distinguish delay and amplitude"
             f"lists <{args.echo_list}>."
         )
-        exit(1)
+        sys.exit(1)
 
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
@@ -1093,7 +1096,7 @@ def echo_hdr(args):
             f"{error_mark}Can't delay and amplitude lists lengths"
             f"differ <{args.echo_list}>."
         )
-        exit(2)
+        sys.exit(2)
 
     check_delay_list(delay_list)
     check_amp_list(amplitude_list)
@@ -1107,7 +1110,7 @@ def echo_hdr(args):
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
-        exit(2)
+        sys.exit(2)
 
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
@@ -1117,7 +1120,7 @@ def echo_hdr(args):
 
     write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
-    exit(0)
+    sys.exit(0)
 
 
 def delay_hdr(args):
@@ -1138,12 +1141,12 @@ def delay_hdr(args):
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
-        exit(2)
+        sys.exit(2)
     _, mcs_data = read(args.in_path)
     res_data = delay_ctrl(mcs_data, int_list)
     write(args.out_path, res_data, info["sample_rate"])
     print(success_mark)
-    exit(0)
+    sys.exit(0)
 
 
 def parse_args():
