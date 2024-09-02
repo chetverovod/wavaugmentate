@@ -873,3 +873,27 @@ def test_pause_set():
     for r, ref in zip(r, ref):
         print(r)
         assert abs(r - ref) < 0.001
+
+
+def test_chain_add_chain():
+    test_sound_1 = wau.generate([300], t, fs)
+    w = wau.WaChain()
+    
+    c = "w.gen([1000], 5)"
+    """
+        .amp([0.3])
+        .sbs(test_sound_1)
+        .wr(test_sound_1_file)
+        .rms(decimals=3)
+    )
+    """
+    w.achn([c])
+    print(c)
+    w.eval()
+    ref_value = [0.212, 0.707]
+    for r, ref in zip(r, ref_value):
+        print(r)
+        assert abs(r - ref) < 0.001
+
+
+

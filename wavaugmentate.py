@@ -18,6 +18,32 @@ DEF_FS = 44100
 
 random_noise_gen = np.random.default_rng()
 
+class Mcs:
+    """
+    Class provides support of  multichannel sound
+    data.
+    """
+
+    def __init__(self, mcs_data: np.ndarray = None, fs: int = -1):
+        """
+        Initializes a new instance of the Mcs class.
+
+        Args:
+            mcs_data (np.ndarray, optional): The multichannel sound data.
+            Defaults to None.
+            fs (int, optional): The sample rate of the sound data. Defaults
+            to -1.
+
+        Returns:
+            None
+        """
+
+        self.data = mcs_data  # Multichannel sound data field.
+        self.path = ""  # Path to the sound file, from which the data was read.
+        self.sample_rate = fs  # Sampling frequency, Hz.
+
+      
+       
 
 def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
     """
@@ -109,15 +135,15 @@ def generate(
                 print(error_mark + "Use basic tone from interval 600..300 Hz")
                 sys.exit(1)
             # Formants:
-            FBT = random.randint(f, 300)  # 60–300 Гц
-            F1 = random.randint(2 * FBT, 850)  # 150–850 Гц
-            F2 = random.randint(3 * FBT, 2500)  # 500–2500 Гц
-            F3 = random.randint(4 * FBT, 3500)  # 1500–3500 Гц
-            F4 = random.randint(5 * FBT, 4500)  # 2500–4500 Гц
-            F = [FBT, F1, F2, F3, F4]
+            fbt = random.randint(f, 300)  # 60–300 Гц
+            frm1 = random.randint(2 * fbt, 850)  # 150–850 Гц
+            frm2 = random.randint(3 * fbt, 2500)  # 500–2500 Гц
+            frm3 = random.randint(4 * fbt, 3500)  # 1500–3500 Гц
+            frm4 = random.randint(5 * fbt, 4500)  # 2500–4500 Гц
+            freq_list = [fbt, frm1, frm2, frm3, frm4]
             signal = 0
             amp = 1
-            for frm in F:
+            for frm in freq_list:
                 signal += amp * np.sin(2 * np.pi * frm * samples)
                 amp -= 0.1
             p = np.max(np.abs(signal))
@@ -565,7 +591,8 @@ class WaChain:
 
         self.data = mcs_data  # Multichannel sound data field
         self.path = ""  # Path to the sound file, from which the data was read.
-        self.sample_rate = fs
+        self.sample_rate = fs  # Sampling frequency, Hz.
+        self.chains=[]  # List of chains.
 
     def copy(self) -> "WaChain":
         """
@@ -868,6 +895,39 @@ class WaChain:
         self.data = pause_detect(self.data, relative_level)
         return self
 
+    def achn(self, list_of_chains: list[str]) -> "WaChain":
+        """
+        Add chain to list of chains.
+
+        Args:
+            list_of_chains (list[str]): A list of chains to add.
+
+        Returns:
+            WaChain: The updated WaChain instance with added chains.
+            result, allowing for method chaining.
+        """
+
+        for c in list_of_chains:
+            self.chains.append( c.strip())
+        return self
+
+    def evl(self) -> "WaChain":
+        """
+        Add chain to list of chains.
+
+        Args:
+            list_of_chains (list[str]): A list of chains to add.
+
+        Returns:
+            WaChain: The updated WaChain instance with added chains.
+            result, allowing for method chaining.
+        """
+        str(eval(cmd_prefix + c.strip())) # It is need for chain commands.
+
+        for s in list_of_chains:
+            self.chains.append(s)
+        return self
+
 
 # CLI interface functions
 error_mark = "Error: "
@@ -959,7 +1019,7 @@ def chain_hdr(args):
     print("chain:", c)
     w = WaChain()
     cmd_prefix = "w."
-    str(eval(cmd_prefix + c.strip())) # It is neade for chaine commands.
+    str(eval(cmd_prefix + c.strip())) # It is need for chain commands.
     print(success_mark)
     w.info()
     sys.exit(0)
