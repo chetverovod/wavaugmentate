@@ -911,9 +911,9 @@ class WaChain:
             self.chains.append( c.strip())
         return self
 
-    def evl(self) -> "WaChain":
+    def eval(self) -> "WaChain":
         """
-        Add chain to list of chains.
+        Evaluate list of chains.
 
         Args:
             list_of_chains (list[str]): A list of chains to add.
@@ -922,11 +922,15 @@ class WaChain:
             WaChain: The updated WaChain instance with added chains.
             result, allowing for method chaining.
         """
-        str(eval(cmd_prefix + c.strip())) # It is need for chain commands.
 
-        for s in list_of_chains:
-            self.chains.append(s)
-        return self
+        res= []
+        w = self.copy()    
+        cmd_prefix = 'w.' 
+        for c in self.chains:
+            cmd_line = cmd_prefix + c
+            print('cmd_line', cmd_line)
+            res.append( str(eval(cmd_line))) # It is need for chain commands.
+        return res
 
 
 # CLI interface functions
