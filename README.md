@@ -106,5 +106,6 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |16|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
 |17|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
 |18|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
-|19|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. |  
+|19|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. | 
+ 
 
