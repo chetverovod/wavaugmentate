@@ -959,7 +959,7 @@ def chain_hdr(args):
     print("chain:", c)
     w = WaChain()
     cmd_prefix = "w."
-    str(eval(cmd_prefix + c.strip()))
+    str(eval(cmd_prefix + c.strip())) # It is neade for chaine commands.
     print(success_mark)
     w.info()
     sys.exit(0)
@@ -1218,8 +1218,8 @@ def parse_args():
 
 def main():
     """CLI arguments parsing."""
-    #if sys.version_info[0:2] != (3, 11):
-    #raise Exception('Requires python 3.11')
+    if sys.version_info[0:2] != (3, 11):
+        raise Exception('Requires python 3.11')
     args = parse_args()
     chain_hdr(args)
     input_path_hdr(args)
