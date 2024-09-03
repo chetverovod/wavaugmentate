@@ -502,18 +502,60 @@ def test_wavaugmentate_noise_option():
 
 
 def test_wavaugmentate_greeting():
+    """
+    Test function to verify the functionality of the greeting option in the
+    command line interface.
+
+    This function runs the command with the greeting option and asserts that
+    the output matches the application info.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [PROG_NAME]
     res = sp.run(cmd, capture_output=True, text=True)
     assert res.stdout == wau.application_info + "\n"
 
 
 def test_wavaugmentate_info_option():
+    """
+    Test function to verify the functionality of the `info` option in the
+    command line interface.
+
+    This function runs the command with the `info` option and asserts that
+    the output matches the application info.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     cmd = [PROG_NAME]
     res = sp.run(cmd, capture_output=True, text=True)
     assert res.stdout == wau.application_info + "\n"
 
 
 def test_wavaugmentate_amplitude_option():
+    """
+    Test function to verify the functionality of the `amplitude` option in the
+    command line interface.
+
+    This function runs the command with the `amplitude` option and asserts that
+    the output matches the expected output. It also checks that the output file
+    exists and has the correct shape and RMS values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -546,6 +588,22 @@ def test_wavaugmentate_amplitude_option():
 
 
 def test_wavaugmentate_amplitude_option_fail_case1():
+    """
+    Test function to verify the functionality of the `amplitude` option in the
+    command line interface when a non-numeric value is provided in the 
+    amplitude list.
+
+    This function runs the command with the `amplitude` option and asserts that
+    the output matches the expected error message. It checks that the output
+    file does not exist.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -568,6 +626,21 @@ def test_wavaugmentate_amplitude_option_fail_case1():
 
 
 def test_wavaugmentate_amplitude_option_fail_case2():
+    """
+    Test function to verify the functionality of the `amplitude` option in the
+    command line interface when the amplitude list length does not match the
+    number of channels.
+
+    This function runs the command with the `amplitude` option and asserts that
+    the output matches the expected error message.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -591,6 +664,21 @@ def test_wavaugmentate_amplitude_option_fail_case2():
 
 
 def test_wavaugmentate_delay_option():
+    """
+    Test function to verify the functionality of the `delay` option in the
+    command line interface.
+
+    This function runs the command with the `delay` option and asserts that
+    the output matches the expected output. It also checks that the output
+    file exists and has the correct shape and RMS values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -625,6 +713,21 @@ def test_wavaugmentate_delay_option():
 
 
 def test_wavaugmentate_delay_option_fail_case1():
+    """
+    Test function to verify the functionality of the `delay` option in the
+    command line interface when a non-integer value is provided in the
+    delays list.
+
+    This function runs the command with the `delay` option and asserts that
+    the output matches the expected error message.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -647,6 +750,21 @@ def test_wavaugmentate_delay_option_fail_case1():
 
 
 def test_wavaugmentate_delay_option_fail_case2():
+    """
+    Test function to verify the functionality of the `delay` option in the
+    command line interface when the delays list length does not match the
+    number of channels.
+
+    This function runs the command with the `delay` option and asserts that
+    the output matches the expected error message.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     cmd = [
         PROG_NAME,
         "-i",
@@ -670,6 +788,19 @@ def test_wavaugmentate_delay_option_fail_case2():
 
 
 def test_wachain_controls():
+    """
+    Test function to verify the functionality of the WaChain class.
+
+    This function tests the amp and dly methods of the WaChain class by
+    applying amplitude and delay controls to a generated multichannel sound.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate(f_list, t, fs)
     w = wau.WaChain(test_sound_1)
     print(w.data)
@@ -689,6 +820,20 @@ def test_wachain_controls():
 
 
 def test_wachain_wr_rd():
+    """
+    Test function to verify the functionality of the WaChain class.
+
+    This function tests the wr and rd methods of the WaChain class by
+    generating a multichannel sound, writing it to a file, reading it back,
+    and comparing the original and read sound data.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    
     w = wau.WaChain()
     if os.path.exists(TEST_SOUND_1_FILE):
         os.remove(TEST_SOUND_1_FILE)
@@ -701,6 +846,31 @@ def test_wachain_wr_rd():
 
 
 def test_wachain_echo():
+    """
+    Test function to verify the functionality of the `echo` method in the
+    WaChain class.
+
+    This function generates a multichannel sound using the `gen` method of the
+    WaChain class with the given frequency list, duration, and sample rate. It
+    then applies the `echo` method to the generated sound with the given delay
+    list and amplitude list. Finally, it calculates the root mean square (RMS)
+    values of the echoed sound and compares them to the expected values in the
+    reference list.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    d_list = [1e6, 2e6, 3e6, 0]
+    a_list = [-0.3, -0.4, -0.5, 0]
+    w = wau.WaChain()
+    w.gen(f_list, t, fs).echo(d_list, a_list)
+    rms_list = w.rms(decimals=3)
+    reference_list = [0.437, 0.461, 0.515, 0.559]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     w = wau.WaChain()
@@ -712,6 +882,24 @@ def test_wachain_echo():
 
 
 def test_wachain_noise():
+    """
+    Test function to verify the functionality of the `ns` method in the
+    `WaChain` class.
+    
+    This function generates a multichannel sound using the `gen` method of the
+    `WaChain` class with the given frequency list, duration, and sample rate. It
+    then applies the `ns` method to the generated sound with the given noise
+    level list. Finally, it calculates the root mean square (RMS) values of the
+    noise-controlled sound and compares them to the expected values in the
+    reference list.
+    
+    Args:
+        None
+
+    Returns:
+        None
+    """  
+    
     n_list = [1, 0.2, 0.3, 0]
 
     w = wau.WaChain()
@@ -724,6 +912,22 @@ def test_wachain_noise():
 
 
 def test_wachain_info():
+    """
+    Test the `info` method of the `WaChain` class.
+
+    This function creates a `WaChain` object, generates a sound file with the
+    given frequency list, duration, and sample rate, and writes it to a file.
+    It then calls the `info` method of the `WaChain` object and prints the
+    result.  Finally, it asserts that the returned dictionary matches the
+    expected reference dictionary.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     w = wau.WaChain()
     if os.path.exists(TEST_SOUND_1_FILE):
         os.remove(TEST_SOUND_1_FILE)
@@ -796,6 +1000,16 @@ def test_wachain_rn_aug_rd():
 
 
 def test_wachain_chain_class():
+    """
+    Tests the functionality of the WaChain class by generating a multichannel
+    sound, computing its RMS values, and comparing them to the expected values.
+    
+    Args:
+        None
+
+    Returns:
+        None
+    """
     w = wau.WaChain()
     cmd_prefix = "w."
     cmd = "gen(f_list, t, fs).rms()"
