@@ -224,7 +224,9 @@ def amplitude_ctrl(
     amplitude_deviation_list: list[float]=None, seed: int = -1
 ) -> np.ndarray:
     """
-    Apply random amplitude control to a multichannel sound.
+    Apply amplitude control to a multichannel sound. If
+    amplitude_deviation_list is defined, you can get diffferent
+    versions of tha same mcs data. 
 
     Args:
         mcs_data (np.ndarray): The multichannel sound data.
@@ -243,7 +245,7 @@ def amplitude_ctrl(
     if amplitude_deviation_list is not None:
         a=[]
         for amplitude, dev in zip(amplitude_list, amplitude_deviation_list):
-            if dev >= 0:
+            if dev > 0:
                 left = amplitude - dev
                 right = amplitude + dev
                 if seed != -1:
@@ -260,8 +262,8 @@ def amplitude_ctrl(
 
 
 def delay_ctrl(
-    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = DEF_FS
-) -> np.ndarray:
+    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = DEF_FS,
+    delay_deviation_list: list[int] = None, seed: int = -1) -> np.ndarray:
     """
     Add delays of channels of multichannel sound. Output data become longer.
     Values of delay will be converted to count of samples.
@@ -276,12 +278,24 @@ def delay_ctrl(
     Returns:
         np.ndarray: The delayed multichannel sound.
     """
+    d = delay_us_list
+    if delay_deviation_list is not None:
+        d=[]
+        for delay, dev in zip(delay_us_list, delay_deviation_list):
+            if dev > 0:
+                left = delay - dev
+                right = delay + dev
+                if seed != -1:
+                    local_ng = np.random.default_rng(seed=seed)
+                    d.append(local_ng.integers(left, right))
+                else:
+                    d.append(random_noise_gen.integers(left, right))
 
     channels = []
     # In samples.
-    max_samples_delay = int(max(delay_us_list) * 1.0e-6 * sampling_rate)
+    max_samples_delay = int(max(d) * 1.0e-6 * sampling_rate)
 
-    for signal, delay in zip(mcs_data, delay_us_list):
+    for signal, delay in zip(mcs_data, d):
         samples_delay = int(delay * 1.0e-6 * sampling_rate)  # In samples.
         res = np.zeros(samples_delay)
         res = np.append(res, signal)
@@ -290,7 +304,6 @@ def delay_ctrl(
         channels.append(res)
         multichannel_sound = np.array(channels).copy()
     return multichannel_sound
-
 
 def echo_ctrl(
     mcs_data,

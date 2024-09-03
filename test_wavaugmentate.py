@@ -223,6 +223,41 @@ def test_delay_ctrl():
         assert abs(r - ref) < 0.001
 
 
+def test_rn_delay_ctrl():
+    """
+    Test function to verify the functionality of the `delay_ctrl`
+    function for random delays.
+
+    This function generates a multichannel sound using the `generate`
+    function from the `ma` module with the given `f_list`, `t`, and `fs`
+    parameters.  It then applies delay control to the generated sound using the
+    `delay_ctrl` function from the `ma` module with the given
+    `test_sound_1` and `delay_list` parameters.  It asserts that the shape of
+    the delayed multichannel sound is equal to `(4, 220500)`.  It writes the
+    delayed multichannel sound to a file using the `write` function from
+    the `ma` module with the given file path and `fs` parameters.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    delay_list = [100, 200, 300, 40]
+    delay_deviation_list = [10, 20, 30, 15]
+    test_dc = wau.delay_ctrl(test_sound_1, delay_list, fs, delay_deviation_list, seed = 42)
+    assert test_dc.shape == (4, 220512)
+    wau.write(test_sound_1_delay_file, test_dc, fs)
+    for ch in test_dc:
+        assert ch.shape[0] == 220512
+    rms_list = wau.rms(test_dc, last_index=24, decimals=3)
+    reference_list = [0.511, 0.627, 0.456, 0.699]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
+
+
 def test_echo_ctrl():
     """
     Test function to verify the functionality of the `echo_ctrl`
