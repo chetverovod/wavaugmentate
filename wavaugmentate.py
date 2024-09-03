@@ -247,9 +247,6 @@ def amplitude_ctrl(
         for amplitude, dev in zip(amplitude_list, amplitude_deviation_list):
             if dev > 0:
                 left = amplitude - dev
-                if left < 0:
-                    print(f"{error_mark} deviation value {dev} can give negative amplitude.")
-                    sys.exit(1)
                 right = amplitude + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
@@ -313,11 +310,15 @@ def delay_ctrl(
         multichannel_sound = np.array(channels).copy()
     return multichannel_sound
 
+
 def echo_ctrl(
     mcs_data,
     delay_us_list: list[int],
     amplitude_list: list[float],
     sampling_rate: int = DEF_FS,
+    delay_deviation_list: list[int] = None,
+    amplitude_deviation_list: list[float] = None,
+    seed: int = -1
 ) -> np.ndarray:
     """
     Add echo to multichannel sound. The output data become longer. To each
@@ -337,8 +338,8 @@ def echo_ctrl(
         np.ndarray: The echoed multichannel sound.
     """
 
-    a = amplitude_ctrl(mcs_data, amplitude_list)
-    e = delay_ctrl(a, delay_us_list, sampling_rate)
+    a = amplitude_ctrl(mcs_data, amplitude_list, amplitude_deviation_list, seed=seed)
+    e = delay_ctrl(a, delay_us_list, sampling_rate, delay_deviation_list, seed=seed)
     channels = []
     for d in mcs_data:
         zl = e.shape[1] - d.shape[0]
@@ -346,7 +347,6 @@ def echo_ctrl(
     multichannel_sound = np.array(channels).copy() + e
 
     return multichannel_sound
-
 
 def noise_ctrl(
     mcs_data: np.ndarray,

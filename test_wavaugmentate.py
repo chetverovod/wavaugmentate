@@ -178,9 +178,9 @@ def test_rn_amplitude_ctrl():
 
     test_sound_1 = wau.generate(f_list, t, fs)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
-    deviation_list = [0.1, 0.1, 0.1, 0.1]
+    amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
     test_ac = wau.amplitude_ctrl(test_sound_1,
-                                    amplitude_list, deviation_list, seed=42)
+                                    amplitude_list, amplitude_deviation_list, seed=42)
     assert test_ac.shape == (4, 220500)
     wau.write(test_sound_1_ac_file, test_ac, fs)
     r_list = wau.rms(test_ac, decimals=3) 
@@ -287,6 +287,43 @@ def test_echo_ctrl():
     wau.write(test_sound_1_echo_file, test_ec, fs)
     rms_list = wau.rms(test_ec, decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
+
+
+def test_rn_echo_ctrl():
+    """
+    Test function to verify the functionality of the `echo_ctrl`
+    function.
+
+    This function generates a multichannel sound using the `generate`
+    function from the `ma` module with the given `f_list`, `t`, and `fs`
+    parameters.  It then applies echo control to the generated sound using the
+    `echo_ctrl` function from the `ma` module with the given
+    `test_sound_1`, `delay_us_list`, and `amplitude_list` parameters.
+    It writes the echoed multichannel sound to a file using the `write`
+    function from the `ma` module with the given file path and `fs` parameters.
+    Finally, it calculates the root mean square (RMS) values of the echoed
+    sound and compares them to the expected values in the `reference_list`.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    delay_list = [1e6, 2e6, 3e6, 100]
+    amplitude_list = [-0.3, -0.4, -0.5, 0.1]
+    amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
+    delay_deviation_list = [10, 20, 30, 5]
+    test_ec = wau.echo_ctrl(test_sound_1, delay_list, amplitude_list, fs,
+                            delay_deviation_list,amplitude_deviation_list,
+                            seed=42)
+    wau.write(test_sound_1_echo_file, test_ec, fs)
+    rms_list = wau.rms(test_ec, decimals=3)
+    reference_list = [0.457, 0.471, 0.536, 0.52]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
