@@ -607,7 +607,7 @@ def test_wavaugmentate_delay_option_fail_case2():
     assert out == ref
 
 
-def test_WaChain_controls():
+def test_wachain_controls():
     test_sound_1 = wau.generate(f_list, t, fs)
     w = wau.WaChain(test_sound_1)
     print(w.data)
@@ -626,7 +626,7 @@ def test_WaChain_controls():
     assert np.array_equal(res1, res2)
 
 
-def test_WaChain_wr_rd():
+def test_wachain_wr_rd():
     w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
@@ -638,7 +638,7 @@ def test_WaChain_wr_rd():
     assert np.array_equal(w.data, r.data)
 
 
-def test_WaChain_echo():
+def test_wachain_echo():
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     w = wau.WaChain()
@@ -649,7 +649,7 @@ def test_WaChain_echo():
         assert abs(r - ref) < 0.001
 
 
-def test_WaChain_noise():
+def test_wachain_noise():
     n_list = [1, 0.2, 0.3, 0]
 
     w = wau.WaChain()
@@ -661,7 +661,7 @@ def test_WaChain_noise():
         assert abs(r - ref) < 0.01
 
 
-def test_WaChain_info():
+def test_wachain_info():
     w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
@@ -677,7 +677,7 @@ def test_WaChain_info():
     assert w.info() == ref
 
 #  Test not finished.
-def test_WaChain_rn_rd():
+def test_wachain_rn_rd():
     """Test augmentation on the fly."""
 
     w = wau.WaChain()
@@ -700,7 +700,38 @@ def test_WaChain_rn_rd():
     
     # !!! assert np.array_equal(w.data, b.data)
 
-def test_WaChain_chain_class():
+def test_wachain_rn_aug_rd():
+    """Test augmentation on the fly."""
+
+    w = wau.WaChain()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+
+    a = wau.WaChain()
+    a.rd(test_sound_1_file)
+
+    b = wau.WaChain()
+    b.rd(test_sound_1_file)
+
+    assert np.array_equal(w.data, a.data)
+    assert np.array_equal(w.data, b.data)
+
+    a.amp([1, 0.7, 0.5, 0.3])    
+    b.amp([1, 0.7, 0.5, 0.3])    
+    assert np.array_equal(a.data, b.data)
+
+    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)    
+    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)    
+    assert np.array_equal(a.data, b.data)
+
+    for _ in range(10):
+        a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        assert not np.array_equal(a.data, b.data)
+
+
+def test_wachain_chain_class():
     w = wau.WaChain()
     cmd_prefix = "w."
     cmd = "gen(f_list, t, fs).rms()"
@@ -1001,7 +1032,7 @@ def test_chain_add_chain():
     ref_value = [[0.212],[0.106]]
     for r, ref in zip(r, ref_value):
         print(r)
-        assert  abs(r[0] -  ref[0]) < 0.001
+        assert  abs(r[0] - ref[0]) < 0.001
 
 
 

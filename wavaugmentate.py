@@ -769,10 +769,11 @@ class WaChain:
         """
 
         self.data = amplitude_ctrl(self.data, amplitude_list,
-                                    amplitude_deviation_list, seed)
+                                   amplitude_deviation_list, seed)
         return self
 
-    def dly(self, delay_list: list[int], delay_deviation_list: list[int]=None,
+    def dly(self, delay_list: list[int],
+            delay_deviation_list: list[int] = None,
             seed: int = -1) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
