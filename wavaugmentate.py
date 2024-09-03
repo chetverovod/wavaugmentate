@@ -227,7 +227,7 @@ def amplitude_ctrl(
 ) -> np.ndarray:
     """
     Apply amplitude control to a multichannel sound. If
-    amplitude_deviation_list is defined, you can get diffferent
+    amplitude_deviation_list is defined, you can get different
     versions of tha same mcs data.
 
     Args:
@@ -280,8 +280,8 @@ def delay_ctrl(
         apply to each channel. Each value should be a positive integer.
         sampling_rate (int): The sampling rate of the
         sound data. Defaults to def_fs.
-        delay_deviation_list (list[int]): If exists, the list of delay devitions
-        makes delays uniformly distributed.
+        delay_deviation_list (list[int]): If exists, the list of delay
+        deviations makes delays uniformly distributed.
         seed (int): If exists seeds random generator.
 
     Returns:
@@ -295,7 +295,8 @@ def delay_ctrl(
                 left = delay - dev
                 if left < 0:
                     print(
-                        f"{error_mark} deviation value {dev} can give negative delay."
+                        f"{error_mark}" 
+                        f"deviation value {dev} can give negative delay."
                     )
                     sys.exit(1)
                 right = delay + dev
@@ -479,11 +480,11 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
         list: A list of lists containing pairs of (index, length) of pauses for
         each channel.  Length is in samples."""
 
-    chans = mask.shape[0]
+    n_channels = mask.shape[0]
     pause_list = []
     out_list = []
     index = 0
-    for i in range(0, chans):
+    for i in range(0, n_channels):
         zero_count = 0
         prev_val = 1
         for j in range(0, mask.shape[1]):
@@ -1026,8 +1027,8 @@ class WaChain:
         """
 
         res = []
-        w = self.copy()
-        cmd_prefix = "w."
+        _ = self.copy()
+        cmd_prefix = "_."
         for c in self.chains:
             cmd_line = cmd_prefix + c
             print("cmd_line", cmd_line)

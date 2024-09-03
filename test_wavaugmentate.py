@@ -816,6 +816,17 @@ def test_README_examples():
         "./sound_delayed.wav"
     )
 
+    # How to make 100 augmented files (amplitude and delay) from 1 sound file
+    v = wau.WaChain()
+    v.rd(test_sound_1_file)
+    result = []
+    for _ in range(100):
+        b = v.copy()
+        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
+            [100, 200, 300, 400], [30, 40, 50, 60]
+        )
+        result.append(b.get())
+
 
 def test_sum():
     test_sound_1 = wau.generate([100], t, fs)
@@ -937,6 +948,18 @@ def test_pause_detect():
 
 
 def test_chain_pause_detect():
+    """
+    Tests the functionality of the WaChain class by creating two instances,
+    generating a multichannel sound, copying the sound, applying pause
+    detection, and then asserting that the RMS values of the resulting sound
+    are within a certain tolerance of the reference values.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     w = wau.WaChain()
     w1 = wau.WaChain()
     w.gen([100, 400], t, fs)
@@ -1045,4 +1068,3 @@ def test_chain_add_chain():
     for r, ref in zip(r, ref_value):
         print(r)
         assert abs(r[0] - ref[0]) < 0.001
-
