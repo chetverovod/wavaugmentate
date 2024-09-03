@@ -885,10 +885,10 @@ def test_chain_add_chain():
     print(c2)
     r = w.eval()
     print('r', r)
-    ref_value = ['[0.212]', '[0.106]']
+    ref_value = [[0.212],[0.106]]
     for r, ref in zip(r, ref_value):
         print(r)
-        assert r  ==  ref
+        assert  abs(r[0] -  ref[0]) < 0.001
 
 
 

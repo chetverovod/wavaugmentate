@@ -929,7 +929,7 @@ class WaChain:
         for c in self.chains:
             cmd_line = cmd_prefix + c
             print('cmd_line', cmd_line)
-            res.append( str(eval(cmd_line))) # It is need for chain commands.
+            res.append( eval(cmd_line)) # It is need for chain commands.
         return res
 
 
