@@ -18,6 +18,7 @@ DEF_FS = 44100
 
 random_noise_gen = np.random.default_rng()
 
+
 class Mcs:
     """
     Class provides support of  multichannel sound
@@ -42,8 +43,6 @@ class Mcs:
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
 
-      
-       
 
 def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
     """
@@ -219,21 +218,24 @@ def file_info(path: str) -> dict:
 
 # Audio augmentation functions
 
+
 def amplitude_ctrl(
-    mcs_data: np.ndarray, amplitude_list: list[float],
-    amplitude_deviation_list: list[float]=None, seed: int = -1
+    mcs_data: np.ndarray,
+    amplitude_list: list[float],
+    amplitude_deviation_list: list[float] = None,
+    seed: int = -1,
 ) -> np.ndarray:
     """
     Apply amplitude control to a multichannel sound. If
     amplitude_deviation_list is defined, you can get diffferent
-    versions of tha same mcs data. 
+    versions of tha same mcs data.
 
     Args:
         mcs_data (np.ndarray): The multichannel sound data.
         amplitude_list (list[float]): The list of amplitude coefficients to
         apply to each channel.
         amplitude_deviation_list(list[float]): If exists, sets amplitude values
-        random with uniform distribution in range 
+        random with uniform distribution in range
         [amplitude - deviation, amplitude + deviation)].
         seed (int): If exists seeds random generator.
 
@@ -243,7 +245,7 @@ def amplitude_ctrl(
 
     a = amplitude_list
     if amplitude_deviation_list is not None:
-        a=[]
+        a = []
         for amplitude, dev in zip(amplitude_list, amplitude_deviation_list):
             if dev > 0:
                 left = amplitude - dev
@@ -262,8 +264,12 @@ def amplitude_ctrl(
 
 
 def delay_ctrl(
-    mcs_data: np.ndarray, delay_us_list: list[int], sampling_rate: int = DEF_FS,
-    delay_deviation_list: list[int] = None, seed: int = -1) -> np.ndarray:
+    mcs_data: np.ndarray,
+    delay_us_list: list[int],
+    sampling_rate: int = DEF_FS,
+    delay_deviation_list: list[int] = None,
+    seed: int = -1,
+) -> np.ndarray:
     """
     Add delays of channels of multichannel sound. Output data become longer.
     Values of delay will be converted to count of samples.
@@ -283,12 +289,14 @@ def delay_ctrl(
     """
     d = delay_us_list
     if delay_deviation_list is not None:
-        d=[]
+        d = []
         for delay, dev in zip(delay_us_list, delay_deviation_list):
             if dev > 0:
                 left = delay - dev
                 if left < 0:
-                    print(f"{error_mark} deviation value {dev} can give negative delay.")
+                    print(
+                        f"{error_mark} deviation value {dev} can give negative delay."
+                    )
                     sys.exit(1)
                 right = delay + dev
                 if seed != -1:
@@ -319,7 +327,7 @@ def echo_ctrl(
     sampling_rate: int = DEF_FS,
     delay_deviation_list: list[int] = None,
     amplitude_deviation_list: list[float] = None,
-    seed: int = -1
+    seed: int = -1,
 ) -> np.ndarray:
     """
     Add echo to multichannel sound. The output data become longer. To each
@@ -334,7 +342,7 @@ def echo_ctrl(
             apply to each channel.
         sampling_rate (int): The sampling rate of the sound data. Defaults to
         def_fs.
-        delay_deviation_list (list[int]): If exists gives random deviation of 
+        delay_deviation_list (list[int]): If exists gives random deviation of
         reflection delay.
         amplitude_deviation_list (list[float]): If exists gives random deviation of
         reflection amplitude.
@@ -344,8 +352,12 @@ def echo_ctrl(
         np.ndarray: The echoed multichannel sound.
     """
 
-    a = amplitude_ctrl(mcs_data, amplitude_list, amplitude_deviation_list, seed=seed)
-    e = delay_ctrl(a, delay_us_list, sampling_rate, delay_deviation_list, seed=seed)
+    a = amplitude_ctrl(
+        mcs_data, amplitude_list, amplitude_deviation_list, seed=seed
+    )
+    e = delay_ctrl(
+        a, delay_us_list, sampling_rate, delay_deviation_list, seed=seed
+    )
     channels = []
     for d in mcs_data:
         zl = e.shape[1] - d.shape[0]
@@ -353,6 +365,7 @@ def echo_ctrl(
     multichannel_sound = np.array(channels).copy() + e
 
     return multichannel_sound
+
 
 def noise_ctrl(
     mcs_data: np.ndarray,
@@ -376,7 +389,9 @@ def noise_ctrl(
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
             random.seed(seed)
-            n_noise = random_noise_gen.standard_normal(mcs_data.shape[1],)
+            n_noise = random_noise_gen.standard_normal(
+                mcs_data.shape[1],
+            )
         else:
             # TODO seed should be fixed for repeatable results
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
@@ -636,7 +651,7 @@ class WaChain:
         self.data = mcs_data  # Multichannel sound data field
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
-        self.chains=[]  # List of chains.
+        self.chains = []  # List of chains.
 
     def copy(self) -> "WaChain":
         """
@@ -720,7 +735,7 @@ class WaChain:
 
         self.sample_rate, self.data = read(path)
         return self
-    
+
     def rdac(self, path: str) -> "WaChain":
         """
         Reads data from a file at the specified path and updates the sample
@@ -753,9 +768,12 @@ class WaChain:
         write(path, self.data, self.sample_rate)
         return self
 
-    def amp(self, amplitude_list: list[float],
-            amplitude_deviation_list: list[float] = None,
-            seed: int = -1) -> "WaChain":
+    def amp(
+        self,
+        amplitude_list: list[float],
+        amplitude_deviation_list: list[float] = None,
+        seed: int = -1,
+    ) -> "WaChain":
         """
         Amplifies the audio data based on a custom amplitude control.
 
@@ -768,13 +786,17 @@ class WaChain:
             chaining.
         """
 
-        self.data = amplitude_ctrl(self.data, amplitude_list,
-                                   amplitude_deviation_list, seed)
+        self.data = amplitude_ctrl(
+            self.data, amplitude_list, amplitude_deviation_list, seed
+        )
         return self
 
-    def dly(self, delay_list: list[int],
-            delay_deviation_list: list[int] = None,
-            seed: int = -1) -> "WaChain":
+    def dly(
+        self,
+        delay_list: list[int],
+        delay_deviation_list: list[int] = None,
+        seed: int = -1,
+    ) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
 
@@ -787,8 +809,13 @@ class WaChain:
             chaining.
         """
 
-        self.data = delay_ctrl(self.data, delay_list, self.sample_rate, 
-                               delay_deviation_list, seed=seed)
+        self.data = delay_ctrl(
+            self.data,
+            delay_list,
+            self.sample_rate,
+            delay_deviation_list,
+            seed=seed,
+        )
         return self
 
     def ns(self, noise_level_list, seed=-1) -> "WaChain":
@@ -815,7 +842,7 @@ class WaChain:
         amplitude_list: list[float],
         delay_deviation_list: list[int] = None,
         amplitude_deviation_list: list[float] = None,
-        seed: int = -1
+        seed: int = -1,
     ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
@@ -834,8 +861,13 @@ class WaChain:
         """
 
         self.data = echo_ctrl(
-            self.data, delay_us_list, amplitude_list, self.sample_rate,
-            delay_deviation_list, amplitude_deviation_list, seed=seed
+            self.data,
+            delay_us_list,
+            amplitude_list,
+            self.sample_rate,
+            delay_deviation_list,
+            amplitude_deviation_list,
+            seed=seed,
         )
         return self
 
@@ -978,7 +1010,7 @@ class WaChain:
         """
 
         for c in list_of_chains:
-            self.chains.append( c.strip())
+            self.chains.append(c.strip())
         return self
 
     def eval(self) -> "WaChain":
@@ -993,13 +1025,13 @@ class WaChain:
             result, allowing for method chaining.
         """
 
-        res= []
-        w = self.copy()    
-        cmd_prefix = 'w.' 
+        res = []
+        w = self.copy()
+        cmd_prefix = "w."
         for c in self.chains:
             cmd_line = cmd_prefix + c
-            print('cmd_line', cmd_line)
-            res.append(eval(cmd_line)) # It is need for chain commands.
+            print("cmd_line", cmd_line)
+            res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
 
@@ -1093,7 +1125,7 @@ def chain_hdr(args):
     print("chain:", c)
     w = WaChain()
     cmd_prefix = "w."
-    str(eval(cmd_prefix + c.strip())) # It is need for chain commands.
+    str(eval(cmd_prefix + c.strip()))  # It is need for chain commands.
     print(success_mark)
     w.info()
     sys.exit(0)
@@ -1353,7 +1385,7 @@ def parse_args():
 def main():
     """CLI arguments parsing."""
     if sys.version_info[0:2] != (3, 11):
-        raise Exception('Requires python 3.11')
+        raise Exception("Requires python 3.11")
     args = parse_args()
     chain_hdr(args)
     input_path_hdr(args)

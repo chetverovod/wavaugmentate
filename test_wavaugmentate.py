@@ -170,23 +170,25 @@ def test_amplitude_ctrl():
     for a, sig, coef in zip(test_ac, test_sound_1, amplitude_list):
         assert np.array_equal(a, sig * coef)
 
+
 def test_rn_amplitude_ctrl():
     """
     Test random amplitudes control.
-    
+
     """
 
     test_sound_1 = wau.generate(f_list, t, fs)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
-    test_ac = wau.amplitude_ctrl(test_sound_1,
-                                    amplitude_list, amplitude_deviation_list, seed=42)
+    test_ac = wau.amplitude_ctrl(
+        test_sound_1, amplitude_list, amplitude_deviation_list, seed=42
+    )
     assert test_ac.shape == (4, 220500)
     wau.write(test_sound_1_ac_file, test_ac, fs)
-    r_list = wau.rms(test_ac, decimals=3) 
+    r_list = wau.rms(test_ac, decimals=3)
     ref_list = [0.109, 0.180, 0.251, 0.322]
     for r, ref in zip(r_list, ref_list):
-        assert abs (r - ref) < 0.001
+        assert abs(r - ref) < 0.001
 
 
 def test_delay_ctrl():
@@ -247,7 +249,9 @@ def test_rn_delay_ctrl():
     test_sound_1 = wau.generate(f_list, t, fs)
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
-    test_dc = wau.delay_ctrl(test_sound_1, delay_list, fs, delay_deviation_list, seed = 42)
+    test_dc = wau.delay_ctrl(
+        test_sound_1, delay_list, fs, delay_deviation_list, seed=42
+    )
     assert test_dc.shape == (4, 220512)
     wau.write(test_sound_1_delay_file, test_dc, fs)
     for ch in test_dc:
@@ -318,9 +322,15 @@ def test_rn_echo_ctrl():
     amplitude_list = [-0.3, -0.4, -0.5, 0.1]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
     delay_deviation_list = [10, 20, 30, 5]
-    test_ec = wau.echo_ctrl(test_sound_1, delay_list, amplitude_list, fs,
-                            delay_deviation_list,amplitude_deviation_list,
-                            seed=42)
+    test_ec = wau.echo_ctrl(
+        test_sound_1,
+        delay_list,
+        amplitude_list,
+        fs,
+        delay_deviation_list,
+        amplitude_deviation_list,
+        seed=42,
+    )
     wau.write(test_sound_1_echo_file, test_ec, fs)
     rms_list = wau.rms(test_ec, decimals=3)
     reference_list = [0.457, 0.471, 0.536, 0.52]
@@ -676,6 +686,7 @@ def test_wachain_info():
     }
     assert w.info() == ref
 
+
 #  Test not finished.
 def test_wachain_rn_rd():
     """Test augmentation on the fly."""
@@ -687,18 +698,19 @@ def test_wachain_rn_rd():
 
     a = wau.WaChain()
     a.rd(test_sound_1_file)
-    
+
     b = wau.WaChain()
     b.rd(test_sound_1_file)
 
     assert np.array_equal(w.data, a.data)
     assert np.array_equal(w.data, b.data)
 
-    b.achn(["amp([1, 0.7, 0.5, 0.3])"])    
+    b.achn(["amp([1, 0.7, 0.5, 0.3])"])
     res = b.rdac(test_sound_1_file)
     print("res=", res.data[0])
-    
+
     # !!! assert np.array_equal(w.data, b.data)
+
 
 def test_wachain_rn_aug_rd():
     """Test augmentation on the fly."""
@@ -717,12 +729,12 @@ def test_wachain_rn_aug_rd():
     assert np.array_equal(w.data, a.data)
     assert np.array_equal(w.data, b.data)
 
-    a.amp([1, 0.7, 0.5, 0.3])    
-    b.amp([1, 0.7, 0.5, 0.3])    
+    a.amp([1, 0.7, 0.5, 0.3])
+    b.amp([1, 0.7, 0.5, 0.3])
     assert np.array_equal(a.data, b.data)
 
-    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)    
-    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)    
+    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
+    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
     assert np.array_equal(a.data, b.data)
 
     for _ in range(10):
@@ -762,7 +774,8 @@ def test_chain_option():
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
         + test_sound_1_file
-        + '")\n' + f'{wau.success_mark}\n'
+        + '")\n'
+        + f"{wau.success_mark}\n"
     )
     ref = shrink(full_ref)
     print("ref:", ref)
@@ -1020,7 +1033,6 @@ def test_pause_set():
 
 
 def test_chain_add_chain():
-    test_sound_1 = wau.generate([300], t, fs)
     w = wau.WaChain()
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
     c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
@@ -1028,11 +1040,9 @@ def test_chain_add_chain():
     print(c1)
     print(c2)
     r = w.eval()
-    print('r', r)
-    ref_value = [[0.212],[0.106]]
+    print("r", r)
+    ref_value = [[0.212], [0.106]]
     for r, ref in zip(r, ref_value):
         print(r)
-        assert  abs(r[0] - ref[0]) < 0.001
-
-
+        assert abs(r[0] - ref[0]) < 0.001
 
