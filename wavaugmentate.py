@@ -736,7 +736,9 @@ class WaChain:
         write(path, self.data, self.sample_rate)
         return self
 
-    def amp(self, amplitude_list: list[float]) -> "WaChain":
+    def amp(self, amplitude_list: list[float],
+            amplitude_deviation_list: list[float] = None,
+            seed: int = -1) -> "WaChain":
         """
         Amplifies the audio data based on a custom amplitude control.
 
@@ -749,10 +751,12 @@ class WaChain:
             chaining.
         """
 
-        self.data = amplitude_ctrl(self.data, amplitude_list)
+        self.data = amplitude_ctrl(self.data, amplitude_list,
+                                    amplitude_deviation_list, seed)
         return self
 
-    def dly(self, delay_list: list[int]) -> "WaChain":
+    def dly(self, delay_list: list[int], delay_deviation_list: list[int]=None,
+            seed: int = -1) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
 
@@ -765,7 +769,8 @@ class WaChain:
             chaining.
         """
 
-        self.data = delay_ctrl(self.data, delay_list)
+        self.data = delay_ctrl(self.data, delay_list, self.sample_rate, 
+                               delay_deviation_list, seed=seed)
         return self
 
     def ns(self, noise_level_list, seed=-1) -> "WaChain":
@@ -790,7 +795,9 @@ class WaChain:
         self,
         delay_us_list: list[int],
         amplitude_list: list[float],
-        sampling_rate: int = DEF_FS,
+        delay_deviation_list: list[int] = None,
+        amplitude_deviation_list: list[float] = None,
+        seed: int = -1
     ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
@@ -809,7 +816,8 @@ class WaChain:
         """
 
         self.data = echo_ctrl(
-            self.data, delay_us_list, amplitude_list, sampling_rate
+            self.data, delay_us_list, amplitude_list, self.sample_rate,
+            delay_deviation_list, amplitude_deviation_list, seed=seed
         )
         return self
 
