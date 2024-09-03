@@ -1088,6 +1088,7 @@ def test_README_examples():
     Returns:
         None
     """
+
     # preparations
     fn = "./sound.wav"
     if os.path.exists(fn):
@@ -1264,11 +1265,11 @@ def test_chain_sum():
 def test_chain_merge():
     """
     Tests the functionality of the `merge` method in the `WaChain` class.
-    
-    This function creates an instance of the `WaChain` class, generates a 
-    multichannel sound using the `gen` method, merges the channels using the 
-    `mrg` method, writes the result to a file using the `wr` method, and 
-    calculates the root mean square (RMS) value of the merged sound using the 
+
+    This function creates an instance of the `WaChain` class, generates a
+    multichannel sound using the `gen` method, merges the channels using the
+    `mrg` method, writes the result to a file using the `wr` method, and
+    calculates the root mean square (RMS) value of the merged sound using the
     `rms` method.
 
     Args:
@@ -1319,13 +1320,14 @@ def test_chain_split():
 def test_chain_side_by_side():
     """
     Tests the functionality of the `sbs` method in the `WaChain` class.
-    
+
     This function generates two multichannel sounds using the `generate`
     function from the `wau` module with the given frequency lists, time
-    duration, and sample rate. It then applies the `sbs` method to the generated
-    sounds and writes the result to a file using the `wr` method. The function
-    then calculates the root mean square (RMS) value of the side-by-side sound
-    using the `rms` method and compares it to the expected values.
+    duration, and sample rate. It then applies the `sbs` method to the 
+    generated sounds and writes the result to a file using the `wr` method.
+    The function then calculates the root mean square (RMS) value of the
+    side-by-side sound using the `rms` method and compares it to the expected
+    values.
     
     Args:
         None
@@ -1333,7 +1335,7 @@ def test_chain_side_by_side():
     Returns:
         None
     """
-        
+
     test_sound_1 = wau.generate([300], t, fs)
     w = wau.WaChain()
     r = (
@@ -1424,6 +1426,7 @@ def test_chain_pause_detect():
     Returns:
         None
     """
+
     w = wau.WaChain()
     w1 = wau.WaChain()
     w.gen([100, 400], t, fs)
@@ -1438,6 +1441,25 @@ def test_chain_pause_detect():
 
 
 def test_pause_shrink_sine():
+    """
+    Tests the functionality of the pause_shrink function.
+
+    This function generates a multichannel sound using the generate function
+    from the wau module with the given frequency lists, time duration, and
+    sample rate. It then applies the pause_detect function to the generated
+    sound and writes the result to a file using the write function. The
+    function then applies the pause_shrink function to the generated sound and
+    writes the result to a file using the write function. Finally, it calculates
+    the root mean square (RMS) value of the sound using the rms method and
+    compares it to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([100, 400], t, fs)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
@@ -1452,6 +1474,26 @@ def test_pause_shrink_sine():
 
 
 def test_pause_shrink_speech():
+    """
+    Tests the functionality of the pause_shrink function with speech-like
+    input.
+
+    This function generates a speech-like multichannel sound using the generate
+    function from the wau module with the given frequency lists, time duration,
+    and sample rate. It then applies the pause_detect function to the generated
+    sound and writes the result to a file using the write function. The
+    function then applies the pause_shrink function to the generated sound and
+    writes the result to a file using the write function. Finally, it
+    calculates the root mean square (RMS) value of the sound using the rms
+    method and compares it to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([100, 300], t, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res = wau.side_by_side(test_sound_1, mask)
@@ -1465,13 +1507,30 @@ def test_pause_shrink_speech():
 
 
 def test_pause_measure():
+    """
+    Tests the functionality of the pause_measure function.
+
+    This function generates a multichannel sound using the generate function
+    from the wau module with the given frequency lists, time duration, and
+    sample rate. It then applies the pause_detect function to the generated
+    sound and writes the result to a file using the write function. The
+    function then applies the pause_measure function to the generated sound
+    and writes the result to a file using the write function. Finally, it
+    calculates the root mean square (RMS) value of the sound using the rms
+    method and compares it to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([100, 300], 0.003, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res_list = wau.pause_measure(mask)
     print(res_list)
 
-    # res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    # wau.write(test_sound_1_file, res, fs)
     ref_list = [
         [
             (0, 2),
@@ -1504,6 +1563,25 @@ def test_pause_measure():
 
 
 def test_pause_set():
+    """
+    Tests the functionality of the pause_set function.
+
+    This function generates a multichannel sound using the generate function
+    from the wau module with the given frequency lists, time duration, and
+    sample rate. It then applies the pause_detect function to the generated
+    sound and writes the result to a file using the write function. The
+    function then applies the pause_measure function to the generated sound
+    and writes the result to a file using the write function. Finally, it
+    calculates the root mean square (RMS) value of the sound using the rms
+    method and compares it to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([100, 300], 0.003, fs, mode="speech", seed=42)
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     pause_list = wau.pause_measure(mask)
@@ -1520,6 +1598,38 @@ def test_pause_set():
 
 
 def test_chain_add_chain():
+    """
+    Test function to verify the functionality of the `add_chain` method in the
+    `WaChain` class.
+
+    This function creates a `WaChain` instance, defines two chain commands as
+    strings, adds them to the `chains` list of the `WaChain` instance, evaluates
+    the chains, and compares the result to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    w = wau.WaChain()  # Create a WaChain instance
+
+    # Define the first chain command
+    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
+    # Define the second chain command
+    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    w.achn([c1, c2])  # Add the chain commands to the chains list
+    print(c1)  # Print the first chain command
+    print(c2)  # Print the second chain command
+    r = w.eval()  # Evaluate the chains
+    print("r", r)  # Print the result
+    ref_value = [[0.212], [0.106]]  # Define the expected values
+    # Compare the result to the expected values
+    for r, ref in zip(r, ref_value):
+        print(r)  # Print the result
+        # Assert that the result is within the expected tolerance
+        assert abs(r[0] - ref[0]) < 0.001
     w = wau.WaChain()
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
     c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
