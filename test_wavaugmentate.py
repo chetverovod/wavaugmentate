@@ -676,6 +676,29 @@ def test_WaChain_info():
     }
     assert w.info() == ref
 
+#  Test not finished.
+def test_WaChain_rn_rd():
+    """Test augmentation on the fly."""
+
+    w = wau.WaChain()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+
+    a = wau.WaChain()
+    a.rd(test_sound_1_file)
+    
+    b = wau.WaChain()
+    b.rd(test_sound_1_file)
+
+    assert np.array_equal(w.data, a.data)
+    assert np.array_equal(w.data, b.data)
+
+    b.achn(["amp([1, 0.7, 0.5, 0.3])"])    
+    res = b.rdac(test_sound_1_file)
+    print("res=", res.data[0])
+    
+    # !!! assert np.array_equal(w.data, b.data)
 
 def test_WaChain_chain_class():
     w = wau.WaChain()

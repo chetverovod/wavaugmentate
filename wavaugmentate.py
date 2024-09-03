@@ -720,6 +720,23 @@ class WaChain:
 
         self.sample_rate, self.data = read(path)
         return self
+    
+    def rdac(self, path: str) -> "WaChain":
+        """
+        Reads data from a file at the specified path and updates the sample
+        rate and data attributes and applies chains if they exist in object.
+
+        Args:
+            path (str): Path to the file containing the data.
+
+        Returns:
+            sWaChain: The updated WaChain instance itself, allowing for method
+            chaining.
+        """
+
+        self.sample_rate, self.data = read(path)
+        self.data = self.eval()
+        return self
 
     def wr(self, path: str) -> "WaChain":
         """
@@ -981,7 +998,7 @@ class WaChain:
         for c in self.chains:
             cmd_line = cmd_prefix + c
             print('cmd_line', cmd_line)
-            res.append( eval(cmd_line)) # It is need for chain commands.
+            res.append(eval(cmd_line)) # It is need for chain commands.
         return res
 
 
