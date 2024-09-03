@@ -131,7 +131,7 @@ def generate(
             random.seed(seed)
         for f in frequency_list:
             if f > 300 or f < 60:
-                print(error_mark + "Use basic tone from interval 600..300 Hz")
+                print(ERROR_MARK + "Use basic tone from interval 600..300 Hz")
                 sys.exit(1)
             # Formants:
             fbt = random.randint(f, 300)  # 60–300 Гц
@@ -295,7 +295,7 @@ def delay_ctrl(
                 left = delay - dev
                 if left < 0:
                     print(
-                        f"{error_mark}" 
+                        f"{ERROR_MARK}" 
                         f"deviation value {dev} can give negative delay."
                     )
                     sys.exit(1)
@@ -1037,8 +1037,8 @@ class WaChain:
 
 
 # CLI interface functions
-error_mark = "Error: "
-success_mark = "Done."
+ERROR_MARK = "Error: "
+SUCCESS_MARK = "Done."
 
 prog_name = os.path.basename(__file__).split(".")[0]
 
@@ -1066,7 +1066,7 @@ def check_amp_list(ls: list[str]) -> None:
             float(n)
         except ValueError:
             print(
-                f"{error_mark}Amplitude list"
+                f"{ERROR_MARK}Amplitude list"
                 f" contains non number element: <{n}>."
             )
             sys.exit(3)
@@ -1092,7 +1092,7 @@ def check_delay_list(ls: list[str]) -> None:
             int(n)
         except ValueError:
             print(
-                f"{error_mark}Delays list"
+                f"{ERROR_MARK}Delays list"
                 f" contains non integer element: <{n}>."
             )
             sys.exit(1)
@@ -1127,7 +1127,7 @@ def chain_hdr(args):
     w = WaChain()
     cmd_prefix = "w."
     str(eval(cmd_prefix + c.strip()))  # It is need for chain commands.
-    print(success_mark)
+    print(SUCCESS_MARK)
     w.info()
     sys.exit(0)
 
@@ -1137,7 +1137,7 @@ def input_path_hdr(args):
     if args.in_path is None:
         print_help_and_info()
     if not os.path.exists(args.in_path) or not os.path.isfile(args.in_path):
-        print(f"{error_mark}Input file <{args.in_path}> not found.")
+        print(f"{ERROR_MARK}Input file <{args.in_path}> not found.")
         sys.exit(1)
 
 
@@ -1163,10 +1163,10 @@ def is_file_creatable(fullpath: str) -> bool:
         try:
             Path(fullpath).touch(mode=0o777, exist_ok=True)
         except Exception:
-            print(f"{error_mark}Can't create file <{fullpath}>.")
+            print(f"{ERROR_MARK}Can't create file <{fullpath}>.")
             raise
     else:
-        print(f"{error_mark}Path <{path}> is not exists.")
+        print(f"{ERROR_MARK}Path <{path}> is not exists.")
         sys.exit(1)
 
     return True
@@ -1176,7 +1176,7 @@ def output_path_hdr(args):
     """Function checks of output file name and path."""
 
     if not is_file_creatable(args.out_path):
-        print(f"{error_mark}Can't create file <{args.out_path}>.")
+        print(f"{ERROR_MARK}Can't create file <{args.out_path}>.")
         sys.exit(1)
 
 
@@ -1204,7 +1204,7 @@ def amplitude_hdr(args):
     info = file_info(args.in_path)
     if info["channels_count"] != len(float_list):
         print(
-            f"{error_mark}Amplitude list length <{len(float_list)}>"
+            f"{ERROR_MARK}Amplitude list length <{len(float_list)}>"
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
@@ -1212,7 +1212,7 @@ def amplitude_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = amplitude_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info["sample_rate"])
-    print(success_mark)
+    print(SUCCESS_MARK)
     sys.exit(0)
 
 
@@ -1230,7 +1230,7 @@ def noise_hdr(args):
     info = file_info(args.in_path)
     if info["channels_count"] != len(float_list):
         print(
-            f"{error_mark}Noise list length <{len(float_list)}>"
+            f"{ERROR_MARK}Noise list length <{len(float_list)}>"
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
@@ -1238,7 +1238,7 @@ def noise_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = noise_ctrl(mcs_data, float_list)
     write(args.out_path, res_data, info["sample_rate"])
-    print(success_mark)
+    print(SUCCESS_MARK)
     sys.exit(0)
 
 
@@ -1251,7 +1251,7 @@ def echo_hdr(args):
     lists = args.echo_list.split("/")
     if len(lists) != 2:
         print(
-            f"{error_mark}Can't distinguish delay and amplitude"
+            f"{ERROR_MARK}Can't distinguish delay and amplitude"
             f"lists <{args.echo_list}>."
         )
         sys.exit(1)
@@ -1260,7 +1260,7 @@ def echo_hdr(args):
     amplitude_list = lists[1].split(",")
     if len(amplitude_list) != len(delay_list):
         print(
-            f"{error_mark}Can't delay and amplitude lists lengths"
+            f"{ERROR_MARK}Can't delay and amplitude lists lengths"
             f"differ <{args.echo_list}>."
         )
         sys.exit(2)
@@ -1273,7 +1273,7 @@ def echo_hdr(args):
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
         print(
-            f"{error_mark}Delay list length <{len(int_list)}>"
+            f"{ERROR_MARK}Delay list length <{len(int_list)}>"
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
@@ -1286,7 +1286,7 @@ def echo_hdr(args):
     res_data = echo_ctrl(mcs_data, int_list, float_list)
 
     write(args.out_path, res_data, info["sample_rate"])
-    print(success_mark)
+    print(SUCCESS_MARK)
     sys.exit(0)
 
 
@@ -1304,7 +1304,7 @@ def delay_hdr(args):
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
         print(
-            f"{error_mark}Delays list length <{len(int_list)}>"
+            f"{ERROR_MARK}Delays list length <{len(int_list)}>"
             " does not match number of channels. It should have"
             f" <{info['channels_count']}> elements."
         )
@@ -1312,7 +1312,7 @@ def delay_hdr(args):
     _, mcs_data = read(args.in_path)
     res_data = delay_ctrl(mcs_data, int_list)
     write(args.out_path, res_data, info["sample_rate"])
-    print(success_mark)
+    print(SUCCESS_MARK)
     sys.exit(0)
 
 
