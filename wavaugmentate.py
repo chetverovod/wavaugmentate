@@ -534,8 +534,8 @@ def pause_set(
                 prev_index = index
         out_list.append(local_list)
         a = []
-        for L in out_list:
-            a.append(np.concatenate(L).copy())
+        for elem in out_list:
+            a.append(np.concatenate(elem).copy())
         max_len = -1
         for b in a:
             if len(b) > max_len:
@@ -1291,7 +1291,7 @@ def echo_hdr(args):
 
 
 def delay_hdr(args):
-    """Function makes CLIdelay augmentation."""
+    """Function makes CLI delay augmentation."""
 
     if args.delay_list is None:
         return
@@ -1385,6 +1385,7 @@ def parse_args():
 
 def main():
     """CLI arguments parsing."""
+
     if sys.version_info[0:2] != (3, 11):
         raise Exception("Requires python 3.11")
     args = parse_args()
