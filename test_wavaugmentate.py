@@ -1010,6 +1010,7 @@ def test_wachain_chain_class():
     Returns:
         None
     """
+
     w = wau.WaChain()
     cmd_prefix = "w."
     cmd = "gen(f_list, t, fs).rms()"
@@ -1023,6 +1024,29 @@ def test_wachain_chain_class():
 
 
 def test_chain_option():
+    """
+    Test function to verify the functionality of the `-c` option in the command
+    line interface.
+    
+    This function generates a multichannel sound using the `gen` function from
+    the `wavaugmentate` module with the given frequency list, number of
+    repetitions, and sample rate. It then applies amplitude control to the
+    generated sound using the `amp` function from the `wavaugmentate` module
+    with the given amplitude list. The generated sound is written to a file
+    using the `wr` function from the `wavaugmentate` module with the given file
+    path and sample rate.
+
+    This function runs the command with the `-c` option and asserts that the
+    output matches the expected output. It also checks that the output file
+    exists and has the correct shape and RMS values.
+    
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     if os.path.exists(TEST_SOUND_1_FILE):
         os.remove(TEST_SOUND_1_FILE)
     cmd = [
@@ -1051,6 +1075,18 @@ def test_chain_option():
 
 
 def test_README_examples():
+    """
+    This function tests the functionality of examples for README file of the
+    wavaugmentate module by generating a multichannel sound, applying various
+    augmentations, and saving the results to WAV files. It also demonstrates the
+    usage of the WaChain class for object-oriented augmentation.
+    
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     # preparations
     fn = "./sound.wav"
     if os.path.exists(fn):
@@ -1095,6 +1131,24 @@ def test_README_examples():
 
 
 def test_sum():
+    """
+    Test function to verify the functionality of the `sum` function.
+
+    This function generates two multichannel sounds using the `generate` function
+    from the `wau` module with the given frequency lists, time duration, and
+    sample rate. It then applies the `sum` function to the generated sounds
+    and writes the result to a file using the `write` function from the `wau`
+    module with the given file path and sample rate. Finally, it calculates the
+    root mean square (RMS) values of the original and summed sounds and
+    compares them to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+        
     test_sound_1 = wau.generate([100], t, fs)
     test_sound_2 = wau.generate([300], t, fs)
     res = wau.sum(test_sound_1, test_sound_2)
@@ -1111,6 +1165,24 @@ def test_sum():
 
 
 def test_merge():
+    """
+    Test function to verify the functionality of the `merge` function.
+
+    This function generates a multichannel sound using the `generate` function
+    from the `wau` module with the given frequency lists, time duration, and
+    sample rate. It then applies the `merge` function to the generated sound
+    and writes the result to a file using the `write` function from the `wau`
+    module with the given file path and sample rate. Finally, it calculates
+    the root mean square (RMS) value of the merged sound and compares it to the
+    expected value.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([100, 300], t, fs)
     res = wau.merge(test_sound_1)
     wau.write(
@@ -1125,6 +1197,24 @@ def test_merge():
 
 
 def test_split():
+    """
+    Test function to verify the functionality of the `split` function.
+
+    This function generates a multichannel sound using the `generate` function
+    from the `wau` module with the given frequency list, time duration, and
+    sample rate. It then applies the `split` function to the generated sound
+    and writes the result to a file using the `write` function from the `wau`
+    module with the given file path and sample rate. Finally, it calculates the
+    root mean square (RMS) value of the split sound and compares it to the
+    expected value.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     test_sound_1 = wau.generate([300], t, fs)
     res = wau.split(test_sound_1, 5)
     wau.write(TEST_SOUND_1_FILE, res, fs)
@@ -1137,6 +1227,26 @@ def test_split():
 
 
 def test_chain_sum():
+    """
+    Test the functionality of the `sum` method in the `WaChain` class.
+
+    This function creates two instances of the `WaChain` class, `w` and `res`,
+    and generates a multichannel sound using the `gen` method of the `WaChain`
+    class. It then copies the data of `w` to `res` and generates another
+    multichannel sound using the `generate` function. The `sum` method is used
+    to add the two sounds together, and the result is written to a file using
+    the `wr` method.
+
+    The function then calculates the root mean square (RMS) values of the
+    original and summed sounds and compares them to the expected values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     w = wau.WaChain()
     res = wau.WaChain()
     w.gen([100], t, fs)
