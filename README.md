@@ -76,6 +76,20 @@ Example 4 (OOP approach):
 ./wavaugmentate.py -c 'rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./sound_delayed.wav")'
 
 ```
+ ## How to make 100 augmented files from 1 sound file
+ Amplitudes and delays will be augmented by  code shown in example 5.
+ Example 5 (single file augmentation):
+ ```Python
+    v = wau.WaChain()
+    v.rd(test_sound_1_file)
+    result = []
+    for _ in range(100):
+        b = v.copy()
+        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
+            [100, 200, 300, 400], [30, 40, 50, 60]
+        )
+        result.append(b.get())
+```
 
 # Unit Tests
 

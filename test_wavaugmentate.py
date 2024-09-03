@@ -171,6 +171,26 @@ def test_amplitude_ctrl():
         assert np.array_equal(a, sig * coef)
 
 
+def test_rn_amplitude_ctrl():
+    """
+    Test random amplitudes control.
+
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    amplitude_list = [0.1, 0.2, 0.3, 0.4]
+    amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
+    test_ac = wau.amplitude_ctrl(
+        test_sound_1, amplitude_list, amplitude_deviation_list, seed=42
+    )
+    assert test_ac.shape == (4, 220500)
+    wau.write(test_sound_1_ac_file, test_ac, fs)
+    r_list = wau.rms(test_ac, decimals=3)
+    ref_list = [0.109, 0.180, 0.251, 0.322]
+    for r, ref in zip(r_list, ref_list):
+        assert abs(r - ref) < 0.001
+
+
 def test_delay_ctrl():
     """
     Test function to verify the functionality of the `delay_ctrl`
@@ -205,6 +225,43 @@ def test_delay_ctrl():
         assert abs(r - ref) < 0.001
 
 
+def test_rn_delay_ctrl():
+    """
+    Test function to verify the functionality of the `delay_ctrl`
+    function for random delays.
+
+    This function generates a multichannel sound using the `generate`
+    function from the `ma` module with the given `f_list`, `t`, and `fs`
+    parameters.  It then applies delay control to the generated sound using the
+    `delay_ctrl` function from the `ma` module with the given
+    `test_sound_1` and `delay_list` parameters.  It asserts that the shape of
+    the delayed multichannel sound is equal to `(4, 220500)`.  It writes the
+    delayed multichannel sound to a file using the `write` function from
+    the `ma` module with the given file path and `fs` parameters.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    delay_list = [100, 200, 300, 40]
+    delay_deviation_list = [10, 20, 30, 15]
+    test_dc = wau.delay_ctrl(
+        test_sound_1, delay_list, fs, delay_deviation_list, seed=42
+    )
+    assert test_dc.shape == (4, 220512)
+    wau.write(test_sound_1_delay_file, test_dc, fs)
+    for ch in test_dc:
+        assert ch.shape[0] == 220512
+    rms_list = wau.rms(test_dc, last_index=24, decimals=3)
+    reference_list = [0.511, 0.627, 0.456, 0.699]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
+
+
 def test_echo_ctrl():
     """
     Test function to verify the functionality of the `echo_ctrl`
@@ -234,6 +291,49 @@ def test_echo_ctrl():
     wau.write(test_sound_1_echo_file, test_ec, fs)
     rms_list = wau.rms(test_ec, decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
+    for r, ref in zip(rms_list, reference_list):
+        assert abs(r - ref) < 0.001
+
+
+def test_rn_echo_ctrl():
+    """
+    Test function to verify the functionality of the `echo_ctrl`
+    function.
+
+    This function generates a multichannel sound using the `generate`
+    function from the `ma` module with the given `f_list`, `t`, and `fs`
+    parameters.  It then applies echo control to the generated sound using the
+    `echo_ctrl` function from the `ma` module with the given
+    `test_sound_1`, `delay_us_list`, and `amplitude_list` parameters.
+    It writes the echoed multichannel sound to a file using the `write`
+    function from the `ma` module with the given file path and `fs` parameters.
+    Finally, it calculates the root mean square (RMS) values of the echoed
+    sound and compares them to the expected values in the `reference_list`.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    delay_list = [1e6, 2e6, 3e6, 100]
+    amplitude_list = [-0.3, -0.4, -0.5, 0.1]
+    amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
+    delay_deviation_list = [10, 20, 30, 5]
+    test_ec = wau.echo_ctrl(
+        test_sound_1,
+        delay_list,
+        amplitude_list,
+        fs,
+        delay_deviation_list,
+        amplitude_deviation_list,
+        seed=42,
+    )
+    wau.write(test_sound_1_echo_file, test_ec, fs)
+    rms_list = wau.rms(test_ec, decimals=3)
+    reference_list = [0.457, 0.471, 0.536, 0.52]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
 
@@ -517,7 +617,7 @@ def test_wavaugmentate_delay_option_fail_case2():
     assert out == ref
 
 
-def test_WaChain_controls():
+def test_wachain_controls():
     test_sound_1 = wau.generate(f_list, t, fs)
     w = wau.WaChain(test_sound_1)
     print(w.data)
@@ -536,7 +636,7 @@ def test_WaChain_controls():
     assert np.array_equal(res1, res2)
 
 
-def test_WaChain_wr_rd():
+def test_wachain_wr_rd():
     w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
@@ -548,7 +648,7 @@ def test_WaChain_wr_rd():
     assert np.array_equal(w.data, r.data)
 
 
-def test_WaChain_echo():
+def test_wachain_echo():
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     w = wau.WaChain()
@@ -559,7 +659,7 @@ def test_WaChain_echo():
         assert abs(r - ref) < 0.001
 
 
-def test_WaChain_noise():
+def test_wachain_noise():
     n_list = [1, 0.2, 0.3, 0]
 
     w = wau.WaChain()
@@ -571,7 +671,7 @@ def test_WaChain_noise():
         assert abs(r - ref) < 0.01
 
 
-def test_WaChain_info():
+def test_wachain_info():
     w = wau.WaChain()
     if os.path.exists(test_sound_1_file):
         os.remove(test_sound_1_file)
@@ -587,7 +687,63 @@ def test_WaChain_info():
     assert w.info() == ref
 
 
-def test_WaChain_chain_class():
+#  Test not finished.
+def test_wachain_rn_rd():
+    """Test augmentation on the fly."""
+
+    w = wau.WaChain()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+
+    a = wau.WaChain()
+    a.rd(test_sound_1_file)
+
+    b = wau.WaChain()
+    b.rd(test_sound_1_file)
+
+    assert np.array_equal(w.data, a.data)
+    assert np.array_equal(w.data, b.data)
+
+    b.achn(["amp([1, 0.7, 0.5, 0.3])"])
+    res = b.rdac(test_sound_1_file)
+    print("res=", res.data[0])
+
+    # !!! assert np.array_equal(w.data, b.data)
+
+
+def test_wachain_rn_aug_rd():
+    """Test augmentation on the fly."""
+
+    w = wau.WaChain()
+    if os.path.exists(test_sound_1_file):
+        os.remove(test_sound_1_file)
+    w.gen(f_list, t, fs).wr(test_sound_1_file)
+
+    a = wau.WaChain()
+    a.rd(test_sound_1_file)
+
+    b = wau.WaChain()
+    b.rd(test_sound_1_file)
+
+    assert np.array_equal(w.data, a.data)
+    assert np.array_equal(w.data, b.data)
+
+    a.amp([1, 0.7, 0.5, 0.3])
+    b.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(a.data, b.data)
+
+    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
+    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
+    assert np.array_equal(a.data, b.data)
+
+    for _ in range(10):
+        a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        assert not np.array_equal(a.data, b.data)
+
+
+def test_wachain_chain_class():
     w = wau.WaChain()
     cmd_prefix = "w."
     cmd = "gen(f_list, t, fs).rms()"
@@ -618,7 +774,8 @@ def test_chain_option():
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
         + test_sound_1_file
-        + '")\n' + f'{wau.success_mark}\n'
+        + '")\n'
+        + f"{wau.success_mark}\n"
     )
     ref = shrink(full_ref)
     print("ref:", ref)
@@ -658,6 +815,17 @@ def test_README_examples():
     w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
         "./sound_delayed.wav"
     )
+
+    # How to make 100 augmented files (amplitude and delay) from 1 sound file
+    v = wau.WaChain()
+    v.rd(test_sound_1_file)
+    result = []
+    for _ in range(100):
+        b = v.copy()
+        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
+            [100, 200, 300, 400], [30, 40, 50, 60]
+        )
+        result.append(b.get())
 
 
 def test_sum():
@@ -780,6 +948,18 @@ def test_pause_detect():
 
 
 def test_chain_pause_detect():
+    """
+    Tests the functionality of the WaChain class by creating two instances,
+    generating a multichannel sound, copying the sound, applying pause
+    detection, and then asserting that the RMS values of the resulting sound
+    are within a certain tolerance of the reference values.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     w = wau.WaChain()
     w1 = wau.WaChain()
     w.gen([100, 400], t, fs)
@@ -873,3 +1053,18 @@ def test_pause_set():
     for r, ref in zip(r, ref):
         print(r)
         assert abs(r - ref) < 0.001
+
+
+def test_chain_add_chain():
+    w = wau.WaChain()
+    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
+    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    w.achn([c1, c2])
+    print(c1)
+    print(c2)
+    r = w.eval()
+    print("r", r)
+    ref_value = [[0.212], [0.106]]
+    for r, ref in zip(r, ref_value):
+        print(r)
+        assert abs(r[0] - ref[0]) < 0.001
