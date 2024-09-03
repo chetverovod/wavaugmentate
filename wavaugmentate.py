@@ -247,6 +247,9 @@ def amplitude_ctrl(
         for amplitude, dev in zip(amplitude_list, amplitude_deviation_list):
             if dev > 0:
                 left = amplitude - dev
+                if left < 0:
+                    print(f"{error_mark} deviation value {dev} can give negative amplitude.")
+                    sys.exit(1)
                 right = amplitude + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
@@ -274,6 +277,8 @@ def delay_ctrl(
         apply to each channel. Each value should be a positive integer.
         sampling_rate (int): The sampling rate of the
         sound data. Defaults to def_fs.
+        delay_deviation_list (list[int]): If exists, the list of delay devitions
+        makes delays uniformly distributed.
 
     Returns:
         np.ndarray: The delayed multichannel sound.
@@ -284,6 +289,9 @@ def delay_ctrl(
         for delay, dev in zip(delay_us_list, delay_deviation_list):
             if dev > 0:
                 left = delay - dev
+                if left < 0:
+                    print(f"{error_mark} deviation value {dev} can give negative delay.")
+                    sys.exit(1)
                 right = delay + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
