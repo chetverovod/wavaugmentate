@@ -276,6 +276,7 @@ def delay_ctrl(
         sound data. Defaults to def_fs.
         delay_deviation_list (list[int]): If exists, the list of delay devitions
         makes delays uniformly distributed.
+        seed (int): If exists seeds random generator.
 
     Returns:
         np.ndarray: The delayed multichannel sound.
@@ -323,7 +324,7 @@ def echo_ctrl(
     """
     Add echo to multichannel sound. The output data become longer. To each
     channel will be added it's copy with corresponding delay delay and
-    amplitude.  It looks like acoustic wave was reflected from the hard wall.
+    amplitude. It looks like acoustic wave was reflected from the hard wall.
 
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
@@ -333,6 +334,11 @@ def echo_ctrl(
             apply to each channel.
         sampling_rate (int): The sampling rate of the sound data. Defaults to
         def_fs.
+        delay_deviation_list (list[int]): If exists gives random deviation of 
+        reflection delay.
+        amplitude_deviation_list (list[float]): If exists gives random deviation of
+        reflection amplitude.
+        seed (int): If exists seeds random generator.
 
     Returns:
         np.ndarray: The echoed multichannel sound.
