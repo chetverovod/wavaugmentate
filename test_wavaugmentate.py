@@ -170,6 +170,24 @@ def test_amplitude_ctrl():
     for a, sig, coef in zip(test_ac, test_sound_1, amplitude_list):
         assert np.array_equal(a, sig * coef)
 
+def test_rn_amplitude_ctrl():
+    """
+    Test random amplitudes control.
+    
+    """
+
+    test_sound_1 = wau.generate(f_list, t, fs)
+    amplitude_list = [0.1, 0.2, 0.3, 0.4]
+    deviation_list = [0.1, 0.1, 0.1, 0.1]
+    test_ac = wau.amplitude_ctrl(test_sound_1,
+                                    amplitude_list, deviation_list, seed=42)
+    assert test_ac.shape == (4, 220500)
+    wau.write(test_sound_1_ac_file, test_ac, fs)
+    r_list = wau.rms(test_ac, decimals=3) 
+    ref_list = [0.109, 0.180, 0.251, 0.322]
+    for r, ref in zip(r_list, ref_list):
+        assert abs (r - ref) < 0.001
+
 
 def test_delay_ctrl():
     """

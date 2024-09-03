@@ -220,7 +220,7 @@ def file_info(path: str) -> dict:
 # Audio augmentation functions
 
 
-def amplitude_ctrl(
+def amplitude_ctrl2(
     mcs_data: np.ndarray, amplitude_list: list[float]
 ) -> np.ndarray:
     """
@@ -238,6 +238,42 @@ def amplitude_ctrl(
     channels = []
     for signal, amplitude in zip(mcs_data, amplitude_list):
         channels.append(signal * amplitude)
+        multichannel_sound = np.array(channels).copy()
+    return multichannel_sound
+
+def amplitude_ctrl(
+    mcs_data: np.ndarray, amplitude_list: list[float],
+    amplitude_deviation_list: list[float]=None, seed: int = -1
+) -> np.ndarray:
+    """
+    Apply random amplitude control to a multichannel sound.
+
+    Args:
+        mcs_data (np.ndarray): The multichannel sound data.
+        amplitude_list (list[float]): The list of amplitude coefficients to
+        apply to each channel.
+
+    Returns:
+        np.ndarray: The amplitude-controlled multichannel sound.
+    """
+
+    a = amplitude_list
+    if amplitude_deviation_list is not None:
+        a=[]
+        for amplitude, dev in zip(amplitude_list, amplitude_deviation_list):
+            if dev >= 0:
+                left = amplitude - dev
+                right = amplitude + dev
+                if seed != -1:
+                    local_ng = np.random.default_rng(seed=seed)
+                    a.append(local_ng.uniform(left, right))
+                else:
+                    a.append(random_noise_gen.uniform(left, right))
+
+
+    channels = []
+    for signal, amp in zip(mcs_data, a):
+        channels.append(signal * amp)
         multichannel_sound = np.array(channels).copy()
     return multichannel_sound
 
