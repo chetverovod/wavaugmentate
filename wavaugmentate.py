@@ -72,7 +72,7 @@ class Mcs:
             r = _single_rms(self.data[0:last_index], decimals)
             res.append(r)
         return res
-    
+
     def wr(self, path: str):
         """
         Writes the given multichannel sound data to a WAV file at the specified
@@ -263,6 +263,7 @@ def file_info(path: str) -> dict:
 
 
 # Audio augmentation functions
+
 
 def amplitude_ctrl(
     mcs_data: np.ndarray,
@@ -584,8 +585,7 @@ def pause_set(
 
         max_len = -1
         for elem in a:
-            if len(elem) > max_len:
-                max_len = len(elem)
+            max_len = max(max_len, len(elem))
 
         c = []
         for elem in a:
@@ -681,8 +681,9 @@ class WaChain:
     data.
     """
 
-    def __init__(self, mcs_data: np.ndarray = None, fs: int = -1,
-                 seed: int = -1):
+    def __init__(
+        self, mcs_data: np.ndarray = None, fs: int = -1, seed: int = -1
+    ):
         """
         Initializes a new instance of the WaChain class.
 
@@ -700,7 +701,7 @@ class WaChain:
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
         self.chains = []  # List of chains.
-        self.seed = seed # Flag for seeding random generator.
+        self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> "WaChain":
         """
@@ -815,17 +816,16 @@ class WaChain:
 
         write(path, self.data, self.sample_rate)
         return self
-    
-    def set_seed(
-        self,
-        seed: int = -1):
-        self.seed = seed
 
+    def set_seed(self, seed: int = -1):
+        """Set seeding value."""
+
+        self.seed = seed
 
     def amp(
         self,
         amplitude_list: List[float],
-        amplitude_deviation_list: List[float] = None
+        amplitude_deviation_list: List[float] = None,
     ) -> "WaChain":
         """
         Amplifies the audio data based on a custom amplitude control.
@@ -840,15 +840,12 @@ class WaChain:
         """
 
         self.data = amplitude_ctrl(
-            self.data, amplitude_list, amplitude_deviation_list,
-            seed=self.seed
+            self.data, amplitude_list, amplitude_deviation_list, seed=self.seed
         )
         return self
 
     def dly(
-        self,
-        delay_list: List[int],
-        delay_deviation_list: List[int] = None
+        self, delay_list: List[int], delay_deviation_list: List[int] = None
     ) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
@@ -894,7 +891,7 @@ class WaChain:
         delay_us_list: List[int],
         amplitude_list: List[float],
         delay_deviation_list: List[int] = None,
-        amplitude_deviation_list: List[float] = None
+        amplitude_deviation_list: List[float] = None,
     ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
@@ -919,7 +916,7 @@ class WaChain:
             self.sample_rate,
             delay_deviation_list,
             amplitude_deviation_list,
-            seed=self.seed
+            seed=self.seed,
         )
         return self
 

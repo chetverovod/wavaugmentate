@@ -209,7 +209,7 @@ def test_wachain_rn_aug_rd():
     a.amp([1, 0.7, 0.5, 0.3])
     b.amp([1, 0.7, 0.5, 0.3])
     assert np.array_equal(a.data, b.data)
-   
+
     a.set_seed(42)
     b.set_seed(42)
     a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
