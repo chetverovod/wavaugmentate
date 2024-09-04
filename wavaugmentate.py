@@ -552,8 +552,7 @@ def pause_set(
         for elem in a:
             elem = np.concatenate([elem, np.zeros(max_len - len(elem))]).copy()
             c.append(elem)
-    res = np.stack(c, axis=0).copy()
-    return res
+    return np.stack(c, axis=0).copy()
 
 
 def split(mcs_data: np.ndarray, channels_count: int) -> np.ndarray:
