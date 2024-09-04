@@ -47,6 +47,32 @@ class Mcs:
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
 
+    def rms(self, last_index: int = -1, decimals: int = -1):
+        """
+        Calculate the root mean square (RMS) of a multichannel sound.
+
+        Parameters:
+        last_index (int): The last index to consider when calculating the RMS.
+        If -1, consider the entire array. Defaults to -1.
+        decimals (int): Number of decimal places to round the RMS value.
+            If -1, do not round. Defaults to -1.
+
+        Returns:
+            list: A list of RMS values for each channel in the multichannel sound.
+        """
+    
+        res = []
+        shlen = len(self.data.shape)
+        if shlen > 1:
+            for i in range(0, self.data.shape[0]):
+                ch = self.data[i]
+                r = _single_rms(ch[0:last_index], decimals)
+                res.append(r)
+        else:
+            r = _single_rms(self.data[0:last_index], decimals)
+            res.append(r)
+        return res    
+
 
 def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
     """
