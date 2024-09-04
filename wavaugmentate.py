@@ -137,24 +137,24 @@ def generate(
             if f > 300 or f < 60:
                 print(ERROR_MARK + "Use basic tone from interval 600..300 Hz")
                 sys.exit(1)
-    
-        # Formants:
-        fbt = random.randint(f, 300)  # 60–300 Гц
-        frm1 = random.randint(2 * fbt, 850)  # 150–850 Гц
-        frm2 = random.randint(3 * fbt, 2500)  # 500–2500 Гц
-        frm3 = random.randint(4 * fbt, 3500)  # 1500–3500 Гц
-        frm4 = random.randint(5 * fbt, 4500)  # 2500–4500 Гц
-        freq_list = [fbt, frm1, frm2, frm3, frm4]
-        signal = 0
-        amp = 1
-        for frm in freq_list:
-            signal += amp * np.sin(2 * np.pi * frm * samples)
-            amp -= 0.1
-        p = np.max(np.abs(signal))
-        signal = signal / p
-        signal = np.float32(signal)
-        channels.append(signal)
-        multichannel_sound = np.array(channels).copy()
+
+            # Formants:
+            fbt = random.randint(f, 300)  # 60–300 Гц
+            frm1 = random.randint(2 * fbt, 850)  # 150–850 Гц
+            frm2 = random.randint(3 * fbt, 2500)  # 500–2500 Гц
+            frm3 = random.randint(4 * fbt, 3500)  # 1500–3500 Гц
+            frm4 = random.randint(5 * fbt, 4500)  # 2500–4500 Гц
+            freq_list = [fbt, frm1, frm2, frm3, frm4]
+            signal = 0
+            amp = 1
+            for frm in freq_list:
+                signal += amp * np.sin(2 * np.pi * frm * samples)
+                amp -= 0.1
+            p = np.max(np.abs(signal))
+            signal = signal / p
+            signal = np.float32(signal)
+            channels.append(signal)
+            multichannel_sound = np.array(channels).copy()
 
     return multichannel_sound
 
