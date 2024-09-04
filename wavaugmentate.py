@@ -393,12 +393,11 @@ def noise_ctrl(
     channels = []
     for signal, level in zip(mcs_data, noise_level_list):
         if seed != -1:
-            random.seed(seed)
-            n_noise = random_noise_gen.standard_normal(
+            local_ng = np.random.default_rng(seed=seed)
+            n_noise = local_ng.standard_normal(
                 mcs_data.shape[1],
             )
         else:
-            # TODO seed should be fixed for repeatable results
             n_noise = random_noise_gen.standard_normal(mcs_data.shape[1])
         noise = n_noise
         res = signal + level * noise
@@ -523,6 +522,7 @@ def pause_set(
     Returns:
         np.ndarray: The multichannel sound with pauses shrunk.
     """
+
     chans = mcs_data.shape[0]
     out_list = []
     for i in range(0, chans):
@@ -536,18 +536,21 @@ def pause_set(
                 stub = np.zeros(pause_sz[i])
                 local_list.append(stub)
                 prev_index = index
+
         out_list.append(local_list)
         a = []
         for elem in out_list:
             a.append(np.concatenate(elem).copy())
+
         max_len = -1
-        for b in a:
-            if len(b) > max_len:
-                max_len = len(b)
+        for elem in a:
+            if len(elem) > max_len:
+                max_len = len(elem)
+
         c = []
-        for e in a:
-            e = np.concatenate([e, np.zeros(max_len - len(e))]).copy()
-            c.append(e)
+        for elem in a:
+            elem = np.concatenate([elem, np.zeros(max_len - len(elem))]).copy()
+            c.append(elem)
     res = np.stack(c, axis=0).copy()
     return res
 
@@ -823,7 +826,7 @@ class WaChain:
         )
         return self
 
-    def ns(self, noise_level_list, seed=-1) -> "WaChain":
+    def ns(self, noise_level_list: List[float], seed: int = -1) -> "WaChain":
         """
         Adds custom noise to the audio data.
 
@@ -843,8 +846,8 @@ class WaChain:
 
     def echo(
         self,
-        delay_us_list: list[int],
-        amplitude_list: list[float],
+        delay_us_list: List[int],
+        amplitude_list: List[float],
         delay_deviation_list: List[int] = None,
         amplitude_deviation_list: List[float] = None,
         seed: int = -1,
