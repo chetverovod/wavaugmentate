@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 import sys
 import random
-from typing import List
+from typing import List, Tuple
 from scipy.io import wavfile
 import numpy as np
 
@@ -178,7 +178,7 @@ def write(path: str, mcs_data: np.ndarray, sample_rate: int = 44100):
     wavfile.write(path, sample_rate, buf)
 
 
-def read(path: str) -> tuple[int, np.ndarray]:
+def read(path: str) -> Tuple[int, np.ndarray]:
     """
     Reads a multichannel sound from a WAV file.
 
