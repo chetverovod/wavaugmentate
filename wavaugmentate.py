@@ -10,11 +10,15 @@ from pathlib import Path
 import os
 import sys
 import random
+from typing import List
 from scipy.io import wavfile
 import numpy as np
 
 # Default sampling frequency, Hz.
 DEF_FS = 44100
+
+# Default signal durance in seconds.
+DEF_SIGNAL_LEN = 5
 
 random_noise_gen = np.random.default_rng()
 
@@ -90,12 +94,12 @@ def rms(mcs_data: np.ndarray, last_index: int = -1, decimals: int = -1):
 
 
 def generate(
-    frequency_list: list[100, 200, 300, 400],
-    duration: float,
-    sample_rate=DEF_FS,
+    frequency_list: List[int] = [100, 200, 300, 400],
+    duration: float = DEF_SIGNAL_LEN,
+    sample_rate: int = DEF_FS,
     mode="sine",
     seed: int = -1,
-):
+) -> np.ndarray:
     """
     Generate a multichannel sound based on the given frequency list, duration,
     sample rate, and mode. The mode can be 'sine' or 'speech'. In 'sine' mode,
@@ -221,8 +225,8 @@ def file_info(path: str) -> dict:
 
 def amplitude_ctrl(
     mcs_data: np.ndarray,
-    amplitude_list: list[float],
-    amplitude_deviation_list: list[float] = None,
+    amplitude_list: List[float],
+    amplitude_deviation_list: List[float] = None,
     seed: int = -1,
 ) -> np.ndarray:
     """
@@ -232,9 +236,9 @@ def amplitude_ctrl(
 
     Args:
         mcs_data (np.ndarray): The multichannel sound data.
-        amplitude_list (list[float]): The list of amplitude coefficients to
+        amplitude_list (List[float]): The list of amplitude coefficients to
         apply to each channel.
-        amplitude_deviation_list(list[float]): If exists, sets amplitude values
+        amplitude_deviation_list (List[float]): If exists, sets amplitude values
         random with uniform distribution in range
         [amplitude - deviation, amplitude + deviation)].
         seed (int): If exists seeds random generator.
@@ -265,9 +269,9 @@ def amplitude_ctrl(
 
 def delay_ctrl(
     mcs_data: np.ndarray,
-    delay_us_list: list[int],
+    delay_us_list: List[int],
     sampling_rate: int = DEF_FS,
-    delay_deviation_list: list[int] = None,
+    delay_deviation_list: List[int] = None,
     seed: int = -1,
 ) -> np.ndarray:
     """
@@ -276,11 +280,11 @@ def delay_ctrl(
 
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
-        delay_us_list (list[int]): The list of delay values in microseconds to
+        delay_us_list (List[int]): The list of delay values in microseconds to
         apply to each channel. Each value should be a positive integer.
         sampling_rate (int): The sampling rate of the
         sound data. Defaults to def_fs.
-        delay_deviation_list (list[int]): If exists, the list of delay
+        delay_deviation_list (List[int]): If exists, the list of delay
         deviations makes delays uniformly distributed.
         seed (int): If exists seeds random generator.
 
@@ -295,7 +299,7 @@ def delay_ctrl(
                 left = delay - dev
                 if left < 0:
                     print(
-                        f"{ERROR_MARK}" 
+                        f"{ERROR_MARK}"
                         f"deviation value {dev} can give negative delay."
                     )
                     sys.exit(1)
@@ -323,11 +327,11 @@ def delay_ctrl(
 
 def echo_ctrl(
     mcs_data,
-    delay_us_list: list[int],
-    amplitude_list: list[float],
+    delay_us_list: List[int],
+    amplitude_list: List[float],
     sampling_rate: int = DEF_FS,
-    delay_deviation_list: list[int] = None,
-    amplitude_deviation_list: list[float] = None,
+    delay_deviation_list: List[int] = None,
+    amplitude_deviation_list: List[float] = None,
     seed: int = -1,
 ) -> np.ndarray:
     """
@@ -337,16 +341,16 @@ def echo_ctrl(
 
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
-        delay_us_list (list[int]): The list of delay values in microseconds to
+        delay_us_list (List[int]): The list of delay values in microseconds to
             apply to each channel. Each value should be a positive integer.
-        amplitude_list (list[float]): The list of amplitude coefficients to
+        amplitude_list (List[float]): The list of amplitude coefficients to
             apply to each channel.
         sampling_rate (int): The sampling rate of the sound data. Defaults to
         def_fs.
-        delay_deviation_list (list[int]): If exists gives random deviation of
+        delay_deviation_list (List[int]): If exists gives random deviation of
         reflection delay.
-        amplitude_deviation_list (list[float]): If exists gives random deviation of
-        reflection amplitude.
+        amplitude_deviation_list (List[float]): If exists gives random
+        deviation of reflection amplitude.
         seed (int): If exists seeds random generator.
 
     Returns:
@@ -370,7 +374,7 @@ def echo_ctrl(
 
 def noise_ctrl(
     mcs_data: np.ndarray,
-    noise_level_list: list[float],
+    noise_level_list: List[float],
     seed: int = -1,
 ) -> np.ndarray:
     """
@@ -378,7 +382,7 @@ def noise_ctrl(
 
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
-        noise_level_list (list[float]): The list of noise levels to apply to
+        noise_level_list (List[float]): The list of noise levels to apply to
         each channel.
         seed (int): The seed for random number generation. Defaults to -1.
 
@@ -404,14 +408,14 @@ def noise_ctrl(
 
 
 def pause_detect(
-    mcs_data: np.ndarray, relative_level: list[float]
+    mcs_data: np.ndarray, relative_level: List[float]
 ) -> np.ndarray[int]:
     """
     Detects pauses in a multichannel sound.
 
     Parameters:
         mcs_data (np.ndarray): The multichannel sound data.
-        relative_level (list[float]): The list of relative levels for each
+        relative_level (List[float]): The list of relative levels for each
         channel, signal below this level will be marked as pause.
 
     Returns:
@@ -434,7 +438,7 @@ def pause_detect(
 
 
 def pause_shrink(
-    mcs_data: np.ndarray, mask: np.ndarray[int], min_pause: list[int]
+    mcs_data: np.ndarray, mask: np.ndarray[int], min_pause: List[int]
 ) -> np.ndarray:
     """
     Shrink pauses in multichannel sound.
@@ -443,7 +447,7 @@ def pause_shrink(
         mcs_data (np.ndarray): The multichannel sound data.
         mask (np.ndarray): The mask indicating the pauses in the multichannel
         sound.
-        min_pause (list[int]): The list of minimum pause lengths for
+        min_pause (List[int]): The list of minimum pause lengths for
         each channel in samples.
 
     Returns:
@@ -505,7 +509,7 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
 
 
 def pause_set(
-    mcs_data: np.ndarray, pause_map: list, pause_sz: list[int]
+    mcs_data: np.ndarray, pause_map: list, pause_sz: List[int]
 ) -> np.ndarray:
     """
     Set pauses lengths in multichannel sound to selected values.
@@ -514,7 +518,7 @@ def pause_set(
         mcs_data (np.ndarray): The multichannel sound data.
         pause_map (list): A list of dictionaries containing pairs of (index,
         length) of pauses for each channel.
-        pause_sz (list[int]): A list of pause sizes for each channel.
+        pause_sz (List[int]): A list of pause sizes for each channel.
 
     Returns:
         np.ndarray: The multichannel sound with pauses shrunk.
@@ -691,7 +695,7 @@ class WaChain:
 
     def gen(
         self,
-        f_list: list[int],
+        f_list: List[int],
         t: float,
         fs: int = DEF_FS,
         mode="sine",
@@ -702,7 +706,7 @@ class WaChain:
         duration, and sampling rate.
 
         Args:
-            f_list (list[int]): The list of frequencies to generate the sound
+            f_list (List[int]): The list of frequencies to generate the sound
             for each channel.
             t (float): The duration of the sound in seconds.
             fs (int, optional): The sampling rate of the sound data. Defaults
@@ -771,15 +775,15 @@ class WaChain:
 
     def amp(
         self,
-        amplitude_list: list[float],
-        amplitude_deviation_list: list[float] = None,
+        amplitude_list: List[float],
+        amplitude_deviation_list: List[float] = None,
         seed: int = -1,
     ) -> "WaChain":
         """
         Amplifies the audio data based on a custom amplitude control.
 
         Args:
-            amplitude_list (list[float]): A list of amplitudes to apply to each
+            amplitude_list (List[float]): A list of amplitudes to apply to each
             corresponding chunk of audio data.
 
         Returns:
@@ -794,15 +798,15 @@ class WaChain:
 
     def dly(
         self,
-        delay_list: list[int],
-        delay_deviation_list: list[int] = None,
+        delay_list: List[int],
+        delay_deviation_list: List[int] = None,
         seed: int = -1,
     ) -> "WaChain":
         """
         Delays the audio data based on a custom delay control.
 
         Args:
-            delay_list (list[int]): A list of delays to apply to each
+            delay_list (List[int]): A list of delays to apply to each
             corresponding chunk of audio data.
 
         Returns:
@@ -824,7 +828,7 @@ class WaChain:
         Adds custom noise to the audio data.
 
         Args:
-            noise_level_list (list[float]): A list of noise levels to apply to
+            noise_level_list (List[float]): A list of noise levels to apply to
             each corresponding chunk of audio data.
             seed (int): An optional random seed for reproducibility. Defaults
             to -1.
@@ -841,17 +845,17 @@ class WaChain:
         self,
         delay_us_list: list[int],
         amplitude_list: list[float],
-        delay_deviation_list: list[int] = None,
-        amplitude_deviation_list: list[float] = None,
+        delay_deviation_list: List[int] = None,
+        amplitude_deviation_list: List[float] = None,
         seed: int = -1,
     ) -> "WaChain":
         """
         Adds an echo effect to the audio data.
 
         Args:
-            delay_us_list (list[int]): A list of delays in microseconds for
+            delay_us_list (List[int]): A list of delays in microseconds for
             each corresponding chunk of audio data.
-            amplitude_list (list[float]): A list of amplitudes to apply to each
+            amplitude_list (List[float]): A list of amplitudes to apply to each
             corresponding chunk of echo data.
             sampling_rate (int): The sampling rate at which to add the echo
             effect.  Defaults to `def_fs`.
@@ -872,7 +876,7 @@ class WaChain:
         )
         return self
 
-    def rms(self, last_index: int = -1, decimals: int = -1) -> list[float]:
+    def rms(self, last_index: int = -1, decimals: int = -1) -> List[float]:
         """
         Calculates the root mean square (RMS) of the audio data.
 
@@ -884,7 +888,7 @@ class WaChain:
             Defaults to -1, meaning no rounding.
 
         Returns:
-            list[float]: A list containing the RMS values for each
+            List[float]: A list containing the RMS values for each
             corresponding chunk of audio data.
         """
 
@@ -981,13 +985,13 @@ class WaChain:
         self.data = side_by_side(self.data, mcs_data)
         return self
 
-    def pdt(self, relative_level: list[float]) -> "WaChain":
+    def pdt(self, relative_level: List[float]) -> "WaChain":
         """
         Detects pauses in a multichannel sound based on a custom
         relative level value.
 
         Args:
-            relative_level (list[float]): A list of relative levels for each
+            relative_level (List[float]): A list of relative levels for each
             corresponding channel, signal below this level will be marked as
             pause.
 
@@ -998,12 +1002,12 @@ class WaChain:
         self.data = pause_detect(self.data, relative_level)
         return self
 
-    def achn(self, list_of_chains: list[str]) -> "WaChain":
+    def achn(self, list_of_chains: List[str]) -> "WaChain":
         """
         Add chain to list of chains.
 
         Args:
-            list_of_chains (list[str]): A list of chains to add.
+            list_of_chains (List[str]): A list of chains to add.
 
         Returns:
             WaChain: The updated WaChain instance with added chains.
@@ -1019,7 +1023,7 @@ class WaChain:
         Evaluate list of chains.
 
         Args:
-            list_of_chains (list[str]): A list of chains to add.
+            list_of_chains (List[str]): A list of chains to add.
 
         Returns:
             WaChain: The updated WaChain instance with added chains.
@@ -1046,7 +1050,7 @@ application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
 
 
-def check_amp_list(ls: list[str]) -> None:
+def check_amp_list(ls: List[str]) -> None:
     """
     Checks if all elements in the given amplitudes list are valid numbers.
 
@@ -1072,7 +1076,7 @@ def check_amp_list(ls: list[str]) -> None:
             sys.exit(3)
 
 
-def check_delay_list(ls: list[str]) -> None:
+def check_delay_list(ls: List[str]) -> None:
     """
     Checks if all elements in the given delays list are valid integers.
 
@@ -1387,7 +1391,7 @@ def main():
     """CLI arguments parsing."""
 
     if sys.version_info[0:2] != (3, 11):
-        raise Exception("Requires python 3.11")
+        raise ValueError("Requires python 3.11")
     args = parse_args()
     chain_hdr(args)
     input_path_hdr(args)

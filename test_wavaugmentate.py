@@ -1,3 +1,4 @@
+"""Module providing test functions for wavaugmentate.py  module."""
 import os
 import subprocess as sp
 import numpy as np
@@ -1077,7 +1078,7 @@ def test_chain_option():
     assert exists is True
 
 
-def test_README_examples():
+def test_readme_examples():
     """
     This function tests the functionality of examples for README file of the
     wavaugmentate module by generating a multichannel sound, applying various
@@ -1321,7 +1322,7 @@ def test_chain_split():
     r = w.rms(decimals=3)
     print(r)
     for i in range(0, c):
-        assert abs(r[0] - ref_value) < 0.001
+        assert abs(r[i] - ref_value) < 0.001
 
 
 def test_chain_side_by_side():
