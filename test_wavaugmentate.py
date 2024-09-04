@@ -598,11 +598,11 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     s = str(res.stdout)
     out = ctf.shrink(s)
-    print("out:", out)
     full_ref = f"{wau.ERROR_MARK}Amplitude list contains non number element:"
     full_ref += " < abc>."
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
+    print("out:", out)
     assert out == ref
 
 

@@ -123,7 +123,8 @@ def test_wachain_noise():
     n_list = [1, 0.2, 0.3, 0]
 
     w = wau.WaChain()
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list, seed=42)
+    w.set_seed(42)
+    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
     rms_list = w.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
     for r, ref in zip(rms_list, reference_list):
@@ -208,11 +209,15 @@ def test_wachain_rn_aug_rd():
     a.amp([1, 0.7, 0.5, 0.3])
     b.amp([1, 0.7, 0.5, 0.3])
     assert np.array_equal(a.data, b.data)
-
-    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
-    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3], seed=42)
+   
+    a.set_seed(42)
+    b.set_seed(42)
+    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
     assert np.array_equal(a.data, b.data)
 
+    a.set_seed(-1)
+    b.set_seed(-1)
     for _ in range(10):
         a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
         b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
@@ -280,7 +285,6 @@ def test_chain_option():
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     s = str(res.stdout)
     out = ctf.shrink(s)
-    print("out:", out)
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
         + ctf.TEST_SOUND_1_FILE
@@ -288,6 +292,7 @@ def test_chain_option():
         + f"{wau.SUCCESS_MARK}\n"
     )
     ref = ctf.shrink(full_ref)
+    print("out:", out)
     print("ref:", ref)
     assert out == ref
     exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
