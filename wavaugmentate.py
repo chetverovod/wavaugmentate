@@ -72,6 +72,19 @@ class Mcs:
             r = _single_rms(self.data[0:last_index], decimals)
             res.append(r)
         return res
+    
+    def wr(self, path: str):
+        """
+        Writes the given multichannel sound data to a WAV file at the specified
+        path.
+
+        Args:
+            path (str): The path to the WAV file.
+
+        Returns:
+            None
+        """
+        write(path, self.data, self.sample_rate)
 
 
 def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
@@ -186,7 +199,7 @@ def generate(
     return multichannel_sound
 
 
-def write(path: str, mcs_data: np.ndarray, sample_rate: int = 44100):
+def write(path: str, mcs_data: np.ndarray, sample_rate: int = DEF_FS):
     """
     Writes the given multichannel sound data to a WAV file at the specified
     path.
@@ -194,8 +207,9 @@ def write(path: str, mcs_data: np.ndarray, sample_rate: int = 44100):
     Args:
         path (str): The path to the WAV file.
         mcs_data (np.ndarray): The multichannel sound data to write. The shape
-        of the array should be (num_channels, num_samples).  sample_rate (int,
-        optional): The sample rate of the sound data. Defaults to 44100.
+        of the array should be (num_channels, num_samples).
+        sample_rate (int, optional): The sample rate of the sound data.
+        Defaults to 44100.
 
     Returns:
         None
@@ -621,7 +635,7 @@ def merge(mcs_data: np.ndarray) -> np.ndarray:
     return out_data
 
 
-def sum(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
+def sum_sig(mcs_data1: np.ndarray, mcs_data2: np.ndarray) -> np.ndarray:
     """
     Sums two multichannel sound signals.
 
@@ -968,7 +982,7 @@ class WaChain:
             sound, allowing for method chaining.
         """
 
-        self.data = sum(self.data, mcs_data)
+        self.data = sum_sig(self.data, mcs_data)
         return self
 
     def mrg(self) -> "WaChain":

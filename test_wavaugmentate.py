@@ -1,5 +1,4 @@
 """Module providing test functions for wavaugmentate.py  module."""
-
 import os
 import subprocess as sp
 import numpy as np

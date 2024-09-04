@@ -372,7 +372,7 @@ def test_sum():
 
     test_sound_1 = wau.generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.sum(test_sound_1, test_sound_2)
+    res = wau.sum_sig(test_sound_1, test_sound_2)
     wau.write(
         ctf.TEST_SOUND_1_FILE,
         res,
