@@ -450,7 +450,7 @@ def noise_ctrl(
 
 def pause_detect(
     mcs_data: np.ndarray, relative_level: List[float]
-) -> np.ndarray[int]:
+) -> np.ndarray[int]:  # pylint: disable=E1136
     """
     Detects pauses in a multichannel sound.
 
