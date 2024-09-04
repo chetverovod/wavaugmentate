@@ -1,9 +1,11 @@
 """Module providing test functions for wavaugmentate.py  module."""
+
 import os
 import subprocess as sp
 import numpy as np
 import wavaugmentate as wau
 import common_test_functions as ctf
+
 
 def test_wachain_controls():
     """
@@ -750,8 +752,9 @@ def test_pause_measure():
         None
     """
 
-    test_sound_1 = wau.generate([100, 300], 0.003, ctf.FS,
-                                mode="speech", seed=42)
+    test_sound_1 = wau.generate(
+        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    )
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     res_list = wau.pause_measure(mask)
     print(res_list)
@@ -807,8 +810,9 @@ def test_pause_set():
         None
     """
 
-    test_sound_1 = wau.generate([100, 300], 0.003, ctf.FS,
-                                mode="speech", seed=42)
+    test_sound_1 = wau.generate(
+        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    )
     mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
     pause_list = wau.pause_measure(mask)
     res = wau.pause_set(test_sound_1, pause_list, [10, 150])

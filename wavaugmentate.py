@@ -60,7 +60,7 @@ class Mcs:
         Returns:
             list: A list of RMS values for each channel in the multichannel sound.
         """
-    
+
         res = []
         shlen = len(self.data.shape)
         if shlen > 1:
@@ -71,7 +71,7 @@ class Mcs:
         else:
             r = _single_rms(self.data[0:last_index], decimals)
             res.append(r)
-        return res    
+        return res
 
 
 def _single_rms(signal_of_channel: np.ndarray, decimals: int) -> float:
@@ -146,7 +146,7 @@ def generate(
     multichannel_sound (numpy array): A numpy array representing the generated
     multichannel sound.
     """
-    
+
     multichannel_sound = None
     samples = np.arange(duration * sample_rate) / sample_rate
     channels = []

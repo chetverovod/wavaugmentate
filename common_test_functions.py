@@ -1,4 +1,5 @@
 """Module providing test functions for wavaugmentate.py  module."""
+
 import wavaugmentate as wau
 
 FS = wau.DEF_FS
@@ -15,6 +16,7 @@ TEST_SOUND_1_NOISE_FILE = "./test_sounds/test_sound_1_noise.wav"
 
 OUTPUT_FILE = "./outputwav/out.wav"
 PROG_NAME = "./" + wau.prog_name + ".py"
+
 
 def shrink(s: str):
     """Drops white spaces, newlines, and tabs from a string."""
