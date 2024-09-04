@@ -309,6 +309,31 @@ def amplitude_ctrl(
     return multichannel_sound
 
 
+def delay_syntez(delay_us_list: List[int],
+    delay_deviation_list: List[int] = None,
+    seed: int = -1,) -> List[int]:
+    """ Make delays list"""
+
+    d = delay_us_list
+    if delay_deviation_list is not None:
+        d = []
+        for delay, dev in zip(delay_us_list, delay_deviation_list):
+            if dev > 0:
+                left = delay - dev
+                if left < 0:
+                    print(
+                        f"{ERROR_MARK}"
+                        f"deviation value {dev} can give negative delay."
+                    )
+                    sys.exit(1)
+                right = delay + dev
+                if seed != -1:
+                    local_ng = np.random.default_rng(seed=seed)
+                    d.append(local_ng.integers(left, right))
+                else:
+                    d.append(random_noise_gen.integers(left, right))
+    return d
+
 def delay_ctrl(
     mcs_data: np.ndarray,
     delay_us_list: List[int],
@@ -333,25 +358,8 @@ def delay_ctrl(
     Returns:
         np.ndarray: The delayed multichannel sound.
     """
-    d = delay_us_list
-    if delay_deviation_list is not None:
-        d = []
-        for delay, dev in zip(delay_us_list, delay_deviation_list):
-            if dev > 0:
-                left = delay - dev
-                if left < 0:
-                    print(
-                        f"{ERROR_MARK}"
-                        f"deviation value {dev} can give negative delay."
-                    )
-                    sys.exit(1)
-                right = delay + dev
-                if seed != -1:
-                    local_ng = np.random.default_rng(seed=seed)
-                    d.append(local_ng.integers(left, right))
-                else:
-                    d.append(random_noise_gen.integers(left, right))
 
+    d = delay_syntez(delay_us_list, delay_deviation_list, seed)
     channels = []
     # In samples.
     max_samples_delay = int(max(d) * 1.0e-6 * sampling_rate)
@@ -450,7 +458,7 @@ def noise_ctrl(
 
 def pause_detect(
     mcs_data: np.ndarray, relative_level: List[float]
-) -> np.ndarray[int]:  # pylint: disable=E1136
+) -> np.ndarray[int]:
     """
     Detects pauses in a multichannel sound.
 
