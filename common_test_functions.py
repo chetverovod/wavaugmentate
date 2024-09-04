@@ -1,5 +1,4 @@
 """Module providing test functions for wavaugmentate.py  module."""
-import os
 import wavaugmentate as wau
 
 FS = wau.DEF_FS
@@ -24,4 +23,3 @@ def shrink(s: str):
         {" ": None, "\n": None, "\t": None, "\r": None}
     )
     return s.translate(subst_table)
-

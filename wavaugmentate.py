@@ -120,7 +120,8 @@ def generate(
     multichannel_sound (numpy array): A numpy array representing the generated
     multichannel sound.
     """
-
+    
+    multichannel_sound = None
     samples = np.arange(duration * sample_rate) / sample_rate
     channels = []
     if mode == "sine":

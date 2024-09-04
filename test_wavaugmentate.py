@@ -766,4 +766,3 @@ def test_wavaugmentate_delay_option_fail_case2():
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
-
