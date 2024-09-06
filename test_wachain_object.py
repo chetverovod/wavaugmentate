@@ -21,14 +21,15 @@ def test_wachain_controls():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     w = wau.WaChain(test_sound_1)
     print(w.data)
 
     w.amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0])
     res1 = w.data
 
-    w.put(np.zeros(1))
+    w.put(wau.Mcs(np.zeros(1)))
     res2 = (
         w.put(test_sound_1)
         .amp([0.1, 0.3, 0.4, 1])
@@ -306,7 +307,7 @@ def test_readme_examples():
     augmentations, and saving the results to WAV files. It also demonstrates
     the usage of the WaChain class for object-oriented augmentation.
 
-    Parameters:
+    Args:
         None
 
     Returns:
