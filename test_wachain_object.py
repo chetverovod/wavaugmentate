@@ -537,11 +537,12 @@ def test_chain_sum():
     res = wau.WaChain()
     w.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = w.copy()
-    test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_2  = wau.Mcs()
+    test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for s, ref_value in zip([w.data, test_sound_2, res.data], ref):
-        r = wau.rms(s, decimals=3)
+    for s, ref_value in zip([w, test_sound_2, res], ref):
+        r = s.rms(decimals=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001
 
@@ -624,8 +625,9 @@ def test_chain_side_by_side():
     Returns:
         None
     """
-
-    test_sound_1 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    
+    test_sound_1 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    
     w = wau.WaChain()
     r = (
         w.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
@@ -660,13 +662,13 @@ def test_side_by_side():
         None
     """
 
-    test_sound_1 = wau.generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_1 = wau.amplitude_ctrl(test_sound_1, [0.3])
-    test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.side_by_side(test_sound_1, test_sound_2)
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
+    test_sound_1 = wau.Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1.amplitude_ctrl([0.3])
+    test_sound_2 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1.side_by_side(test_sound_2)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     ref_list = [0.212, 0.707]
-    r = wau.rms(res, decimals=3)
+    r = test_sound_1.rms(decimals=3)
     for r, ref in zip(r, ref_list):
         print(r)
         assert abs(r - ref) < 0.001
@@ -690,12 +692,12 @@ def test_pause_detect():
         None
     """
 
-    test_sound_1 = wau.generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
-    print(res)
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1 = wau.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    test_sound_1.side_by_side(mask)
+    print(test_sound_1)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    r = test_sound_1.rms(decimals=3)
     ref_list = [0.707, 0.707, 0.865, 0.923]
     for r, ref in zip(r, ref_list):
         print(r)
@@ -720,8 +722,8 @@ def test_chain_pause_detect():
     w1 = wau.WaChain()
     w.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     w1 = w.copy()
-    w.pdt([0.5, 0.3])
-    w1.sbs(w.data).wr(ctf.TEST_SOUND_1_FILE)
+    mask = w.pdt([0.5, 0.3])
+    w1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
     r = w1.rms(decimals=3)
     ref = [0.707, 0.707, 0.865, 0.923]
     for i, ri in enumerate(r):
@@ -749,13 +751,14 @@ def test_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = wau.generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
+    test_sound_1 = wau.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    res = test_sound_1.copy()
+    res.side_by_side(mask)
     print(res)
-    res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1.pause_shrink(mask, [20, 4])
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    r = test_sound_1.rms(decimals=3)
     ref = [0.702, 0.706, 0.865, 0.923]
     for r, ref in zip(r, ref):
         print(r)
@@ -783,14 +786,15 @@ def test_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = wau.generate(
+    test_sound_1 = wau.Mcs().generate(
         [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech", seed=42
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
-    res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    res = test_sound_1.copy()
+    res.side_by_side(mask)
+    res.write(ctf.TEST_SOUND_1_FILE)
+    test_sound_1.pause_shrink(mask, [20, 4])
+    r = test_sound_1.rms(decimals=3)
     ref = [0.331, 0.324]
     for r, ref in zip(r, ref):
         print(r)
@@ -817,10 +821,10 @@ def test_pause_measure():
         None
     """
 
-    test_sound_1 = wau.generate(
+    test_sound_1 = wau.Mcs().generate(
         [100, 300], 0.003, ctf.FS, mode="speech", seed=42
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    mask = test_sound_1.pause_detect([0.5, 0.3])
     res_list = wau.pause_measure(mask)
     print(res_list)
 
@@ -875,17 +879,18 @@ def test_pause_set():
         None
     """
 
-    test_sound_1 = wau.generate(
+    test_sound_1 = wau.Mcs().generate(
         [100, 300], 0.003, ctf.FS, mode="speech", seed=42
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    mask = test_sound_1.pause_detect([0.5, 0.3])
     pause_list = wau.pause_measure(mask)
-    res = wau.pause_set(test_sound_1, pause_list, [10, 150])
-    assert res.shape == (2, 1618)
-    print("res shape:", res.shape)
-    print("res:", type(res[0, 1]))
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1.pause_set(pause_list, [10, 150])
+    res = test_sound_1.copy()
+    assert res.shape() == (2, 1618)
+    print("res shape:", res.shape())
+    print("res:", type(res.data[0, 1]))
+    res.write(ctf.TEST_SOUND_1_FILE)
+    r = res.rms(decimals=3)
     ref = [0.105, 0.113]
     for r, ref in zip(r, ref):
         print(r)

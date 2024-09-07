@@ -214,7 +214,7 @@ class Mcs:
         self,
         frequency_list: List[int],
         duration: float = DEF_SIGNAL_LEN,
-         fs: int = -1, 
+        fs: int = -1,
         mode="sine",
         seed: int = -1,
     ) -> "Mcs":
@@ -965,7 +965,7 @@ class WaChain(Mcs):
             sound, allowing for method chaining.
         """
 
-        super().sum_sig(super().data, mcs_data)
+        super().sum_sig(mcs_data)
         return self
 
     def mrg(self) -> "WaChain":
