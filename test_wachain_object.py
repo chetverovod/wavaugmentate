@@ -795,8 +795,9 @@ def test_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = wau.Mcs().generate(
-        [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42)
+    test_sound_1.generate(
+        [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech"
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
@@ -830,8 +831,8 @@ def test_pause_measure():
         None
     """
 
-    test_sound_1 = wau.Mcs().generate(
-        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42).generate(
+        [100, 300], 0.003, ctf.FS, mode="speech"
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res_list = wau.pause_measure(mask)
@@ -888,8 +889,8 @@ def test_pause_set():
         None
     """
 
-    test_sound_1 = wau.Mcs().generate(
-        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42).generate(
+        [100, 300], 0.003, ctf.FS, mode="speech"
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
     pause_list = wau.pause_measure(mask)

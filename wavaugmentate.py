@@ -220,7 +220,6 @@ class Mcs:
         duration: float = DEF_SIGNAL_LEN,
         fs: int = -1,
         mode="sine",
-        seed: int = -1,
     ) -> "Mcs":
         """
         Generate a multichannel sound based on the given frequency list, duration,
@@ -254,8 +253,8 @@ class Mcs:
             self.data = np.array(channels).copy()
 
         if mode == "speech":
-            if seed != -1:
-                random.seed(seed)
+            if self.seed != -1:
+                random.seed(self.seed)
             for f in frequency_list:
                 if f > 300 or f < 60:
                     print(
@@ -682,35 +681,6 @@ class Mcs:
         """
         return self.data
 
-    def gen(
-        self,
-        f_list: List[int],
-        t: float,
-        fs: int = -1,
-        mode: str = "sine",
-    ) -> "Mcs":
-        """
-        Generates a multichannel sound using the given frequency list,
-        duration, and sampling rate.
-
-        Args:
-            f_list (List[int]): The list of frequencies to generate the sound
-            for each channel.
-            t (float): The duration of the sound in seconds.
-            fs (int, optional): The sampling rate of the sound data. Defaults
-            to def_fs.
-            mode (str, optional): The mode of sound generation. Can be
-            'sine' or 'speech'. Defaults to 'sine'.
-            seed (int, optional): The seed for random number generation.
-            Defaults to -1.
-
-        Returns:
-            WaChain: The updated WaChain instance with the generated
-            multichannel sound, allowing for method chaining.
-        """
-        self.generate(f_list, t, fs, mode, seed=self.seed)
-        return self
-
     def set_seed(self, seed: int = -1):
         """Set seeding value."""
 
@@ -816,6 +786,7 @@ class Mcs:
     pdt = pause_detect
     achn = add_chain
     rdac = read_file_apply_chains
+    gen = generate
 
 
 # CLI interface functions

@@ -42,10 +42,8 @@ def test_generate_speech():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
-    test_sound_1.generate(
-        ctf.frm_list, ctf.SIGNAL_TIME_LEN, mode="speech", seed=42
-    )
+    test_sound_1 = wau.Mcs(fs=ctf.FS, seed=42)
+    test_sound_1.generate(ctf.frm_list, ctf.SIGNAL_TIME_LEN, mode="speech")
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     assert test_sound_1.shape() == (4, 220500)
     rms_list = test_sound_1.rms(decimals=3)
