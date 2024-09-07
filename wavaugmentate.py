@@ -49,7 +49,7 @@ def file_info(path: str) -> dict:
     }
 
 
-def _delay_syntez(
+def delay_syntez(
     delay_us_list: List[int],
     delay_deviation_list: List[int] = None,
     seed: int = -1,
@@ -119,7 +119,7 @@ class Mcs:
     data.
     """
 
-    def __init__(self, mcs_data: np.ndarray = None, fs: int = -1):
+    def __init__(self, np_data: np.ndarray = None, fs: int = -1):
         """
         Initializes a new instance of the Mcs class.
 
@@ -132,8 +132,10 @@ class Mcs:
         Returns:
             None
         """
-
-        self.data = mcs_data  #  np.ndarray: Multichannel sound data field.
+        if np_data is None:
+            self.data = None  #  np.ndarray: Multichannel sound data field.
+        else:
+            self.data = np_data.copy()  #  np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
 
@@ -156,9 +158,13 @@ class Mcs:
             float: The RMS value of the input signal.
         """
         # Calculate the mean of the squares of the signal values
-        mean_square = np.mean(
-            self.data[chan_index, 0:last_index] ** 2
-        )  # np.mean(signal_of_channel**2)
+        mean_square  = 0
+        if chan_index > -1:
+            mean_square = np.mean(
+                self.data[chan_index, 0:last_index] ** 2)
+        else:
+            mean_square = np.mean(
+                self.data[0:last_index] ** 2)
 
         # Calculate the square root of the mean of the squares
         r = np.sqrt(mean_square)
@@ -188,11 +194,10 @@ class Mcs:
         shlen = len(self.data.shape)
         if shlen > 1:
             for i in range(0, self.data.shape[0]):
-                ch = self.data[i]
                 r = self.channel_rms(i, last_index, decimals)
                 res.append(r)
         else:
-            r = self.channel_rms(0, last_index, decimals)
+            r = self.channel_rms(-1, last_index, decimals)
             res.append(r)
         return res
 
@@ -232,7 +237,7 @@ class Mcs:
         self (Mcs):  representing the generated multichannel sound.
         """
 
-        if fs > 0:  
+        if fs > 0:
             self.sample_rate = fs
         self.data = None
         samples = np.arange(duration * self.sample_rate) / self.sample_rate
@@ -304,7 +309,7 @@ class Mcs:
             tuple[int, np.ndarray]: A tuple containing the sample rate and the
             multichannel sound data.
         """
-          
+
         self.sample_rate, buf = wavfile.read(path)
         self.path = path
         self.data = buf.T.copy()
@@ -379,7 +384,7 @@ class Mcs:
             self (Mcs): The delayed multichannel sound.
         """
 
-        d = _delay_syntez(delay_us_list, delay_deviation_list, seed)
+        d = delay_syntez(delay_us_list, delay_deviation_list, seed)
         channels = []
         # In samples.
         max_samples_delay = int(max(d) * 1.0e-6 * self.sample_rate)
@@ -663,7 +668,7 @@ class WaChain(Mcs):
     """
 
     def __init__(
-        self, mcs_data: "Mcs" = None, fs: int = -1, seed: int = -1
+        self, mcs_data: "Mcs" = None, seed: int = -1
     ):
         """
         Initializes a new instance of the WaChain class.
@@ -681,18 +686,10 @@ class WaChain(Mcs):
         d = mcs_data
         if d is None:
             d = Mcs()
-        super().__init__(d.data, fs)
+        super().__init__(d.data, d.sample_rate)
+        self.path = d.path
         self.chains = []  # List of chains.
         self.seed = seed  # Flag for seeding random generator.
-
-    def copy(self) -> "WaChain":
-        """
-        Creates a deep copy of the WaChain instance.
-
-        Returns:
-            WaChain: A deep copy of the WaChain instance.
-        """
-        return copy.deepcopy(self)
 
     def put(self, mcs_data: Mcs) -> "WaChain":
         """
@@ -707,11 +704,12 @@ class WaChain(Mcs):
             WaChain: The updated WaChain instance.
         """
 
-        super().data = mcs_data.data.copy()
-        super().sample_rate = mcs_data.sample_rate
+        self.data = mcs_data.data.copy()
+        self.sample_rate = mcs_data.sample_rate
+        self.path = mcs_data.path
         return self
 
-    def get(self):
+    def get(self) -> np.ndarray:
         """
         Returns the multichannel sound data stored in the WaChain instance.
 
@@ -719,6 +717,15 @@ class WaChain(Mcs):
             np.ndarray: The multichannel sound data.
         """
         return self.data
+    
+    def copy(self) -> "WaChain":
+        """
+        Creates a deep copy of the WaChain instance.
+
+        Returns:
+            WaChain: A deep copy of the WaChain instance.
+        """
+        return copy.deepcopy(self)
 
     def gen(
         self,
@@ -779,7 +786,7 @@ class WaChain(Mcs):
         """
 
         super().read(path)
-        super().data = self.eval()
+        self.data = self.eval()
         return self
 
     def wr(self, path: str) -> "WaChain":
@@ -935,14 +942,14 @@ class WaChain(Mcs):
         """
 
         res = {
-            "path": super().path,
+            "path": self.path,
             "channels_count": -1,
-            "sample_rate": super().sample_rate,
+            "sample_rate": self.sample_rate,
             "length_s": -1,
         }
-        if super().data is not None:
-            length = super().data.shape[1] / super().sample_rate
-            res["channels_count"] = super().data.shape[0]
+        if self.data is not None:
+            length = self.data.shape[1] / self.sample_rate
+            res["channels_count"] = self.data.shape[0]
             res["length_s"] = length
         return res
 
