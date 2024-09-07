@@ -375,42 +375,50 @@ def test_readme_examples():
         None
     """
 
-    # preparations
-    fn = "./sound.wav"
-    if os.path.exists(fn):
-        os.remove(fn)
+    # Preparations
+    file_name = "./sound.wav"
+    if os.path.exists(file_name):
+        os.remove(file_name)
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(fn, test_sound_1, ctf.FS)
+    # Frequencies list, corresponds to channels quantity.
+    freq_list = [400, 1000, 2333, 3700]
+    
+    fs = 441100  # Select sampling frequency, Hz.
+    time_len = 5  # Length of signal in seconds.
 
-    # examples code for  README.md
+    # Create Mcs-object and generate sine waves in 4 channels.
+    mcs = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs.write(file_name)
 
-    # Read WAV-file to array.
-    fsmp, mcs = wau.read("./sound.wav")
+    # Examples code for  README.md
+
+    # Read WAV-file to Mcs-object.
+    mcs.read(file_name)
 
     # Apply delays.
     delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity.
-    d = wau.delay_ctrl(mcs, delay_list)
+    mcs.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
     amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity.
-    res = wau.amplitude_ctrl(d, amplitude_list)
+    mcs.amplitude_ctrl(amplitude_list)
 
     # Augmentation result saving.
-    wau.write("./sound_delayed.wav", res, fsmp)
+    mcs.write("./sound_augmented.wav")
 
     # The same code in OOP approach:
-
-    w = wau.WaChain()
+    
+    mcs = wau.Mcs().generate(freq_list, time_len, fs)
+    w = wau.WaChain(mcs)
     w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
-        "./sound_delayed.wav"
-    )
-
-    # How to make 100 augmented files (amplitude and delay) from 1 sound file
+        "./sound_augmented.wav"
+     )
+    
+    # How to make 100 augmented files (amplitude and delay) from 1 sound file.
     v = wau.WaChain()
-    v.rd(ctf.TEST_SOUND_1_FILE)
+    v.rd(file_name)  # Read original file.
     result = []
-    for _ in range(100):
+    for _ in range(5):
         b = v.copy()
         b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
             [100, 200, 300, 400], [30, 40, 50, 60]
@@ -912,8 +920,8 @@ def test_chain_add_chain():
     Returns:
         None
     """
-
-    w = wau.WaChain()  # Create a WaChain instance
+    mcs = wau.Mcs(fs=ctf.FS) 
+    w = wau.WaChain(mcs)  # Create a WaChain instance
 
     # Define the first chain command
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
@@ -930,7 +938,7 @@ def test_chain_add_chain():
         print(r)  # Print the result
         # Assert that the result is within the expected tolerance
         assert abs(r[0] - ref[0]) < 0.001
-    w = wau.WaChain()
+    w = wau.WaChain(mcs)
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
     c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
     w.achn([c1, c2])

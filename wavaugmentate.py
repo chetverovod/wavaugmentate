@@ -1058,10 +1058,11 @@ class WaChain(Mcs):
 
         res = []
         _ = self.copy()
+        print('_sample_rate:', _.sample_rate)
         cmd_prefix = "_."
         for c in self.chains:
             cmd_line = cmd_prefix + c
-            print("cmd_line", cmd_line)
+            print("cmd_line:", cmd_line)
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
@@ -1239,9 +1240,10 @@ def amplitude_hdr(args):
             f" <{info['channels_count']}> elements."
         )
         sys.exit(2)
-    _, mcs_data = read(args.in_path)
-    res_data = amplitude_ctrl(mcs_data, float_list)
-    write(args.out_path, res_data, info["sample_rate"])
+
+    mcs = Mcs().read(args.in_path)
+    mcs.amplitude_ctrl(float_list)
+    mcs.write(args.out_path)
     print(SUCCESS_MARK)
     sys.exit(0)
 
@@ -1265,9 +1267,11 @@ def noise_hdr(args):
             f" <{info['channels_count']}> elements."
         )
         sys.exit(2)
-    _, mcs_data = read(args.in_path)
-    res_data = noise_ctrl(mcs_data, float_list)
-    write(args.out_path, res_data, info["sample_rate"])
+
+    mcs = Mcs().read(args.in_path)
+    mcs.read(args.in_path)
+    mcs.noise_ctrl(float_list)
+    mcs.write(args.out_path)
     print(SUCCESS_MARK)
     sys.exit(0)
 
@@ -1312,10 +1316,9 @@ def echo_hdr(args):
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
 
-    _, mcs_data = read(args.in_path)
-    res_data = echo_ctrl(mcs_data, int_list, float_list)
-
-    write(args.out_path, res_data, info["sample_rate"])
+    mcs = Mcs().read(args.in_path)
+    mcs.echo_ctrl(int_list, float_list)
+    mcs.write(args.out_path)
     print(SUCCESS_MARK)
     sys.exit(0)
 
@@ -1339,9 +1342,10 @@ def delay_hdr(args):
             f" <{info['channels_count']}> elements."
         )
         sys.exit(2)
-    _, mcs_data = read(args.in_path)
-    res_data = delay_ctrl(mcs_data, int_list)
-    write(args.out_path, res_data, info["sample_rate"])
+    
+    mcs = Mcs().read(args.in_path)
+    mcs.delay_ctrl(int_list)
+    mcs.write(args.out_path)
     print(SUCCESS_MARK)
     sys.exit(0)
 
