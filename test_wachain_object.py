@@ -58,14 +58,15 @@ def test_wachain_amp_control():
 
     w.amp(a_list)
     res1 = w
-    print('res1 =', res1.data)
-    
+    print("res1 =", res1.data)
+
     d = wau.WaChain()
-   
+
     res2 = d.put(test_sound_1).amp(a_list).get()
-    
-    print('res2 =', res2.data)
+
+    print("res2 =", res2.data)
     assert np.array_equal(res1.get(), res2)
+
 
 def test_wachain_dly_controls():
     """
@@ -88,15 +89,15 @@ def test_wachain_dly_controls():
 
     w.dly(d_list)
     res1 = w
-    print('res1 shape =', res1.data.shape)
-    print('res1 =', res1.data)
+    print("res1 shape =", res1.data.shape)
+    print("res1 =", res1.data)
 
     d = wau.WaChain()
     d.put(test_sound_1)
     res2 = d.dly(d_list)
 
-    print('res2 shape =', res2.data.shape)
-    print('res2 =', res2.data)
+    print("res2 shape =", res2.data.shape)
+    print("res2 =", res2.data)
     assert res1.data.shape == res2.data.shape
     assert np.array_equal(res1.get(), res2.get())
 
@@ -382,7 +383,7 @@ def test_readme_examples():
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400, 1000, 2333, 3700]
-    
+
     fs = 441100  # Select sampling frequency, Hz.
     time_len = 5  # Length of signal in seconds.
 
@@ -407,13 +408,13 @@ def test_readme_examples():
     mcs.write("./sound_augmented.wav")
 
     # The same code in OOP approach:
-    
+
     mcs = wau.Mcs().generate(freq_list, time_len, fs)
     w = wau.WaChain(mcs)
     w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
         "./sound_augmented.wav"
-     )
-    
+    )
+
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
     v = wau.WaChain()
     v.rd(file_name)  # Read original file.
@@ -483,7 +484,7 @@ def test_merge():
     res = test_sound_1.copy()
     res.merge()
     res.write(ctf.TEST_SOUND_1_FILE)
-    print('res.shape =', res.shape())
+    print("res.shape =", res.shape())
     ref_value = 1.0
     r = res.rms(decimals=3)
     print(r)
@@ -545,7 +546,7 @@ def test_chain_sum():
     res = wau.WaChain()
     w.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = w.copy()
-    test_sound_2  = wau.Mcs()
+    test_sound_2 = wau.Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
@@ -633,9 +634,9 @@ def test_chain_side_by_side():
     Returns:
         None
     """
-    
+
     test_sound_1 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    
+
     w = wau.WaChain()
     r = (
         w.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
@@ -920,7 +921,7 @@ def test_chain_add_chain():
     Returns:
         None
     """
-    mcs = wau.Mcs(fs=ctf.FS) 
+    mcs = wau.Mcs(fs=ctf.FS)
     w = wau.WaChain(mcs)  # Create a WaChain instance
 
     # Define the first chain command

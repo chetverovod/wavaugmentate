@@ -135,7 +135,9 @@ class Mcs:
         if np_data is None:
             self.data = None  #  np.ndarray: Multichannel sound data field.
         else:
-            self.data = np_data.copy()  #  np.ndarray: Multichannel sound data field.
+            self.data = (
+                np_data.copy()
+            )  #  np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
 
@@ -158,13 +160,11 @@ class Mcs:
             float: The RMS value of the input signal.
         """
         # Calculate the mean of the squares of the signal values
-        mean_square  = 0
+        mean_square = 0
         if chan_index > -1:
-            mean_square = np.mean(
-                self.data[chan_index, 0:last_index] ** 2)
+            mean_square = np.mean(self.data[chan_index, 0:last_index] ** 2)
         else:
-            mean_square = np.mean(
-                self.data[0:last_index] ** 2)
+            mean_square = np.mean(self.data[0:last_index] ** 2)
 
         # Calculate the square root of the mean of the squares
         r = np.sqrt(mean_square)
@@ -431,9 +431,7 @@ class Mcs:
             self (Mcs): The echoed multichannel sound.
         """
         a = self.copy()
-        a.amplitude_ctrl(
-            amplitude_list, amplitude_deviation_list, seed=seed
-        )
+        a.amplitude_ctrl(amplitude_list, amplitude_deviation_list, seed=seed)
         e = a.copy()
         e.delay_ctrl(delay_us_list, delay_deviation_list, seed=seed)
         channels = []
@@ -667,9 +665,7 @@ class WaChain(Mcs):
     data.
     """
 
-    def __init__(
-        self, mcs_data: "Mcs" = None, seed: int = -1
-    ):
+    def __init__(self, mcs_data: "Mcs" = None, seed: int = -1):
         """
         Initializes a new instance of the WaChain class.
 
@@ -682,7 +678,7 @@ class WaChain(Mcs):
         Returns:
             None
         """
-        
+
         d = mcs_data
         if d is None:
             d = Mcs()
@@ -717,7 +713,7 @@ class WaChain(Mcs):
             np.ndarray: The multichannel sound data.
         """
         return self.data
-    
+
     def copy(self) -> "WaChain":
         """
         Creates a deep copy of the WaChain instance.
@@ -1058,7 +1054,7 @@ class WaChain(Mcs):
 
         res = []
         _ = self.copy()
-        print('_sample_rate:', _.sample_rate)
+        print("_sample_rate:", _.sample_rate)
         cmd_prefix = "_."
         for c in self.chains:
             cmd_line = cmd_prefix + c
@@ -1342,7 +1338,7 @@ def delay_hdr(args):
             f" <{info['channels_count']}> elements."
         )
         sys.exit(2)
-    
+
     mcs = Mcs().read(args.in_path)
     mcs.delay_ctrl(int_list)
     mcs.write(args.out_path)
