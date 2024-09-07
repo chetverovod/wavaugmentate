@@ -7,7 +7,7 @@ import wavaugmentate as wau
 import common_test_functions as ctf
 
 
-def test_wachain_put():
+def test_mcs_put():
     """
     Test function to verify the functionality of the WaChain class's put method.
 
@@ -27,13 +27,13 @@ def test_wachain_put():
     test_sound_1 = wau.Mcs(fs=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.put(test_sound_1)
 
     assert np.array_equal(test_sound_1.data, w.data)
     assert np.array_equal(test_sound_1.data, w.get())
 
-    w2 = wau.WaChain(test_sound_1)
+    w2 = wau.Mcs(test_sound_1.data)
     assert np.array_equal(w2.data, w.get())
 
 
@@ -54,13 +54,13 @@ def test_wachain_amp_control():
     a_list = [0.1, 0.3, 0.4, 1]
     test_sound_1 = wau.Mcs(fs=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    w = wau.WaChain(test_sound_1)
+    w = wau.Mcs(test_sound_1.data)
 
     w.amp(a_list)
     res1 = w
     print("res1 =", res1.data)
 
-    d = wau.WaChain()
+    d = wau.Mcs()
 
     res2 = d.put(test_sound_1).amp(a_list).get()
 
@@ -85,14 +85,14 @@ def test_wachain_dly_controls():
     d_list = [100, 200, 300, 0]
     test_sound_1 = wau.Mcs(fs=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    w = wau.WaChain(test_sound_1)
+    w = test_sound_1.copy()
 
     w.dly(d_list)
     res1 = w
     print("res1 shape =", res1.data.shape)
     print("res1 =", res1.data)
 
-    d = wau.WaChain()
+    d = wau.Mcs()
     d.put(test_sound_1)
     res2 = d.dly(d_list)
 
@@ -117,12 +117,12 @@ def test_wachain_wr_rd():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    r = wau.WaChain()
+    r = wau.Mcs()
     r.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, r.data)
@@ -148,7 +148,7 @@ def test_wachain_echo():
     """
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
     rms_list = w.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
@@ -156,7 +156,7 @@ def test_wachain_echo():
         assert abs(r - ref) < 0.001
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
     rms_list = w.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
@@ -185,7 +185,7 @@ def test_wachain_noise():
 
     n_list = [1, 0.2, 0.3, 0]
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.set_seed(42)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
     rms_list = w.rms(decimals=3)
@@ -212,7 +212,7 @@ def test_wachain_info():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
@@ -231,15 +231,15 @@ def test_wachain_info():
 def test_wachain_rn_rd():
     """Test augmentation on the fly."""
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.WaChain()
+    a = wau.Mcs()
     a.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.WaChain()
+    b = wau.Mcs()
     b.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, a.data)
@@ -255,15 +255,15 @@ def test_wachain_rn_rd():
 def test_wachain_rn_aug_rd():
     """Test augmentation on the fly."""
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.WaChain()
+    a = wau.Mcs()
     a.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.WaChain()
+    b = wau.Mcs()
     b.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, a.data)
@@ -299,7 +299,7 @@ def test_wachain_chain_class():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     cmd_prefix = "w."
     cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
     s = str(eval(cmd_prefix + cmd.strip()))
@@ -410,13 +410,13 @@ def test_readme_examples():
     # The same code in OOP approach:
 
     mcs = wau.Mcs().generate(freq_list, time_len, fs)
-    w = wau.WaChain(mcs)
+    w = wau.Mcs(mcs)
     w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
         "./sound_augmented.wav"
     )
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
-    v = wau.WaChain()
+    v = wau.Mcs()
     v.rd(file_name)  # Read original file.
     result = []
     for _ in range(5):
@@ -542,8 +542,8 @@ def test_chain_sum():
         None
     """
 
-    w = wau.WaChain()
-    res = wau.WaChain()
+    w = wau.Mcs()
+    res = wau.Mcs()
     w.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = w.copy()
     test_sound_2 = wau.Mcs()
@@ -573,7 +573,7 @@ def test_chain_merge():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     r = (
         w.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
@@ -605,7 +605,7 @@ def test_chain_split():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
     c = w.data.shape[0]
     assert c == 5
@@ -637,7 +637,7 @@ def test_chain_side_by_side():
 
     test_sound_1 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     r = (
         w.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .amp([0.3])
@@ -727,8 +727,8 @@ def test_chain_pause_detect():
         None
     """
 
-    w = wau.WaChain()
-    w1 = wau.WaChain()
+    w = wau.Mcs()
+    w1 = wau.Mcs()
     w.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     w1 = w.copy()
     mask = w.pdt([0.5, 0.3])
@@ -922,7 +922,7 @@ def test_chain_add_chain():
         None
     """
     mcs = wau.Mcs(fs=ctf.FS)
-    w = wau.WaChain(mcs)  # Create a WaChain instance
+    w = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
 
     # Define the first chain command
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
@@ -939,7 +939,7 @@ def test_chain_add_chain():
         print(r)  # Print the result
         # Assert that the result is within the expected tolerance
         assert abs(r[0] - ref[0]) < 0.001
-    w = wau.WaChain(mcs)
+    w = wau.Mcs(mcs.data, mcs.sample_rate)
     c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
     c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
     w.achn([c1, c2])

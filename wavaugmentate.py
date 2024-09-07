@@ -357,8 +357,8 @@ class Mcs:
                         a.append(random_noise_gen.uniform(left, right))
 
         channels = []
-        for signal, amp in zip(self.data, a):
-            channels.append(signal * amp)
+        for signal, ampl in zip(self.data, a):
+            channels.append(signal * ampl)
 
         self.data = np.array(channels).copy()
         return self
@@ -817,40 +817,6 @@ class Mcs:
     achn = add_chain
     rdac = read_file_apply_chains
 
-#  Chaining class
-
-
-class WaChain(Mcs):
-    """
-    Class provides support of chain operations with multichannel sound
-    data.
-    """
-
-    def __init__(self, mcs_data: "Mcs" = None, seed: int = -1):
-        """
-        Initializes a new instance of the WaChain class.
-
-        Args:
-            mcs_data (np.ndarray, optional): The multichannel sound data.
-            Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults
-            to -1.
-
-        Returns:
-            None
-        """
-
-        d = mcs_data
-        if d is None:
-            d = Mcs()
-        super().__init__(d.data, d.sample_rate)
-        self.path = d.path
-
-    
-
-
-
-    
 
 # CLI interface functions
 ERROR_MARK = "Error: "
@@ -940,7 +906,7 @@ def chain_hdr(args):
         return
     c = args.chain_code.strip()
     print("chain:", c)
-    w = WaChain()
+    w = Mcs()
     cmd_prefix = "w."
     str(eval(cmd_prefix + c.strip()))  # It is need for chain commands.
     print(SUCCESS_MARK)
