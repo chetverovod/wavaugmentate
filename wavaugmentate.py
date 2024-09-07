@@ -130,16 +130,17 @@ class Mcs:
             Defaults to None.
             fs (int, optional): The sample rate of the sound data. Defaults
             to -1.
+            seed (int): Value for seeding random generator. Defaults to -1.
 
         Returns:
             None
         """
         if np_data is None:
-            self.data = None  #  np.ndarray: Multichannel sound data field.
+            self.data = None  # np.ndarray: Multichannel sound data field.
         else:
             self.data = (
                 np_data.copy()
-            )  #  np.ndarray: Multichannel sound data field.
+            )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
         self.chains = []  # List of chains.
@@ -232,9 +233,9 @@ class Mcs:
         Args:
         frequency_list (list): A list of frequencies to generate sound for.
         duration (float): The duration of the sound in seconds.
+        fs (int): The sample rate of the sound. Defaults to -1.
         mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
         Defaults to 'sine'.
-        seed (int): The seed for random number generation. Defaults to -1.
 
         Returns:
         self (Mcs):  representing the generated multichannel sound.
@@ -290,8 +291,6 @@ class Mcs:
             path (str): The path to the WAV file.
             mcs_data (np.ndarray): The multichannel sound data to write. The shape
             of the array should be (num_channels, num_samples).
-            sample_rate (int, optional): The sample rate of the sound data.
-            Defaults to 44100.
 
         Returns:
         self (Mcs):  representing saved multichannel sound.
@@ -336,7 +335,6 @@ class Mcs:
             amplitude_deviation_list (List[float]): If exists, sets amplitude values
             random with uniform distribution in range
             [amplitude - deviation, amplitude + deviation)].
-            seed (int): If exists seeds random generator.
 
         Returns:
             self (Mcs): The amplitude-controlled multichannel sound.
@@ -376,10 +374,9 @@ class Mcs:
         Args:
             delay_us_list (List[int]): The list of delay values in microseconds to
             apply to each channel. Each value should be a positive integer.
-            sound data. Defaults to def_fs.
+            sound data.
             delay_deviation_list (List[int]): If exists, the list of delay
             deviations makes delays uniformly distributed.
-            seed (int): If exists seeds random generator.
 
         Returns:
             self (Mcs): The delayed multichannel sound.
@@ -799,7 +796,7 @@ application_info = f"{prog_name} application provides functions for \
 multichannel WAV audio data augmentation."
 
 
-def check_amp_list(ls: List[str]) -> None:
+def validate_amp_list(ls: List[str]) -> None:
     """
     Checks if all elements in the given amplitudes list are valid numbers.
 
@@ -825,7 +822,7 @@ def check_amp_list(ls: List[str]) -> None:
             sys.exit(3)
 
 
-def check_delay_list(ls: List[str]) -> None:
+def validate_delay_list(ls: List[str]) -> None:
     """
     Checks if all elements in the given delays list are valid integers.
 
@@ -950,7 +947,7 @@ def amplitude_hdr(args):
         return
 
     amplitude_list = args.amplitude_list.split(",")
-    check_amp_list(amplitude_list)
+    validate_amp_list(amplitude_list)
 
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
@@ -977,7 +974,7 @@ def noise_hdr(args):
         return
 
     noise_list = args.noise_list.split(",")
-    check_amp_list(noise_list)
+    validate_amp_list(noise_list)
 
     float_list = [float(i) for i in noise_list]
     print(f"noise levels: {float_list}")
@@ -1021,8 +1018,8 @@ def echo_hdr(args):
         )
         sys.exit(2)
 
-    check_delay_list(delay_list)
-    check_amp_list(amplitude_list)
+    validate_delay_list(delay_list)
+    validate_amp_list(amplitude_list)
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
@@ -1052,7 +1049,7 @@ def delay_hdr(args):
         return
 
     delay_list = args.delay_list.split(",")
-    check_delay_list(delay_list)
+    validate_delay_list(delay_list)
 
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
