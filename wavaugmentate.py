@@ -119,7 +119,7 @@ class Mcs:
     data.
     """
 
-    def __init__(self, np_data: np.ndarray = None, fs: int = -1):
+    def __init__(self, np_data: np.ndarray = None, fs: int = -1, seed: int = -1):
         """
         Initializes a new instance of the Mcs class.
 
@@ -140,6 +140,8 @@ class Mcs:
             )  #  np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = fs  # Sampling frequency, Hz.
+        self.chains = []  # List of chains.
+        self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> "Mcs":
         """Deep Copy of the Mcs object."""
@@ -321,7 +323,6 @@ class Mcs:
         self,
         amplitude_list: List[float],
         amplitude_deviation_list: List[float] = None,
-        seed: int = -1,
     ) -> "Mcs":
         """
         Apply amplitude control to a multichannel sound. If
@@ -349,8 +350,8 @@ class Mcs:
                 if dev > 0:
                     left = amplitude - dev
                     right = amplitude + dev
-                    if seed != -1:
-                        local_ng = np.random.default_rng(seed=seed)
+                    if self.seed != -1:
+                        local_ng = np.random.default_rng(seed=self.seed)
                         a.append(local_ng.uniform(left, right))
                     else:
                         a.append(random_noise_gen.uniform(left, right))
@@ -366,7 +367,6 @@ class Mcs:
         self,
         delay_us_list: List[int],
         delay_deviation_list: List[int] = None,
-        seed: int = -1,
     ) -> "Mcs":
         """
             Add delays of channels of multichannel sound. Output data become longer.
@@ -384,7 +384,7 @@ class Mcs:
             self (Mcs): The delayed multichannel sound.
         """
 
-        d = delay_syntez(delay_us_list, delay_deviation_list, seed)
+        d = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
         channels = []
         # In samples.
         max_samples_delay = int(max(d) * 1.0e-6 * self.sample_rate)
@@ -409,7 +409,6 @@ class Mcs:
         amplitude_list: List[float],
         delay_deviation_list: List[int] = None,
         amplitude_deviation_list: List[float] = None,
-        seed: int = -1,
     ) -> "Mcs":
         """
         Add echo to multichannel sound. The output data become longer. To each
@@ -431,9 +430,9 @@ class Mcs:
             self (Mcs): The echoed multichannel sound.
         """
         a = self.copy()
-        a.amplitude_ctrl(amplitude_list, amplitude_deviation_list, seed=seed)
+        a.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
         e = a.copy()
-        e.delay_ctrl(delay_us_list, delay_deviation_list, seed=seed)
+        e.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
         for d in self.data:
             zl = e.data.shape[1] - d.data.shape[0]
@@ -445,7 +444,6 @@ class Mcs:
     def noise_ctrl(
         self,
         noise_level_list: List[float],
-        seed: int = -1,
     ) -> "Mcs":
         """
         Apply noise to a multichannel sound.
@@ -461,8 +459,8 @@ class Mcs:
 
         channels = []
         for signal, level in zip(self.data, noise_level_list):
-            if seed != -1:
-                local_ng = np.random.default_rng(seed=seed)
+            if self.seed != -1:
+                local_ng = np.random.default_rng(seed=self.seed)
                 n_noise = local_ng.standard_normal(
                     self.data.shape[1],
                 )
@@ -619,7 +617,7 @@ class Mcs:
         self.data = out_data
         return self
 
-    def sum_sig(self, mcs_data2: "Mcs") -> "Mcs":
+    def sum(self, mcs_data2: "Mcs") -> "Mcs":
         """
         Sums two multichannel sound signals.
 
@@ -654,42 +652,10 @@ class Mcs:
         out_data[self.data.shape[0] :, :] = mcs_data2.data
         self.data = out_data.copy()
         return self
-
-
-#  Chaining class
-
-
-class WaChain(Mcs):
-    """
-    Class provides support of chain operations with multichannel sound
-    data.
-    """
-
-    def __init__(self, mcs_data: "Mcs" = None, seed: int = -1):
+    
+    def put(self, mcs: "Mcs") -> "Mcs":
         """
-        Initializes a new instance of the WaChain class.
-
-        Args:
-            mcs_data (np.ndarray, optional): The multichannel sound data.
-            Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults
-            to -1.
-
-        Returns:
-            None
-        """
-
-        d = mcs_data
-        if d is None:
-            d = Mcs()
-        super().__init__(d.data, d.sample_rate)
-        self.path = d.path
-        self.chains = []  # List of chains.
-        self.seed = seed  # Flag for seeding random generator.
-
-    def put(self, mcs_data: Mcs) -> "WaChain":
-        """
-        Updates the multichannel sound data and sample rate of the WaChain
+        Updates the multichannel sound data and sample rate of the Mcs 
         instance.
 
         Args:
@@ -697,39 +663,30 @@ class WaChain(Mcs):
             fs (int, optional): The new sample rate. Defaults to -1.
 
         Returns:
-            WaChain: The updated WaChain instance.
+            Mcs: The updated Mcs instance.
         """
 
-        self.data = mcs_data.data.copy()
-        self.sample_rate = mcs_data.sample_rate
-        self.path = mcs_data.path
+        self.data = mcs.data.copy()
+        self.sample_rate = mcs.sample_rate
+        self.path = mcs.path
         return self
 
     def get(self) -> np.ndarray:
         """
-        Returns the multichannel sound data stored in the WaChain instance.
+        Returns the multichannel sound data stored in the Mcs instance.
 
         Returns:
             np.ndarray: The multichannel sound data.
         """
         return self.data
-
-    def copy(self) -> "WaChain":
-        """
-        Creates a deep copy of the WaChain instance.
-
-        Returns:
-            WaChain: A deep copy of the WaChain instance.
-        """
-        return copy.deepcopy(self)
-
+    
     def gen(
         self,
         f_list: List[int],
         t: float,
         fs: int = -1,
         mode: str = "sine",
-    ) -> "WaChain":
+    ) -> "Mcs":
         """
         Generates a multichannel sound using the given frequency list,
         duration, and sampling rate.
@@ -749,173 +706,13 @@ class WaChain(Mcs):
             WaChain: The updated WaChain instance with the generated
             multichannel sound, allowing for method chaining.
         """
-        super().generate(f_list, t, fs, mode, seed=self.seed)
+        self.generate(f_list, t, fs, mode, seed=self.seed)
         return self
-
-    def rd(self, path: str) -> "WaChain":
-        """
-        Reads data from a file at the specified path and updates the sample
-        rate and data attributes.
-
-        Args:
-            path (str): Path to the file containing the data.
-
-        Returns:
-            sWaChain: The updated WaChain instance itself, allowing for method
-            chaining.
-        """
-
-        super().read(path)
-        return self
-
-    def rdac(self, path: str) -> "WaChain":
-        """
-        Reads data from a file at the specified path and updates the sample
-        rate and data attributes and applies chains if they exist in object.
-
-        Args:
-            path (str): Path to the file containing the data.
-
-        Returns:
-            sWaChain: The updated WaChain instance itself, allowing for method
-            chaining.
-        """
-
-        super().read(path)
-        self.data = self.eval()
-        return self
-
-    def wr(self, path: str) -> "WaChain":
-        """
-        Writes the audio data to a file at the specified path.
-
-        Args:
-            path (str): The path to write the audio data to.
-
-        Returns:
-            WaChain: The current instance of WaChain, allowing for method
-            chaining.
-        """
-
-        super().write(path)
-        return self
-
+    
     def set_seed(self, seed: int = -1):
         """Set seeding value."""
 
         self.seed = seed
-
-    def amp(
-        self,
-        amplitude_list: List[float],
-        amplitude_deviation_list: List[float] = None,
-    ) -> "WaChain":
-        """
-        Amplifies the audio data based on a custom amplitude control.
-
-        Args:
-            amplitude_list (List[float]): A list of amplitudes to apply to each
-            corresponding chunk of audio data.
-
-        Returns:
-            WaChain: The current instance of WaChain, allowing for method
-            chaining.
-        """
-
-        super().amplitude_ctrl(
-            amplitude_list, amplitude_deviation_list, seed=self.seed
-        )
-        return self
-
-    def dly(
-        self, delay_list: List[int], delay_deviation_list: List[int] = None
-    ) -> "WaChain":
-        """
-        Delays the audio data based on a custom delay control.
-
-        Args:
-            delay_list (List[int]): A list of delays to apply to each
-            corresponding chunk of audio data.
-
-        Returns:
-            WaChain: The current instance of WaChain, allowing for method
-            chaining.
-        """
-
-        super().delay_ctrl(
-            delay_list,
-            delay_deviation_list,
-            seed=self.seed,
-        )
-        return self
-
-    def ns(self, noise_level_list: List[float]) -> "WaChain":
-        """
-        Adds custom noise to the audio data.
-
-        Args:
-            noise_level_list (List[float]): A list of noise levels to apply to
-            each corresponding chunk of audio data.
-            seed (int): An optional random seed for reproducibility. Defaults
-            to -1.
-
-        Returns:
-            WaChain: The current instance of WaChain, allowing for method
-            chaining.
-        """
-
-        super().noise_ctrl(noise_level_list, seed=self.seed)
-        return self
-
-    def echo(
-        self,
-        delay_us_list: List[int],
-        amplitude_list: List[float],
-        delay_deviation_list: List[int] = None,
-        amplitude_deviation_list: List[float] = None,
-    ) -> "WaChain":
-        """
-        Adds an echo effect to the audio data.
-
-        Args:
-            delay_us_list (List[int]): A list of delays in microseconds for
-            each corresponding chunk of audio data.
-            amplitude_list (List[float]): A list of amplitudes to apply to each
-            corresponding chunk of echo data.
-            sampling_rate (int): The sampling rate at which to add the echo
-            effect.  Defaults to `def_fs`.
-
-        Returns:
-            WaChain: The current instance of WaChain, allowing for method
-            chaining.
-        """
-
-        super().echo_ctrl(
-            delay_us_list,
-            amplitude_list,
-            delay_deviation_list,
-            amplitude_deviation_list,
-            seed=self.seed,
-        )
-        return self
-
-    def rms(self, last_index: int = -1, decimals: int = -1) -> List[float]:
-        """
-        Calculates the root mean square (RMS) of the audio data.
-
-        Args:
-            last_index (int): The index up to which to calculate the RMS.
-            Defaults to -1, meaning all data.
-            decimals (int): The number of decimal places to round the
-            result to.
-            Defaults to -1, meaning no rounding.
-
-        Returns:
-            List[float]: A list containing the RMS values for each
-            corresponding chunk of audio data.
-        """
-
-        return super().rms(last_index, decimals)
 
     def info(self) -> dict:
         """
@@ -949,82 +746,8 @@ class WaChain(Mcs):
             res["length_s"] = length
         return res
 
-    def sum(self, mcs_data: Mcs) -> "WaChain":
-        """
-        Sums two multichannel sound signals side by side.
-
-        Args:
-            mcs_data (np.ndarray): The second multichannel sound signal.
-
-        Returns:
-            WaChain: The updated WaChain instance with the summed multichannel
-            sound, allowing for method chaining.
-        """
-
-        super().sum_sig(mcs_data)
-        return self
-
-    def mrg(self) -> "WaChain":
-        """
-        Merges all channels to single and returns mono MCS.
-
-        Returns:
-            WaChain: The updated WaChain instance with the merged multichannel
-            sound, allowing for method chaining.
-        """
-
-        super().merge()
-        return self
-
-    def splt(self, channels_count: int) -> "WaChain":
-        """
-        Splits a multichannel signal (containing single channel) into multiple
-        identical channels.
-
-        Args:
-            channels_count (int): The number of channels to split the signal
-            into.
-
-        Returns:
-            WaChain: The updated WaChain instance with the split multichannel
-            sound, allowing for method chaining.
-        """
-
-        super().split(channels_count)
-        return self
-
-    def sbs(self, mcs_data: Mcs) -> "WaChain":
-        """
-        Concatenates two multichannel sound signals side by side.
-
-        Args:
-            mcs_data (np.ndarray): The second multichannel sound signal.
-
-        Returns:
-            WaChain: The updated WaChain instance with the concatenated
-            multichannel sound, allowing for method chaining.
-        """
-
-        super().side_by_side(mcs_data)
-        return self
-
-    def pdt(self, relative_level: List[float]) -> np.ndarray[int]:
-        """
-        Detects pauses in a multichannel sound based on a custom
-        relative level value.
-
-        Args:
-            relative_level (List[float]): A list of relative levels for each
-            corresponding channel, signal below this level will be marked as
-            pause.
-
-        Returns:
-            mask: The np.ndarray of int.
-        """
-        mask = super().pause_detect(relative_level)
-        return mask
-
-    def achn(self, list_of_chains: List[str]) -> "WaChain":
+    
+    def add_chain(self, list_of_chains: List[str]) -> "Mcs":
         """
         Add chain to list of chains.
 
@@ -1032,23 +755,23 @@ class WaChain(Mcs):
             list_of_chains (List[str]): A list of chains to add.
 
         Returns:
-            WaChain: The updated WaChain instance with added chains.
+            self (Mcs): The updated Mcs instance with added chains.
             result, allowing for method chaining.
         """
 
         for c in list_of_chains:
             self.chains.append(c.strip())
-        return self
+        return self    
 
-    def eval(self) -> "WaChain":
+    def eval(self) -> "Mcs":
         """
         Evaluate list of chains.
 
         Args:
-            list_of_chains (List[str]): A list of chains to add.
+            none
 
         Returns:
-            WaChain: The updated WaChain instance with added chains.
+            self (Mcs): The updated Mcs instance with added chains.
             result, allowing for method chaining.
         """
 
@@ -1062,6 +785,72 @@ class WaChain(Mcs):
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
+    def read_file_apply_chains(self, path: str) -> "Mcs":
+        """
+        Reads data from a file at the specified path and updates the sample
+        rate and data attributes and applies chains if they exist in object.
+
+        Args:
+            path (str): Path to the file containing the data.
+
+        Returns:
+            self (Mcs): The updated Mcs instance itself, allowing for method
+            chaining.
+        """
+
+        self.read(path)
+        self.data = self.eval()
+        return self
+
+
+    # Alias Method Names
+    rd = read
+    wr = write 
+    amp = amplitude_ctrl
+    dly = delay_ctrl
+    echo = echo_ctrl
+    ns = noise_ctrl
+    mrg = merge
+    splt = split 
+    sbs = side_by_side
+    pdt = pause_detect
+    achn = add_chain
+    rdac = read_file_apply_chains
+
+#  Chaining class
+
+
+class WaChain(Mcs):
+    """
+    Class provides support of chain operations with multichannel sound
+    data.
+    """
+
+    def __init__(self, mcs_data: "Mcs" = None, seed: int = -1):
+        """
+        Initializes a new instance of the WaChain class.
+
+        Args:
+            mcs_data (np.ndarray, optional): The multichannel sound data.
+            Defaults to None.
+            fs (int, optional): The sample rate of the sound data. Defaults
+            to -1.
+
+        Returns:
+            None
+        """
+
+        d = mcs_data
+        if d is None:
+            d = Mcs()
+        super().__init__(d.data, d.sample_rate)
+        self.path = d.path
+
+    
+
+
+
+    
 
 # CLI interface functions
 ERROR_MARK = "Error: "

@@ -178,7 +178,8 @@ def test_rn_amplitude_ctrl():
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
     test_ac = test_sound_1.copy()
-    test_ac.amplitude_ctrl(amplitude_list, amplitude_deviation_list, seed=42)
+    test_ac.set_seed(42)
+    test_ac.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
     assert test_ac.shape() == (4, 220500)
     test_ac.write(ctf.TEST_SOUND_1_AC_FILE)
     r_list = test_ac.rms(decimals=3)
@@ -247,9 +248,9 @@ def test_rn_delay_ctrl():
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
-    test_dc = test_sound_1.delay_ctrl(
-        delay_list, delay_deviation_list, seed=42
-    )
+    test_sound_1.set_seed(42)
+    test_dc = test_sound_1.delay_ctrl(delay_list,
+                                      delay_deviation_list)
     assert test_dc.shape() == (4, 220512)
     test_dc.write(ctf.TEST_SOUND_1_DELAY_FILE)
     for ch in test_dc.data:
@@ -324,12 +325,12 @@ def test_rn_echo_ctrl():
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
     delay_deviation_list = [10, 20, 30, 5]
     test_ec = test_sound_1.copy()
+    test_ec.set_seed(42)
     test_ec.echo_ctrl(
         delay_list,
         amplitude_list,
         delay_deviation_list,
         amplitude_deviation_list,
-        seed=42,
     )
     test_ec.write(ctf.TEST_SOUND_1_ECHO_FILE)
     rms_list = test_ec.rms(decimals=3)
@@ -430,7 +431,8 @@ def test_noise_ctrl():
 
     test_sound_1 = wau.Mcs(fs=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    test_nc = test_sound_1.noise_ctrl([1, 0.2, 0.3, 0], seed=42)
+    test_sound_1.set_seed(42)
+    test_nc = test_sound_1.noise_ctrl([1, 0.2, 0.3, 0])
     test_nc.write(ctf.TEST_SOUND_1_NOISE_FILE)
     rms_list = test_nc.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]

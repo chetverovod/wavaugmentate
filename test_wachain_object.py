@@ -451,7 +451,7 @@ def test_sum():
     test_sound_2 = wau.Mcs(fs=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
-    res.sum_sig(test_sound_2)
+    res.sum(test_sound_2)
     res.write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
     for s, ref_value in zip([test_sound_1, test_sound_2, res], ref):
