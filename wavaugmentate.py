@@ -119,7 +119,9 @@ class Mcs:
     data.
     """
 
-    def __init__(self, np_data: np.ndarray = None, fs: int = -1, seed: int = -1):
+    def __init__(
+        self, np_data: np.ndarray = None, fs: int = -1, seed: int = -1
+    ):
         """
         Initializes a new instance of the Mcs class.
 
@@ -652,10 +654,10 @@ class Mcs:
         out_data[self.data.shape[0] :, :] = mcs_data2.data
         self.data = out_data.copy()
         return self
-    
+
     def put(self, mcs: "Mcs") -> "Mcs":
         """
-        Updates the multichannel sound data and sample rate of the Mcs 
+        Updates the multichannel sound data and sample rate of the Mcs
         instance.
 
         Args:
@@ -679,7 +681,7 @@ class Mcs:
             np.ndarray: The multichannel sound data.
         """
         return self.data
-    
+
     def gen(
         self,
         f_list: List[int],
@@ -708,7 +710,7 @@ class Mcs:
         """
         self.generate(f_list, t, fs, mode, seed=self.seed)
         return self
-    
+
     def set_seed(self, seed: int = -1):
         """Set seeding value."""
 
@@ -746,7 +748,6 @@ class Mcs:
             res["length_s"] = length
         return res
 
-    
     def add_chain(self, list_of_chains: List[str]) -> "Mcs":
         """
         Add chain to list of chains.
@@ -761,7 +762,7 @@ class Mcs:
 
         for c in list_of_chains:
             self.chains.append(c.strip())
-        return self    
+        return self
 
     def eval(self) -> "Mcs":
         """
@@ -802,16 +803,15 @@ class Mcs:
         self.data = self.eval()
         return self
 
-
     # Alias Method Names
     rd = read
-    wr = write 
+    wr = write
     amp = amplitude_ctrl
     dly = delay_ctrl
     echo = echo_ctrl
     ns = noise_ctrl
     mrg = merge
-    splt = split 
+    splt = split
     sbs = side_by_side
     pdt = pause_detect
     achn = add_chain

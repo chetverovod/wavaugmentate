@@ -249,8 +249,7 @@ def test_rn_delay_ctrl():
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
     test_sound_1.set_seed(42)
-    test_dc = test_sound_1.delay_ctrl(delay_list,
-                                      delay_deviation_list)
+    test_dc = test_sound_1.delay_ctrl(delay_list, delay_deviation_list)
     assert test_dc.shape() == (4, 220512)
     test_dc.write(ctf.TEST_SOUND_1_DELAY_FILE)
     for ch in test_dc.data:
