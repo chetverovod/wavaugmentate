@@ -135,6 +135,7 @@ class Mcs:
         Returns:
             None
         """
+
         if np_data is None:
             self.data = None  # np.ndarray: Multichannel sound data field.
         else:
@@ -186,13 +187,14 @@ class Mcs:
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-        last_index (int): The last index to consider when calculating the RMS.
-        If -1, consider the entire array. Defaults to -1.
-        decimals (int): Number of decimal places to round the RMS value.
+            last_index (int): The last index to consider when calculating the RMS.
+            If -1, consider the entire array. Defaults to -1.
+            decimals (int): Number of decimal places to round the RMS value.
             If -1, do not round. Defaults to -1.
 
         Returns:
             list: A list of RMS values for each channel in the multichannel sound.
+
         """
 
         res = []
@@ -410,7 +412,7 @@ class Mcs:
     ) -> "Mcs":
         """
             Add delays of channels of multichannel sound. Output data become longer.
-        Values of delay will be converted to count of samples.
+            Values of delay will be converted to count of samples.
 
         Args:
             delay_us_list (List[int]): The list of delay values in microseconds to
@@ -421,6 +423,7 @@ class Mcs:
 
         Returns:
             self (Mcs): The delayed multichannel sound.
+
         """
 
         if self.channels_count() != len(delay_us_list):

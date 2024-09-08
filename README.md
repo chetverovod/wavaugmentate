@@ -185,3 +185,5 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |19| write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
  
 
+## Documentation
+file:///home/igor/Plastov/wavaugmentate/docs/_build/html/source/wavaugmentate.html

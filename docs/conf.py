@@ -26,3 +26,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
+
+# Add napoleon to the extensions list
+extensions = ['sphinx.ext.napoleon',  'sphinx.ext.autodoc']
+
+import os
+import sys
+sys.path.append(os.path.abspath('../src/wavaugmentate'))

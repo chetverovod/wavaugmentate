@@ -12,6 +12,8 @@ documentation for details.
 
 
 .. toctree::
+   /source/modules.rst
    :maxdepth: 2
    :caption: Contents:
+
 
