@@ -1,5 +1,11 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
+import os
+import sys
+cwd = os.getcwd()
+WAU_DIR = cwd + '/src/wavaugmentate'
+sys.path.insert(1, WAU_DIR)
+
 import wavaugmentate as wau
 
 FS = wau.DEF_FS

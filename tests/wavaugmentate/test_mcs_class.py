@@ -1,14 +1,13 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
-import os
-cwd = os.getcwd()
+import common_test_functions as ctf
 import sys
-sys.path.insert(1, cwd + '/wavaugmentate/src/wavaugmentate')
+import os
+sys.path.insert(1, ctf.WAU_DIR)
 
 import subprocess as sp
 import numpy as np
 import wavaugmentate as wau
-import common_test_functions as ctf
 
 
 def test_mcs_put():
