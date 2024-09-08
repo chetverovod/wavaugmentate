@@ -1,8 +1,10 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
-import sys
-sys.path.insert(1, '/home/igor/Plastov/wavaugmentate/src/wavaugmentate')
 import os
+cwd = os.getcwd()
+import sys
+sys.path.insert(1, cwd + '/wavaugmentate/src/wavaugmentate')
+
 import subprocess as sp
 import numpy as np
 import wavaugmentate as wau
