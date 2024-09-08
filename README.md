@@ -1,12 +1,12 @@
-# **Wavaugmentate**:  Multichannel Audio Signal Augmentation Processor
+# **Wavaugmentate**:  Multichannel Audio Signal Augmentation Module
 
+![alt text](./pictures/title_image.png)
 
-
- Mcs The application provides the Mcs class, which helps to perform augmentation of multi-channel audio signals. 
+  The module provides the Mcs class, which helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
 
 # Input Data
 
-Multichannel WAV-file or NumPy array.
+WAV-file or NumPy array.
 ```
 Array shape: (num_channels, num_samples).
 ```
@@ -32,8 +32,8 @@ Same types as in section [Input_data](#Input_data).
 
 # Interfaces
 Signal augmentation can be applied by two ways:
-1. Python module methods.
-2. CLI interface options.
+1. As python module *Mcs* class methods.
+2. As console application with CLI interface options.
 
 ## Python Module
 
@@ -41,27 +41,48 @@ Example 1 (procedural approach):
 ```Python
 import wavaugmentate as wau
 
-# Read WAV-file to array.
-fsmp, mcs = wau.read('./sound.wav')
+# File name of original sound.
+file_name = "./sound.wav"
+# Create Mcs-object.
+    mcs = wau.Mcs()
 
-# Apply delays.
-delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity. 
-d = wau.delay_ctrl(mcs, delay_list)
+    # Read WAV-file to Mcs-object.
+    mcs.read(file_name)
 
-# Apply amplitude changes.
-amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity. 
-res = wau.amplitude_ctrl(d, amplitude_list)
+    # Apply delays.
+    # Corresponds to channels quantity.
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    mcs.delay_ctrl(delay_list)
 
-# Augmentation result saving.
-wau.write('./sound_delayed.wav', res, fsmp)
+    # Apply amplitude changes.
+    # Corresponds to channels quantity.
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+    mcs.amplitude_ctrl(amplitude_list)
+
+    # Augmentation result saving.
+    mcs.write("./sound_augmented.wav")
 ```
-The same code as chain, Example 2 (OOP approach):
+Original signal is shown on picture:
+![Initial signal](./pictures/example_1_original_signal.png)
+
+Output signal with augmented data (channel 1 contains original signal without changes):
+![Augmented signal](./pictures/example_1_augmented_signal.png)
+
+
+The same code as chain, Example 2:
 
 ```Python
 import wavaugmentate as wau
 
-w = wau.WaChain()
-w.rd('./sound.wav').dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr('./sound_delayed.wav')
+  # The same code as chain, Example 2:
+
+    freq_list = [400, 700, 1000, 2333, 3700, 5000, 6500]
+    delay_list = [100, 150, 200, 250, 300, 350, 400]
+    amplitude_list = [0.1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+    mcs = wau.Mcs().gen(freq_list, time_len, fs)
+    w = wau.Mcs(mcs)
+    w.rd(file_name).dly(delay_list).amp(amplitude_list).wr(
+        "./sound_augmented.wav"
 ```
 ## CLI
 

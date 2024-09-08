@@ -377,47 +377,67 @@ def test_readme_examples():
     """
 
     # Preparations
-    file_name = "./sound.wav"
+    file_name = "./outputwav/sound.wav"
     if os.path.exists(file_name):
         os.remove(file_name)
 
     # Frequencies list, corresponds to channels quantity.
-    freq_list = [400, 700, 1000, 2333, 3700, 5000, 6500]
-
-    fs = 441100  # Select sampling frequency, Hz.
+    freq_list = [400]
+    fs = 44100  # Select sampling frequency, Hz.
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs = wau.Mcs().generate(freq_list, time_len, fs)
-    mcs.write(file_name)
+    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1.write(file_name)
 
     # Examples code for  README.md
+
+    # Example 1:
+
+    # File name of original sound.
+    file_name = "./outputwav/sound.wav"
+
+    # Create Mcs-object.
+    mcs = wau.Mcs()
 
     # Read WAV-file to Mcs-object.
     mcs.read(file_name)
 
+    # Change quantity of channels to 7.
+    mcs.split(7)
+
     # Apply delays.
-    delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity.
+    # Corresponds to channels quantity.
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
     mcs.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
-    amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity.
+    # Corresponds to channels quantity.
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     mcs.amplitude_ctrl(amplitude_list)
 
     # Augmentation result saving.
-    mcs.write("./sound_augmented.wav")
+    mcs.write("./outputwav/sound_augmented.wav")
 
-    # The same code in OOP approach:
-
-    mcs = wau.Mcs().generate(freq_list, time_len, fs)
+    # The same code as chain, Example 2:
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     w = wau.Mcs(mcs)
-    w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
-        "./sound_augmented.wav"
+    """
+    w.rd(file_name).dly(delay_list).amp(amplitude_list).wr(
+        "./outputwav/sound_augmented_by_chain.wav"
     )
+    """
+    w.rd(file_name)
+    w.splt(7)
+    w.dly(delay_list)
+    w.amp(amplitude_list)
+    w.wr("./outputwav/sound_augmented_by_chain.wav")
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
     v = wau.Mcs()
     v.rd(file_name)  # Read original file.
+    v.split(4)
     result = []
     for _ in range(5):
         b = v.copy()
@@ -926,9 +946,9 @@ def test_chain_add_chain():
     w = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
 
     # Define the first chain command
-    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
+    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
     # Define the second chain command
-    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
     w.achn([c1, c2])  # Add the chain commands to the chains list
     print(c1)  # Print the first chain command
     print(c2)  # Print the second chain command
@@ -941,8 +961,8 @@ def test_chain_add_chain():
         # Assert that the result is within the expected tolerance
         assert abs(r[0] - ref[0]) < 0.001
     w = wau.Mcs(mcs.data, mcs.sample_rate)
-    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
-    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
+    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
     w.achn([c1, c2])
     print(c1)
     print(c2)
