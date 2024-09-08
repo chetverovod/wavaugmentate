@@ -1,10 +1,12 @@
 """Module providing test functions for wavaugmentate.py  module."""
-
+import sys
 import os
+import common_test_functions as ctf
+sys.path.insert(1, ctf.WAU_DIR)
+
 import subprocess as sp
 import numpy as np
 import wavaugmentate as wau
-import common_test_functions as ctf
 
 
 def test_generate_sine():

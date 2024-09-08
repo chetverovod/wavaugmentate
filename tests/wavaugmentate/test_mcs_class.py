@@ -1,10 +1,13 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
+import common_test_functions as ctf
+import sys
 import os
+sys.path.insert(1, ctf.WAU_DIR)
+
 import subprocess as sp
 import numpy as np
 import wavaugmentate as wau
-import common_test_functions as ctf
 
 
 def test_mcs_put():
@@ -130,7 +133,7 @@ def test_mcs_wr_rd():
 
 def test_mcs_write_by_channel():
     # Preparations
-    file_name = "./outputwav/sound.wav"
+    file_name = ctf.OUTPUTWAV_DIR + "sound.wav"
     if os.path.exists(file_name):
         os.remove(file_name)
 
@@ -162,10 +165,10 @@ def test_mcs_write_by_channel():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     mcs.amplitude_ctrl(amplitude_list)
 
-    mcs.write_by_channel("./outputwav/sound_augmented.wav")
+    mcs.write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
 
     for i in range(7):
-        mcs.read(f"./outputwav/sound_augmented_{i + 1}.wav")
+        mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
         r = mcs.rms()
         assert abs(r[0] - 0.707 * amplitude_list[i]) < 0.001
 
@@ -419,7 +422,10 @@ def test_readme_examples():
     """
 
     # Preparations
-    file_name = "./outputwav/sound.wav"
+    sound_file_path = ctf.OUTPUTWAV_DIR + "sound.wav"
+    sound_aug_file_path = ctf.OUTPUTWAV_DIR + "sound_augmented.wav"
+
+    file_name = sound_file_path
     if os.path.exists(file_name):
         os.remove(file_name)
 
@@ -437,7 +443,7 @@ def test_readme_examples():
     # Example 1:
 
     # File name of original sound.
-    file_name = "./outputwav/sound.wav"
+    file_name = sound_file_path
 
     # Create Mcs-object.
     mcs = wau.Mcs()
@@ -459,12 +465,12 @@ def test_readme_examples():
     mcs.amplitude_ctrl(amplitude_list)
 
     # Augmentation result saving by single file, containing 7 channels.
-    mcs.write("./outputwav/sound_augmented.wav")
+    mcs.write(sound_aug_file_path)
 
     # Augmentation result saving to 7 files, each 1 by channel.
     # ./outputwav/sound_augmented_1.wav
     # ./outputwav/sound_augmented_2.wav and so on.
-    mcs.write_by_channel("./outputwav/sound_augmented.wav")
+    mcs.write_by_channel(sound_aug_file_path)
 
     # The same code as chain, Example 2:
     delay_list = [0, 150, 200, 250, 300, 350, 400]
@@ -475,20 +481,20 @@ def test_readme_examples():
 
     # Apply all transformations of Example 1 in chain.
     w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
-        "./outputwav/sound_augmented_by_chain.wav"
+        ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
     )
 
     # Augmentation result saving to 7 files, each 1 by channel.
-    w.wrbc("./outputwav/sound_augmented_by_chain.wav")
+    w.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
 
     # Example 5:
 
-    file_name = "./outputwav/sound.wav"
+    file_name = sound_file_path
     v = wau.Mcs()
     v.rd(file_name)  # Read original file with single channel.
-    file_name_head = "./outputwav/sound_augmented"
+    file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
 
     # Suppose we need 15 augmented files.
     aug_count = 15

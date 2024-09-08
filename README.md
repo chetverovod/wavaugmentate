@@ -1,4 +1,5 @@
-# **Wavaugmentate**:  Multichannel Audio Signal Augmentation Module
+# **Wavaugmentate** 0.1.0
+**Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
 
@@ -26,7 +27,7 @@ Same types as in section [Input_data](#Input_data).
 11. Time masking. (**not implemented**)
 12. Combinations of methods.
 
-# Additional functionality
+# Additional Functionality
 1. Generation multichannel tonal signals of desired frequency, amplitude, durance.
 2. Generation multichannel speech-like signals of desired formants frequency, amplitude, durance.
 
@@ -118,7 +119,8 @@ Example 4 (OOP approach):
 ./wavaugmentate.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
 
 ```
- ## How to make several augmented files from 1 sound file
+ ## How To
+ ### Single file to several augmented
  Amplitudes and delays will be augmented by  code shown in example 5.
  Example 5 (single file augmentation):
  ```Python
@@ -143,6 +145,19 @@ for i in range(aug_count):
 Just run:
 ```shell
 pytest
+```
+Test coverage:
+```
+---------- coverage: platform linux, python 3.11.4-final-0 -----------
+Name                       Stmts   Miss  Cover
+----------------------------------------------
+common_test_functions.py      15      0   100%
+test_mcs_class.py            385      0   100%
+test_wavaugmentate.py        293      0   100%
+wavaugmentate.py             507     38    93%
+----------------------------------------------
+TOTAL                       1200     38    97%
+
 ```
 
 # Reference
@@ -171,3 +186,5 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 
  
 
+## Documentation
+[html-documenation](docs/_build/html/index.html)
