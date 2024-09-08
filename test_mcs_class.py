@@ -416,23 +416,26 @@ def test_readme_examples():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     mcs.amplitude_ctrl(amplitude_list)
 
-    # Augmentation result saving.
+    # Augmentation result saving by single file, containning 7 channels.
     mcs.write("./outputwav/sound_augmented.wav")
+
+    # Augmentation result saving to 7 files, each 1 by channel.
+    # ./outputwav/sound_augmented_1.wav
+    # ./outputwav/sound_augmented_2.wav and so on.
+    mcs.write_by_channel("./outputwav/sound_augmented.wav")
 
     # The same code as chain, Example 2:
     delay_list = [0, 150, 200, 250, 300, 350, 400]
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+
+    # Create Mcs-object.
     w = wau.Mcs(mcs)
-    """
-    w.rd(file_name).dly(delay_list).amp(amplitude_list).wr(
-        "./outputwav/sound_augmented_by_chain.wav"
-    )
-    """
-    w.rd(file_name)
-    w.splt(7)
-    w.dly(delay_list)
-    w.amp(amplitude_list)
-    w.wr("./outputwav/sound_augmented_by_chain.wav")
+
+    # Apply all transformations of Example 1 in chain.
+    w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr("./outputwav/sound_augmented_by_chain.wav")
+    
+    # Augmentation result saving to 7 files, each 1 by channel.
+    w.wrbc("./outputwav/sound_augmented_by_chain.wav")
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
     v = wau.Mcs()

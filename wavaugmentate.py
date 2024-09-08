@@ -300,6 +300,27 @@ class Mcs:
         wavfile.write(path, self.sample_rate, buf)
         return self
 
+    def write_by_channel(self, path: str) -> "Mcs":
+        """
+        Writes each channel of the multichannel sound data to a separate WAV
+        files, 1 for each channel.
+
+        Args:
+            path (str): The path to the WAV file. The filename will be modified
+            to include the channel number.
+
+        Returns:
+            self (Mcs): The Mcs instance itself, allowing for method chaining.
+        """
+
+        trimmed_path = path.split(".wav")
+        for i in range(self.channels_count()):
+            buf = self.data[i, :].T.copy()
+            fn = trimmed_path[0] + f"_{i + 1}.wav"
+            print(f"Writing {fn}...")
+            wavfile.write(fn, self.sample_rate, buf)
+        return self
+
     def read(self, path: str) -> "Mcs":
         """
         Reads a multichannel sound from a WAV file.
@@ -340,13 +361,19 @@ class Mcs:
             self (Mcs): The amplitude-controlled multichannel sound.
         """
         if self.channels_count() != len(amplitude_list):
-            print(ERROR_MARK + "Amplitude list length does not match number of channels.")
+            print(
+                ERROR_MARK
+                + "Amplitude list length does not match number of channels."
+            )
             sys.exit(1)
 
         a = amplitude_list
         if amplitude_deviation_list is not None:
             if self.channels_count() != len(amplitude_deviation_list):
-                print(ERROR_MARK + "Amplitude deviation list length does not match number of channels.")
+                print(
+                    ERROR_MARK
+                    + "Amplitude deviation list length does not match number of channels."
+                )
                 sys.exit(1)
 
             a = []
@@ -390,12 +417,18 @@ class Mcs:
         """
 
         if self.channels_count() != len(delay_us_list):
-            print(ERROR_MARK + "Delay list length does not match number of channels.")
+            print(
+                ERROR_MARK
+                + "Delay list length does not match number of channels."
+            )
             sys.exit(1)
 
         if delay_deviation_list is not None:
             if self.channels_count() != len(delay_deviation_list):
-                print(ERROR_MARK + "Delay deviation list length does not match number of channels.")
+                print(
+                    ERROR_MARK
+                    + "Delay deviation list length does not match number of channels."
+                )
                 sys.exit(1)
 
         d = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
@@ -592,7 +625,7 @@ class Mcs:
                 c.append(elem)
         self.data = np.stack(c, axis=0).copy()
         return self
-    
+
     def channels_count(self) -> int:
         """Returns the number of channels in the multichannel signal."""
 
@@ -603,7 +636,7 @@ class Mcs:
             else:
                 channels_count = 1
         return channels_count
-    
+
     def split(self, channels_count: int) -> "Mcs":
         """
         Splits a multichannel signal (containing single channel) into multiple
@@ -615,17 +648,21 @@ class Mcs:
         Returns:
             self (Mcs): The split multichannel signal, with each channel identical.
         """
-        
+
         if self.channels_count() > 1:
             print(ERROR_MARK, "Can't split more than 1 channel signal.")
             sys.exit(1)
-               
+
         out_data = None
-        
+
         if len(self.data.shape) > 1:
-            out_data = np.zeros((channels_count, self.data.shape[1]), dtype=np.float32)
+            out_data = np.zeros(
+                (channels_count, self.data.shape[1]), dtype=np.float32
+            )
         else:
-            out_data = np.zeros((channels_count, len(self.data)), dtype=np.float32)
+            out_data = np.zeros(
+                (channels_count, len(self.data)), dtype=np.float32
+            )
 
         for i in range(0, channels_count):
             out_data[i] = self.data.copy()
@@ -808,6 +845,7 @@ class Mcs:
     # Alias Method Names
     rd = read
     wr = write
+    wrbc = write_by_channel
     amp = amplitude_ctrl
     dly = delay_ctrl
     echo = echo_ctrl
@@ -819,7 +857,6 @@ class Mcs:
     achn = add_chain
     rdac = read_file_apply_chains
     gen = generate
-
 
 # CLI interface functions
 ERROR_MARK = "Error: "

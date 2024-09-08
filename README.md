@@ -42,25 +42,35 @@ Example 1 (procedural approach):
 import wavaugmentate as wau
 
 # File name of original sound.
-file_name = "./sound.wav"
+file_name = "./outputwav/sound.wav"
+
 # Create Mcs-object.
-    mcs = wau.Mcs()
+mcs = wau.Mcs()
 
-    # Read WAV-file to Mcs-object.
-    mcs.read(file_name)
+# Read WAV-file to Mcs-object.
+mcs.read(file_name)
 
-    # Apply delays.
-    # Corresponds to channels quantity.
-    delay_list = [0, 150, 200, 250, 300, 350, 400]
-    mcs.delay_ctrl(delay_list)
+# Change quantity of channels to 7.
+mcs.split(7)
 
-    # Apply amplitude changes.
-    # Corresponds to channels quantity.
-    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    mcs.amplitude_ctrl(amplitude_list)
+# Apply delays.
+# Corresponds to channels quantity.
+delay_list = [0, 150, 200, 250, 300, 350, 400]
+mcs.delay_ctrl(delay_list)
 
-    # Augmentation result saving.
-    mcs.write("./sound_augmented.wav")
+# Apply amplitude changes.
+# Corresponds to channels quantity.
+amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+mcs.amplitude_ctrl(amplitude_list)
+
+# Augmentation result saving by single file, containning 7 channels.
+mcs.write("./outputwav/sound_augmented.wav")
+
+# Augmentation result saving to 7 files, each 1 by channel.
+# ./outputwav/sound_augmented_1.wav
+# ./outputwav/sound_augmented_2.wav and so on.
+mcs.write_by_channel("./outputwav/sound_augmented.wav")
+
 ```
 Original signal is shown on picture:
 ![Initial signal](./pictures/example_1_original_signal.png)
@@ -74,15 +84,18 @@ The same code as chain, Example 2:
 ```Python
 import wavaugmentate as wau
 
-  # The same code as chain, Example 2:
+delay_list = [0, 150, 200, 250, 300, 350, 400]
+amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
-    freq_list = [400, 700, 1000, 2333, 3700, 5000, 6500]
-    delay_list = [100, 150, 200, 250, 300, 350, 400]
-    amplitude_list = [0.1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    mcs = wau.Mcs().gen(freq_list, time_len, fs)
-    w = wau.Mcs(mcs)
-    w.rd(file_name).dly(delay_list).amp(amplitude_list).wr(
-        "./sound_augmented.wav"
+# Create Mcs-object.
+w = wau.Mcs(mcs)
+
+# Apply all transformations of Example 1 in chain.
+w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr("./outputwav/sound_augmented_by_chain.wav")
+
+# Augmentation result saving to 7 files, each 1 by channel.
+w.wrbc("./outputwav/sound_augmented_by_chain.wav")
+ 
 ```
 ## CLI
 
