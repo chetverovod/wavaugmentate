@@ -162,12 +162,11 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |11| generate([f1,f2,f3..fm],duration,fs)|-| gen |Creates MCS and generates sine signal for each channel.|
 |12| merge() | -| mrg | Merges all channels to single and returns  mono MCS.|
 |13| pause_detect(relative_level)|-| pdt | Searches pauses by selected levels. Returns array-mask.|
-|14| pause_measure(mcs_mask) | - | - | Measure lengths of pauses. Returns list of lists containing pairs(index, length).|
-|15| pause_set(pause_map,pause_sz) | - | - | Set pauses length to selected values. Returns updated MCS.|
-|16| rms() | - | rms | Returns list of RMS calculated for object channels.|
-|17| side_by_side(mcs) | - | sbs | Appends channels from mcs data as new channels.| 
-|18| split(m_channels) | - | splt | Splits single channel to m_channels copies.|  
-|19| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
-|20 | write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
+|14| pause_set(pause_map,pause_sz) | - | - | Set pauses length to selected values. Returns updated MCS.|
+|15| rms() | - | rms | Returns list of RMS calculated for object channels.|
+|16| side_by_side(mcs) | - | sbs | Appends channels from mcs data as new channels.| 
+|17| split(m_channels) | - | splt | Splits single channel to m_channels copies.|  
+|18| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
+|19| write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
  
 
