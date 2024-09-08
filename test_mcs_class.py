@@ -127,6 +127,48 @@ def test_wachain_wr_rd():
 
     assert np.array_equal(w.data, r.data)
 
+def test_mcs_write_by_channel():
+
+    # Preparations
+    file_name = "./outputwav/sound.wav"
+    if os.path.exists(file_name):
+        os.remove(file_name)
+
+    # Frequencies list, corresponds to channels quantity.
+    freq_list = [400]
+    fs = 44100  # Select sampling frequency, Hz.
+    time_len = 3  # Length of signal in seconds.
+
+    # Create Mcs-object and generate sine waves in 7 channels.
+    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1.write(file_name)
+
+    # Create Mcs-object.
+    mcs = wau.Mcs()
+
+    # Read WAV-file to Mcs-object.
+    mcs.read(file_name)
+
+    # Change quantity of channels to 7.
+    mcs.split(7)
+
+    # Apply delays.
+    # Corresponds to channels quantity.
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    mcs.delay_ctrl(delay_list)
+
+    # Apply amplitude changes.
+    # Corresponds to channels quantity.
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+    mcs.amplitude_ctrl(amplitude_list)
+
+    mcs.write_by_channel("./outputwav/sound_augmented.wav")
+
+    for i in range(7):
+        mcs.read(f"./outputwav/sound_augmented_{i + 1}.wav")
+        r = mcs.rms()
+        assert abs(r[0] - 0.707*amplitude_list[i]) < 0.001
+
 
 def test_wachain_echo():
     """

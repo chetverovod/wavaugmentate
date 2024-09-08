@@ -305,6 +305,11 @@ class Mcs:
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
 
+        File name will be modified to include the channel number. If path contains
+        ./outputwav/sound_augmented.wav the output file names will be
+        ./outputwav/sound_augmented_1.wav
+        ./outputwav/sound_augmented_2.wav and so on.
+
         Args:
             path (str): The path to the WAV file. The filename will be modified
             to include the channel number.
