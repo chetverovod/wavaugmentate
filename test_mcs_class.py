@@ -7,12 +7,15 @@ import wavaugmentate as wau
 import common_test_functions as ctf
 
 
-def test_wachain_controls():
+def test_mcs_put():
     """
-    Test function to verify the functionality of the WaChain class.
+    Test function to verify the functionality of the mcs class's put method.
 
-    This function tests the amp and dly methods of the WaChain class by
-    applying amplitude and delay controls to a generated multichannel sound.
+    This function generates a multichannel sound using the generate function from
+    the wau module with the given frequency list, time duration, and sample rate.
+    It then applies the put method of the mcs class to the generated sound
+    and asserts that the shape and data of the original sound are equal to the
+    shape and data of the sound after applying the put method.
 
     Args:
         None
@@ -21,29 +24,89 @@ def test_wachain_controls():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    w = wau.WaChain(test_sound_1)
-    print(w.data)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
-    w.amp([0.1, 0.3, 0.4, 1]).dly([100, 200, 300, 0])
-    res1 = w.data
+    w = wau.Mcs()
+    w.put(test_sound_1)
 
-    w.put(np.zeros(1))
-    res2 = (
-        w.put(test_sound_1)
-        .amp([0.1, 0.3, 0.4, 1])
-        .dly([100, 200, 300, 0])
-        .get()
-    )
-    print(res2)
-    assert np.array_equal(res1, res2)
+    assert np.array_equal(test_sound_1.data, w.data)
+    assert np.array_equal(test_sound_1.data, w.get())
+
+    w2 = wau.Mcs(test_sound_1.data)
+    assert np.array_equal(w2.data, w.get())
 
 
-def test_wachain_wr_rd():
+def test_mcs_amp_control():
     """
-    Test function to verify the functionality of the WaChain class.
+    Test function to verify the functionality of the mcs class.
 
-    This function tests the wr and rd methods of the WaChain class by
+    This function tests the amp method of the mcs class by
+    applying amplitude control to a generated multichannel sound.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    a_list = [0.1, 0.3, 0.4, 1]
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    w = wau.Mcs(test_sound_1.data)
+
+    w.amp(a_list)
+    res1 = w
+    print("res1 =", res1.data)
+
+    d = wau.Mcs()
+
+    res2 = d.put(test_sound_1).amp(a_list).get()
+
+    print("res2 =", res2.data)
+    assert np.array_equal(res1.get(), res2)
+
+
+def test_mcs_dly_controls():
+    """
+    Test function to verify the functionality of the mcs class.
+
+    This function tests the dly method of the mcs class by
+    applying delay controls to a generated multichannel sound.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    d_list = [100, 200, 300, 0]
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    w = test_sound_1.copy()
+
+    w.dly(d_list)
+    res1 = w
+    print("res1 shape =", res1.data.shape)
+    print("res1 =", res1.data)
+
+    d = wau.Mcs()
+    d.put(test_sound_1)
+    res2 = d.dly(d_list)
+
+    print("res2 shape =", res2.data.shape)
+    print("res2 =", res2.data)
+    assert res1.data.shape == res2.data.shape
+    assert np.array_equal(res1.get(), res2.get())
+
+
+def test_mcs_wr_rd():
+    """
+    Test function to verify the functionality of the mcs class.
+
+    This function tests the wr and rd methods of the mcs class by
     generating a multichannel sound, writing it to a file, reading it back,
     and comparing the original and read sound data.
 
@@ -54,24 +117,66 @@ def test_wachain_wr_rd():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    r = wau.WaChain()
+    r = wau.Mcs()
     r.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, r.data)
 
 
-def test_wachain_echo():
+def test_mcs_write_by_channel():
+    # Preparations
+    file_name = "./outputwav/sound.wav"
+    if os.path.exists(file_name):
+        os.remove(file_name)
+
+    # Frequencies list, corresponds to channels quantity.
+    freq_list = [400]
+    fs = 44100  # Select sampling frequency, Hz.
+    time_len = 3  # Length of signal in seconds.
+
+    # Create Mcs-object and generate sine waves in 7 channels.
+    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1.write(file_name)
+
+    # Create Mcs-object.
+    mcs = wau.Mcs()
+
+    # Read WAV-file to Mcs-object.
+    mcs.read(file_name)
+
+    # Change quantity of channels to 7.
+    mcs.split(7)
+
+    # Apply delays.
+    # Corresponds to channels quantity.
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    mcs.delay_ctrl(delay_list)
+
+    # Apply amplitude changes.
+    # Corresponds to channels quantity.
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+    mcs.amplitude_ctrl(amplitude_list)
+
+    mcs.write_by_channel("./outputwav/sound_augmented.wav")
+
+    for i in range(7):
+        mcs.read(f"./outputwav/sound_augmented_{i + 1}.wav")
+        r = mcs.rms()
+        assert abs(r[0] - 0.707 * amplitude_list[i]) < 0.001
+
+
+def test_mcs_echo():
     """
     Test function to verify the functionality of the `echo` method in the
-    WaChain class.
+    mcs class.
 
     This function generates a multichannel sound using the `gen` method of the
-    WaChain class with the given frequency list, duration, and sample rate. It
+    mcs class with the given frequency list, duration, and sample rate. It
     then applies the `echo` method to the generated sound with the given delay
     list and amplitude list. Finally, it calculates the root mean square (RMS)
     values of the echoed sound and compares them to the expected values in the
@@ -85,7 +190,7 @@ def test_wachain_echo():
     """
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
     rms_list = w.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
@@ -93,7 +198,7 @@ def test_wachain_echo():
         assert abs(r - ref) < 0.001
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
     rms_list = w.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
@@ -101,13 +206,13 @@ def test_wachain_echo():
         assert abs(r - ref) < 0.001
 
 
-def test_wachain_noise():
+def test_mcs_noise():
     """
     Test function to verify the functionality of the `ns` method in the
-    `WaChain` class.
+    `mcs` class.
 
     This function generates a multichannel sound using the `gen` method of the
-    `WaChain` class with the given frequency list, duration, and sample rate. It
+    `mcs` class with the given frequency list, duration, and sample rate. It
     then applies the `ns` method to the generated sound with the given noise
     level list. Finally, it calculates the root mean square (RMS) values of the
     noise-controlled sound and compares them to the expected values in the
@@ -122,7 +227,7 @@ def test_wachain_noise():
 
     n_list = [1, 0.2, 0.3, 0]
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.set_seed(42)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
     rms_list = w.rms(decimals=3)
@@ -132,13 +237,13 @@ def test_wachain_noise():
         assert abs(r - ref) < 0.01
 
 
-def test_wachain_info():
+def test_mcs_info():
     """
-    Test the `info` method of the `WaChain` class.
+    Test the `info` method of the `mcs` class.
 
-    This function creates a `WaChain` object, generates a sound file with the
+    This function creates a `mcs` object, generates a sound file with the
     given frequency list, duration, and sample rate, and writes it to a file.
-    It then calls the `info` method of the `WaChain` object and prints the
+    It then calls the `info` method of the `mcs` object and prints the
     result.  Finally, it asserts that the returned dictionary matches the
     expected reference dictionary.
 
@@ -149,7 +254,7 @@ def test_wachain_info():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
@@ -165,18 +270,18 @@ def test_wachain_info():
 
 
 #  Test not finished.
-def test_wachain_rn_rd():
+def test_mcs_rn_rd():
     """Test augmentation on the fly."""
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.WaChain()
+    a = wau.Mcs()
     a.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.WaChain()
+    b = wau.Mcs()
     b.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, a.data)
@@ -189,18 +294,18 @@ def test_wachain_rn_rd():
     # !!! assert np.array_equal(w.data, b.data)
 
 
-def test_wachain_rn_aug_rd():
+def test_mcs_rn_aug_rd():
     """Test augmentation on the fly."""
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.WaChain()
+    a = wau.Mcs()
     a.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.WaChain()
+    b = wau.Mcs()
     b.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(w.data, a.data)
@@ -224,9 +329,9 @@ def test_wachain_rn_aug_rd():
         assert not np.array_equal(a.data, b.data)
 
 
-def test_wachain_chain_class():
+def test_mcs_chain_class():
     """
-    Tests the functionality of the WaChain class by generating a multichannel
+    Tests the functionality of the mcs class by generating a multichannel
     sound, computing its RMS values, and comparing them to the expected values.
 
     Args:
@@ -236,7 +341,7 @@ def test_wachain_chain_class():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     cmd_prefix = "w."
     cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
     s = str(eval(cmd_prefix + cmd.strip()))
@@ -304,56 +409,96 @@ def test_readme_examples():
     This function tests the functionality of examples for README file of the
     wavaugmentate module by generating a multichannel sound, applying various
     augmentations, and saving the results to WAV files. It also demonstrates
-    the usage of the WaChain class for object-oriented augmentation.
+    the usage of the mcs class for object-oriented augmentation.
 
-    Parameters:
+    Args:
         None
 
     Returns:
         None
     """
 
-    # preparations
-    fn = "./sound.wav"
-    if os.path.exists(fn):
-        os.remove(fn)
+    # Preparations
+    file_name = "./outputwav/sound.wav"
+    if os.path.exists(file_name):
+        os.remove(file_name)
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(fn, test_sound_1, ctf.FS)
+    # Frequencies list, corresponds to channels quantity.
+    freq_list = [400]
+    fs = 44100  # Select sampling frequency, Hz.
+    time_len = 3  # Length of signal in seconds.
 
-    # examples code for  README.md
+    # Create Mcs-object and generate sine waves in 7 channels.
+    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1.write(file_name)
 
-    # Read WAV-file to array.
-    fsmp, mcs = wau.read("./sound.wav")
+    # Examples code for  README.md
+
+    # Example 1:
+
+    # File name of original sound.
+    file_name = "./outputwav/sound.wav"
+
+    # Create Mcs-object.
+    mcs = wau.Mcs()
+
+    # Read WAV-file to Mcs-object.
+    mcs.read(file_name)
+
+    # Change quantity of channels to 7.
+    mcs.split(7)
 
     # Apply delays.
-    delay_list = [100, 200, 300, 400]  # Corresponds to channels quantity.
-    d = wau.delay_ctrl(mcs, delay_list)
+    # Corresponds to channels quantity.
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    mcs.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
-    amplitude_list = [0.1, 0.2, 0.3, 0.4]  # Corresponds to channels quantity.
-    res = wau.amplitude_ctrl(d, amplitude_list)
+    # Corresponds to channels quantity.
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+    mcs.amplitude_ctrl(amplitude_list)
 
-    # Augmentation result saving.
-    wau.write("./sound_delayed.wav", res, fsmp)
+    # Augmentation result saving by single file, containing 7 channels.
+    mcs.write("./outputwav/sound_augmented.wav")
 
-    # The same code in OOP approach:
+    # Augmentation result saving to 7 files, each 1 by channel.
+    # ./outputwav/sound_augmented_1.wav
+    # ./outputwav/sound_augmented_2.wav and so on.
+    mcs.write_by_channel("./outputwav/sound_augmented.wav")
 
-    w = wau.WaChain()
-    w.rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(
-        "./sound_delayed.wav"
+    # The same code as chain, Example 2:
+    delay_list = [0, 150, 200, 250, 300, 350, 400]
+    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+
+    # Create Mcs-object.
+    w = wau.Mcs(mcs)
+
+    # Apply all transformations of Example 1 in chain.
+    w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
+        "./outputwav/sound_augmented_by_chain.wav"
     )
 
-    # How to make 100 augmented files (amplitude and delay) from 1 sound file
-    v = wau.WaChain()
-    v.rd(ctf.TEST_SOUND_1_FILE)
-    result = []
-    for _ in range(100):
+    # Augmentation result saving to 7 files, each 1 by channel.
+    w.wrbc("./outputwav/sound_augmented_by_chain.wav")
+
+    # How to make 100 augmented files (amplitude and delay) from 1 sound file.
+
+    # Example 5:
+
+    file_name = "./outputwav/sound.wav"
+    v = wau.Mcs()
+    v.rd(file_name)  # Read original file with single channel.
+    file_name_head = "./outputwav/sound_augmented"
+
+    # Suppose we need 15 augmented files.
+    aug_count = 15
+    for i in range(aug_count):
         b = v.copy()
-        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
-            [100, 200, 300, 400], [30, 40, 50, 60]
-        )
-        result.append(b.get())
+        # Apply random amplitude [0.3..1.7) and delay [70..130)
+        # microseconds changes to each copy of original signal.
+        b.amp([1], [0.7]).dly([100], [30])
+        name = file_name_head + f"_{i + 1}.wav"
+        b.write(name)
 
 
 def test_sum():
@@ -375,17 +520,16 @@ def test_sum():
         None
     """
 
-    test_sound_1 = wau.generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.sum_sig(test_sound_1, test_sound_2)
-    wau.write(
-        ctf.TEST_SOUND_1_FILE,
-        res,
-        ctf.FS,
-    )
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
+    test_sound_2 = wau.Mcs(fs=ctf.FS)
+    test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
+    res = test_sound_1.copy()
+    res.sum(test_sound_2)
+    res.write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
     for s, ref_value in zip([test_sound_1, test_sound_2, res], ref):
-        r = wau.rms(s, decimals=3)
+        r = s.rms(decimals=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001
 
@@ -409,15 +553,14 @@ def test_merge():
         None
     """
 
-    test_sound_1 = wau.generate([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.merge(test_sound_1)
-    wau.write(
-        ctf.TEST_SOUND_1_FILE,
-        res,
-        ctf.FS,
-    )
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
+    res = test_sound_1.copy()
+    res.merge()
+    res.write(ctf.TEST_SOUND_1_FILE)
+    print("res.shape =", res.shape())
     ref_value = 1.0
-    r = wau.rms(res, decimals=3)
+    r = res.rms(decimals=3)
     print(r)
     assert abs(r[0] - ref_value) < 0.001
 
@@ -441,23 +584,23 @@ def test_split():
         None
     """
 
-    test_sound_1 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.split(test_sound_1, 5)
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
+    test_sound_1.split(5)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     ref_value = 0.707
-    # for i in range(0, test_sound_1.shape[0]):
-    r = wau.rms(test_sound_1, decimals=3)
+    r = test_sound_1.rms(decimals=3)
     print(r)
-    for i in range(0, test_sound_1.shape[0]):
+    for i in range(0, test_sound_1.shape()[0]):
         assert abs(r[i] - ref_value) < 0.001
 
 
 def test_chain_sum():
     """
-    Test the functionality of the `sum` method in the `WaChain` class.
+    Test the functionality of the `sum` method in the `mcs` class.
 
-    This function creates two instances of the `WaChain` class, `w` and `res`,
-    and generates a multichannel sound using the `gen` method of the `WaChain`
+    This function creates two instances of the `mcs` class, `w` and `res`,
+    and generates a multichannel sound using the `gen` method of the `mcs`
     class. It then copies the data of `w` to `res` and generates another
     multichannel sound using the `generate` function. The `sum` method is used
     to add the two sounds together, and the result is written to a file using
@@ -473,24 +616,25 @@ def test_chain_sum():
         None
     """
 
-    w = wau.WaChain()
-    res = wau.WaChain()
+    w = wau.Mcs()
+    res = wau.Mcs()
     w.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = w.copy()
-    test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_2 = wau.Mcs()
+    test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for s, ref_value in zip([w.data, test_sound_2, res.data], ref):
-        r = wau.rms(s, decimals=3)
+    for s, ref_value in zip([w, test_sound_2, res], ref):
+        r = s.rms(decimals=3)
         print(r)
         assert abs(r[0] - ref_value) < 0.001
 
 
 def test_chain_merge():
     """
-    Tests the functionality of the `merge` method in the `WaChain` class.
+    Tests the functionality of the `merge` method in the `mcs` class.
 
-    This function creates an instance of the `WaChain` class, generates a
+    This function creates an instance of the `mcs` class, generates a
     multichannel sound using the `gen` method, merges the channels using the
     `mrg` method, writes the result to a file using the `wr` method, and
     calculates the root mean square (RMS) value of the merged sound using the
@@ -503,7 +647,7 @@ def test_chain_merge():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     r = (
         w.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
@@ -517,13 +661,13 @@ def test_chain_merge():
 
 def test_chain_split():
     """
-    Test the functionality of the `splt` and `wr` methods in the `WaChain`
+    Test the functionality of the `splt` and `wr` methods in the `mcs`
     class.
 
-    This function creates a `WaChain` instance and generates a multichannel
+    This function creates a `mcs` instance and generates a multichannel
     sound using the `gen` method. It then splits the channels using the `splt`
     method and writes the result to a file using the `wr` method. The function
-    then checks the shape of the `data` attribute of the `WaChain` instance and
+    then checks the shape of the `data` attribute of the `mcs` instance and
     compares it to the expected value. It also calculates the root mean square
     (RMS) value of the generated sound using the `rms` method and compares it
     to the expected value.
@@ -535,7 +679,7 @@ def test_chain_split():
         None
     """
 
-    w = wau.WaChain()
+    w = wau.Mcs()
     w.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
     c = w.data.shape[0]
     assert c == 5
@@ -548,7 +692,7 @@ def test_chain_split():
 
 def test_chain_side_by_side():
     """
-    Tests the functionality of the `sbs` method in the `WaChain` class.
+    Tests the functionality of the `sbs` method in the `mcs` class.
 
     This function generates two multichannel sounds using the `generate`
     function from the `wau` module with the given frequency lists, time
@@ -565,8 +709,9 @@ def test_chain_side_by_side():
         None
     """
 
-    test_sound_1 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    w = wau.WaChain()
+    test_sound_1 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+
+    w = wau.Mcs()
     r = (
         w.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .amp([0.3])
@@ -600,13 +745,13 @@ def test_side_by_side():
         None
     """
 
-    test_sound_1 = wau.generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_1 = wau.amplitude_ctrl(test_sound_1, [0.3])
-    test_sound_2 = wau.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = wau.side_by_side(test_sound_1, test_sound_2)
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
+    test_sound_1 = wau.Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1.amplitude_ctrl([0.3])
+    test_sound_2 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1.side_by_side(test_sound_2)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     ref_list = [0.212, 0.707]
-    r = wau.rms(res, decimals=3)
+    r = test_sound_1.rms(decimals=3)
     for r, ref in zip(r, ref_list):
         print(r)
         assert abs(r - ref) < 0.001
@@ -630,12 +775,12 @@ def test_pause_detect():
         None
     """
 
-    test_sound_1 = wau.generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
-    print(res)
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1 = wau.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    test_sound_1.side_by_side(mask)
+    print(test_sound_1)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    r = test_sound_1.rms(decimals=3)
     ref_list = [0.707, 0.707, 0.865, 0.923]
     for r, ref in zip(r, ref_list):
         print(r)
@@ -644,7 +789,7 @@ def test_pause_detect():
 
 def test_chain_pause_detect():
     """
-    Tests the functionality of the WaChain class by creating two instances,
+    Tests the functionality of the mcs class by creating two instances,
     generating a multichannel sound, copying the sound, applying pause
     detection, and then asserting that the RMS values of the resulting sound
     are within a certain tolerance of the reference values.
@@ -656,12 +801,12 @@ def test_chain_pause_detect():
         None
     """
 
-    w = wau.WaChain()
-    w1 = wau.WaChain()
+    w = wau.Mcs()
+    w1 = wau.Mcs()
     w.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     w1 = w.copy()
-    w.pdt([0.5, 0.3])
-    w1.sbs(w.data).wr(ctf.TEST_SOUND_1_FILE)
+    mask = w.pdt([0.5, 0.3])
+    w1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
     r = w1.rms(decimals=3)
     ref = [0.707, 0.707, 0.865, 0.923]
     for i, ri in enumerate(r):
@@ -689,13 +834,14 @@ def test_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = wau.generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
+    test_sound_1 = wau.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    res = test_sound_1.copy()
+    res.side_by_side(mask)
     print(res)
-    res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1.pause_shrink(mask, [20, 4])
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    r = test_sound_1.rms(decimals=3)
     ref = [0.702, 0.706, 0.865, 0.923]
     for r, ref in zip(r, ref):
         print(r)
@@ -723,14 +869,16 @@ def test_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = wau.generate(
-        [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42)
+    test_sound_1.generate(
+        [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech"
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
-    res = wau.side_by_side(test_sound_1, mask)
-    res = wau.pause_shrink(test_sound_1, mask, [20, 4])
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    res = test_sound_1.copy()
+    res.side_by_side(mask)
+    res.write(ctf.TEST_SOUND_1_FILE)
+    test_sound_1.pause_shrink(mask, [20, 4])
+    r = test_sound_1.rms(decimals=3)
     ref = [0.331, 0.324]
     for r, ref in zip(r, ref):
         print(r)
@@ -757,10 +905,10 @@ def test_pause_measure():
         None
     """
 
-    test_sound_1 = wau.generate(
-        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42).generate(
+        [100, 300], 0.003, ctf.FS, mode="speech"
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    mask = test_sound_1.pause_detect([0.5, 0.3])
     res_list = wau.pause_measure(mask)
     print(res_list)
 
@@ -815,17 +963,18 @@ def test_pause_set():
         None
     """
 
-    test_sound_1 = wau.generate(
-        [100, 300], 0.003, ctf.FS, mode="speech", seed=42
+    test_sound_1 = wau.Mcs(seed=42).generate(
+        [100, 300], 0.003, ctf.FS, mode="speech"
     )
-    mask = wau.pause_detect(test_sound_1, [0.5, 0.3])
+    mask = test_sound_1.pause_detect([0.5, 0.3])
     pause_list = wau.pause_measure(mask)
-    res = wau.pause_set(test_sound_1, pause_list, [10, 150])
-    assert res.shape == (2, 1618)
-    print("res shape:", res.shape)
-    print("res:", type(res[0, 1]))
-    wau.write(ctf.TEST_SOUND_1_FILE, res, ctf.FS)
-    r = wau.rms(res, decimals=3)
+    test_sound_1.pause_set(pause_list, [10, 150])
+    res = test_sound_1.copy()
+    assert res.shape() == (2, 1618)
+    print("res shape:", res.shape())
+    print("res:", type(res.data[0, 1]))
+    res.write(ctf.TEST_SOUND_1_FILE)
+    r = res.rms(decimals=3)
     ref = [0.105, 0.113]
     for r, ref in zip(r, ref):
         print(r)
@@ -835,10 +984,10 @@ def test_pause_set():
 def test_chain_add_chain():
     """
     Test function to verify the functionality of the `add_chain` method in the
-    `WaChain` class.
+    `mcs` class.
 
-    This function creates a `WaChain` instance, defines two chain commands as
-    strings, adds them to the `chains` list of the `WaChain` instance, evaluates
+    This function creates a `mcs` instance, defines two chain commands as
+    strings, adds them to the `chains` list of the `mcs` instance, evaluates
     the chains, and compares the result to the expected values.
 
     Args:
@@ -847,13 +996,13 @@ def test_chain_add_chain():
     Returns:
         None
     """
-
-    w = wau.WaChain()  # Create a WaChain instance
+    mcs = wau.Mcs(fs=ctf.FS)
+    w = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
 
     # Define the first chain command
-    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
+    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
     # Define the second chain command
-    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
     w.achn([c1, c2])  # Add the chain commands to the chains list
     print(c1)  # Print the first chain command
     print(c2)  # Print the second chain command
@@ -865,9 +1014,9 @@ def test_chain_add_chain():
         print(r)  # Print the result
         # Assert that the result is within the expected tolerance
         assert abs(r[0] - ref[0]) < 0.001
-    w = wau.WaChain()
-    c1 = "gen([1000, 300], 5).amp([0.3]).rms(decimals=3)"
-    c2 = "gen([700, 100], 5).amp([0.15]).rms(decimals=3)"
+    w = wau.Mcs(mcs.data, mcs.sample_rate)
+    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
+    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
     w.achn([c1, c2])
     print(c1)
     print(c2)

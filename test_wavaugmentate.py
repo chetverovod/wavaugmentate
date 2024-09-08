@@ -22,10 +22,11 @@ def test_generate_sine():
     Returns:
         None
     """
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(ctf.TEST_SOUND_1_FILE, test_sound_1, ctf.FS)
-    assert test_sound_1.shape == (4, 220500)
-    rms_list = wau.rms(test_sound_1, decimals=3)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    assert test_sound_1.shape() == (4, 220500)
+    rms_list = test_sound_1.rms(decimals=3)
     for r in rms_list:
         assert abs(r - 0.707) < 0.001
 
@@ -40,12 +41,12 @@ def test_generate_speech():
     Returns:
         None
     """
-    test_sound_1 = wau.generate(
-        ctf.frm_list, ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech", seed=42
-    )
-    wau.write(ctf.TEST_SOUND_1_FILE, test_sound_1, ctf.FS)
-    assert test_sound_1.shape == (4, 220500)
-    rms_list = wau.rms(test_sound_1, decimals=3)
+
+    test_sound_1 = wau.Mcs(fs=ctf.FS, seed=42)
+    test_sound_1.generate(ctf.frm_list, ctf.SIGNAL_TIME_LEN, mode="speech")
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    assert test_sound_1.shape() == (4, 220500)
+    rms_list = test_sound_1.rms(decimals=3)
     ref_list = [0.327, 0.326, 0.33, 0.332]
     for r, ref in zip(rms_list, ref_list):
         assert abs(r - ref) < 0.001
@@ -68,8 +69,9 @@ def test_write():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(ctf.TEST_SOUND_1_FILE, test_sound_1, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
     assert exists is True
 
@@ -89,11 +91,14 @@ def test_read():
     Returns:
         None
     """
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_rs, test_mcs = wau.read(ctf.TEST_SOUND_1_FILE)
-    assert test_rs == ctf.FS
-    assert test_mcs.shape == (4, 220500)
-    assert np.array_equal(test_mcs, test_sound_1)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_rs = wau.Mcs()
+    assert test_rs.sample_rate == -1
+    test_rs.read(ctf.TEST_SOUND_1_FILE)
+    assert test_rs.sample_rate == ctf.FS
+    assert test_rs.shape() == (4, 220500)
+    assert np.array_equal(test_rs.data, test_sound_1.data)
 
 
 def test_file_info():
@@ -143,13 +148,15 @@ def test_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
-    test_ac = wau.amplitude_ctrl(test_sound_1, amplitude_list)
-    assert test_ac.shape == (4, 220500)
-    wau.write(ctf.TEST_SOUND_1_AC_FILE, test_ac, ctf.FS)
-
-    for a, sig, coef in zip(test_ac, test_sound_1, amplitude_list):
+    test_ac = test_sound_1.copy()
+    test_ac.amplitude_ctrl(amplitude_list)
+    assert test_sound_1.shape() == (4, 220500)
+    assert test_ac.shape() == (4, 220500)
+    test_ac.write(ctf.TEST_SOUND_1_AC_FILE)
+    for a, sig, coef in zip(test_ac.data, test_sound_1.data, amplitude_list):
         assert np.array_equal(a, sig * coef)
 
 
@@ -164,15 +171,16 @@ def test_rn_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
-    test_ac = wau.amplitude_ctrl(
-        test_sound_1, amplitude_list, amplitude_deviation_list, seed=42
-    )
-    assert test_ac.shape == (4, 220500)
-    wau.write(ctf.TEST_SOUND_1_AC_FILE, test_ac, ctf.FS)
-    r_list = wau.rms(test_ac, decimals=3)
+    test_ac = test_sound_1.copy()
+    test_ac.set_seed(42)
+    test_ac.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
+    assert test_ac.shape() == (4, 220500)
+    test_ac.write(ctf.TEST_SOUND_1_AC_FILE)
+    r_list = test_ac.rms(decimals=3)
     ref_list = [0.109, 0.180, 0.251, 0.322]
     for r, ref in zip(r_list, ref_list):
         assert abs(r - ref) < 0.001
@@ -199,14 +207,15 @@ def test_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 0]
-    test_dc = wau.delay_ctrl(test_sound_1, delay_list)
-    assert test_dc.shape == (4, 220513)
-    wau.write(ctf.TEST_SOUND_1_DELAY_FILE, test_dc, ctf.FS)
-    for ch in test_dc:
+    test_dc = test_sound_1.delay_ctrl(delay_list)
+    assert test_dc.shape() == (4, 220513)
+    test_dc.write(ctf.TEST_SOUND_1_DELAY_FILE)
+    for ch in test_dc.data:
         assert ch.shape[0] == 220513
-    rms_list = wau.rms(test_dc, last_index=24, decimals=3)
+    rms_list = test_dc.rms(last_index=24, decimals=3)
     reference_list = [0.511, 0.627, 0.445, 0.705]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -233,17 +242,17 @@ def test_rn_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
-    test_dc = wau.delay_ctrl(
-        test_sound_1, delay_list, ctf.FS, delay_deviation_list, seed=42
-    )
-    assert test_dc.shape == (4, 220512)
-    wau.write(ctf.TEST_SOUND_1_DELAY_FILE, test_dc, ctf.FS)
-    for ch in test_dc:
+    test_sound_1.set_seed(42)
+    test_dc = test_sound_1.delay_ctrl(delay_list, delay_deviation_list)
+    assert test_dc.shape() == (4, 220512)
+    test_dc.write(ctf.TEST_SOUND_1_DELAY_FILE)
+    for ch in test_dc.data:
         assert ch.shape[0] == 220512
-    rms_list = wau.rms(test_dc, last_index=24, decimals=3)
+    rms_list = test_dc.rms(last_index=24, decimals=3)
     reference_list = [0.511, 0.627, 0.456, 0.699]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -271,12 +280,14 @@ def test_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 0]
     amplitude_list = [-0.3, -0.4, -0.5, 0]
-    test_ec = wau.echo_ctrl(test_sound_1, delay_list, amplitude_list, ctf.FS)
-    wau.write(ctf.TEST_SOUND_1_ECHO_FILE, test_ec, ctf.FS)
-    rms_list = wau.rms(test_ec, decimals=3)
+    test_ec = test_sound_1.copy()
+    test_ec.echo_ctrl(delay_list, amplitude_list)
+    test_ec.write(ctf.TEST_SOUND_1_ECHO_FILE)
+    rms_list = test_ec.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -304,22 +315,22 @@ def test_rn_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 100]
     amplitude_list = [-0.3, -0.4, -0.5, 0.1]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
     delay_deviation_list = [10, 20, 30, 5]
-    test_ec = wau.echo_ctrl(
-        test_sound_1,
+    test_ec = test_sound_1.copy()
+    test_ec.set_seed(42)
+    test_ec.echo_ctrl(
         delay_list,
         amplitude_list,
-        ctf.FS,
         delay_deviation_list,
         amplitude_deviation_list,
-        seed=42,
     )
-    wau.write(ctf.TEST_SOUND_1_ECHO_FILE, test_ec, ctf.FS)
-    rms_list = wau.rms(test_ec, decimals=3)
+    test_ec.write(ctf.TEST_SOUND_1_ECHO_FILE)
+    rms_list = test_ec.rms(decimals=3)
     reference_list = [0.457, 0.471, 0.536, 0.52]
     for r, ref in zip(rms_list, reference_list):
         assert abs(r - ref) < 0.001
@@ -352,8 +363,10 @@ def test_echo_ctrl_option():
 
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(ctf.TEST_SOUND_1_FILE, test_sound_1, ctf.FS)
+
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
     cmd = [
         ctf.PROG_NAME,
@@ -379,10 +392,12 @@ def test_echo_ctrl_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    _, written_data = wau.read(ctf.OUTPUT_FILE)
-    for ch in written_data:
+
+    written = wau.Mcs()
+    written.read(ctf.OUTPUT_FILE)
+    for ch in written.data:
         assert ch.shape[0] == 220522
-    rms_list = wau.rms(written_data, decimals=3)
+    rms_list = written.rms(decimals=3)
     print("rms_list:", rms_list)
     reference_list = [1.054, 0.716, 1.144, 0.749]
     for r, ref in zip(rms_list, reference_list):
@@ -411,10 +426,12 @@ def test_noise_ctrl():
         None
     """
 
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_nc = wau.noise_ctrl(test_sound_1, [1, 0.2, 0.3, 0], seed=42)
-    wau.write(ctf.TEST_SOUND_1_NOISE_FILE, test_nc, ctf.FS)
-    rms_list = wau.rms(test_nc, decimals=3)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.set_seed(42)
+    test_nc = test_sound_1.noise_ctrl([1, 0.2, 0.3, 0])
+    test_nc.write(ctf.TEST_SOUND_1_NOISE_FILE)
+    rms_list = test_nc.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
 
     for r, ref in zip(rms_list, reference_list):
@@ -448,8 +465,9 @@ def test_wavaugmentate_noise_option():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    wau.write(ctf.TEST_SOUND_1_FILE, test_sound_1, ctf.FS)
+    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
     cmd = [
         ctf.PROG_NAME,
@@ -472,10 +490,11 @@ def test_wavaugmentate_noise_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    _, written_data = wau.read(ctf.OUTPUT_FILE)
-    for ch in written_data:
+    written = wau.Mcs()
+    written.read(ctf.OUTPUT_FILE)
+    for ch in written.data:
         assert ch.shape[0] == 220500
-    rms_list = wau.rms(written_data, decimals=3)
+    rms_list = written.rms(decimals=3)
     print("rms_list:", rms_list)
     reference_list = [0.866, 0.927, 0.996, 0.714]
 
@@ -559,10 +578,11 @@ def test_wavaugmentate_amplitude_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    _, written_data = wau.read(ctf.OUTPUT_FILE)
-    for ch in written_data:
+    written = wau.Mcs()
+    written.read(ctf.OUTPUT_FILE)
+    for ch in written.data:
         assert ch.shape[0] == 220500
-    rms_list = wau.rms(written_data, decimals=3)
+    rms_list = written.rms(decimals=3)
     print("rms_list:", rms_list)
     reference_list = [0.354, 0.424, 0.495, 0.071]
     for r, ref in zip(rms_list, reference_list):
@@ -684,10 +704,11 @@ def test_wavaugmentate_delay_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    _, written_data = wau.read(ctf.OUTPUT_FILE)
-    for ch in written_data:
+    written = wau.Mcs()
+    written.read(ctf.OUTPUT_FILE)
+    for ch in written.data:
         assert ch.shape[0] == 220513
-    rms_list = wau.rms(written_data, decimals=3)
+    rms_list = written.rms(decimals=3)
     print("rms_list:", rms_list)
     reference_list = [0.707, 0.707, 0.707, 0.707]
     for r, ref in zip(rms_list, reference_list):
