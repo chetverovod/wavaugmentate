@@ -1,10 +1,14 @@
-# **Wavaugmentate**:  Multichannel Speech Signal Augmentation Processor
+# **Wavaugmentate**:  Multichannel Audio Signal Augmentation Processor
+
+
+
+ Mcs The application provides the Mcs class, which helps to perform augmentation of multi-channel audio signals. 
 
 # Input Data
 
 Multichannel WAV-file or NumPy array.
 ```
-Array shape: (num_channels,num_samples).
+Array shape: (num_channels, num_samples).
 ```
 # Output Data
 Same types as in section [Input_data](#Input_data).
@@ -21,6 +25,10 @@ Same types as in section [Input_data](#Input_data).
 10. Frequency masking. (**not implemented**)
 11. Time masking. (**not implemented**)
 12. Combinations of methods.
+
+# Additional functionality
+1. Generation multichannel tonal signals of desired frequency, amplitude, durance.
+2. Generation multichannel speech-like signals of desired formants frequency, amplitude, durance.
 
 # Interfaces
 Signal augmentation can be applied by two ways:

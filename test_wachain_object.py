@@ -382,12 +382,12 @@ def test_readme_examples():
         os.remove(file_name)
 
     # Frequencies list, corresponds to channels quantity.
-    freq_list = [400, 1000, 2333, 3700]
+    freq_list = [400, 700, 1000, 2333, 3700, 5000, 6500]
 
     fs = 441100  # Select sampling frequency, Hz.
-    time_len = 5  # Length of signal in seconds.
+    time_len = 3  # Length of signal in seconds.
 
-    # Create Mcs-object and generate sine waves in 4 channels.
+    # Create Mcs-object and generate sine waves in 7 channels.
     mcs = wau.Mcs().generate(freq_list, time_len, fs)
     mcs.write(file_name)
 
