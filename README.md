@@ -21,7 +21,7 @@ Same types as in section [Input_data](#Input_data).
 4. Adding noise.
 6. Time stretching. (**not implemented**)
 7. Tempo change. (**not implemented**)
-8. ​​Pitch shift. (**not implemented**)
+8. Pitch shift. (**not implemented**)
 9. Adding silence. 
 10. Frequency masking. (**not implemented**)
 11. Time masking. (**not implemented**)
@@ -183,6 +183,7 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |17| split(m_channels) | - | splt | Splits single channel to m_channels copies.|  
 |18| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
 |19| write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
+
  
 
 ## Documentation
