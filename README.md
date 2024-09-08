@@ -187,4 +187,5 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
  
 
 ## Documentation
-[html-documenation](docs/_build/html/index.html)
+Make clone of repository and look html-version of documentation:
+[html-documentation](docs/_build/html/index.html)
