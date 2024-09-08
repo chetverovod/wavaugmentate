@@ -127,8 +127,8 @@ def test_mcs_wr_rd():
 
     assert np.array_equal(w.data, r.data)
 
-def test_mcs_write_by_channel():
 
+def test_mcs_write_by_channel():
     # Preparations
     file_name = "./outputwav/sound.wav"
     if os.path.exists(file_name):
@@ -167,7 +167,7 @@ def test_mcs_write_by_channel():
     for i in range(7):
         mcs.read(f"./outputwav/sound_augmented_{i + 1}.wav")
         r = mcs.rms()
-        assert abs(r[0] - 0.707*amplitude_list[i]) < 0.001
+        assert abs(r[0] - 0.707 * amplitude_list[i]) < 0.001
 
 
 def test_mcs_echo():
@@ -458,7 +458,7 @@ def test_readme_examples():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     mcs.amplitude_ctrl(amplitude_list)
 
-    # Augmentation result saving by single file, containning 7 channels.
+    # Augmentation result saving by single file, containing 7 channels.
     mcs.write("./outputwav/sound_augmented.wav")
 
     # Augmentation result saving to 7 files, each 1 by channel.
@@ -474,22 +474,31 @@ def test_readme_examples():
     w = wau.Mcs(mcs)
 
     # Apply all transformations of Example 1 in chain.
-    w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr("./outputwav/sound_augmented_by_chain.wav")
-    
+    w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
+        "./outputwav/sound_augmented_by_chain.wav"
+    )
+
     # Augmentation result saving to 7 files, each 1 by channel.
     w.wrbc("./outputwav/sound_augmented_by_chain.wav")
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
+
+    # Example 5:
+
+    file_name = "./outputwav/sound.wav"
     v = wau.Mcs()
-    v.rd(file_name)  # Read original file.
-    v.split(4)
-    result = []
-    for _ in range(5):
+    v.rd(file_name)  # Read original file with single channel.
+    file_name_head = "./outputwav/sound_augmented"
+
+    # Suppose we need 15 augmented files.
+    aug_count = 15
+    for i in range(aug_count):
         b = v.copy()
-        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
-            [100, 200, 300, 400], [30, 40, 50, 60]
-        )
-        result.append(b.get())
+        # Apply random amplitude [0.3..1.7) and delay [70..130)
+        # microseconds changes to each copy of original signal.
+        b.amp([1], [0.7]).dly([100], [30])
+        name = file_name_head + f"_{i + 1}.wav"
+        b.write(name)
 
 
 def test_sum():

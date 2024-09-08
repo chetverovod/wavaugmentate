@@ -339,6 +339,8 @@ class Mcs:
         """
 
         self.sample_rate, buf = wavfile.read(path)
+        if len(buf.shape) != 2:
+            buf = np.expand_dims(buf, axis=1)
         self.path = path
         self.data = buf.T.copy()
         return self
@@ -654,6 +656,7 @@ class Mcs:
             self (Mcs): The split multichannel signal, with each channel identical.
         """
 
+        print("channels_count:", self.channels_count())
         if self.channels_count() > 1:
             print(ERROR_MARK, "Can't split more than 1 channel signal.")
             sys.exit(1)
@@ -862,6 +865,8 @@ class Mcs:
     achn = add_chain
     rdac = read_file_apply_chains
     gen = generate
+    cpy = copy
+
 
 # CLI interface functions
 ERROR_MARK = "Error: "

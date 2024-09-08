@@ -115,22 +115,27 @@ Example 3 (procedural approach):
 
 Example 4 (OOP approach):
 ```shell
-./wavaugmentate.py -c 'rd("./sound.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./sound_delayed.wav")'
+./wavaugmentate.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
 
 ```
- ## How to make 100 augmented files from 1 sound file
+ ## How to make several augmented files from 1 sound file
  Amplitudes and delays will be augmented by  code shown in example 5.
  Example 5 (single file augmentation):
  ```Python
-    v = wau.WaChain()
-    v.rd(test_sound_1_file)
-    result = []
-    for _ in range(100):
-        b = v.copy()
-        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3]).dly(
-            [100, 200, 300, 400], [30, 40, 50, 60]
-        )
-        result.append(b.get())
+file_name = "./outputwav/sound.wav"
+v = wau.Mcs()
+v.rd(file_name)  # Read original file with single channel.
+file_name_head = "./outputwav/sound_augmented"
+
+# Suppose we need 15 augmented files.
+aug_count = 15
+for i in range(aug_count):
+    b = v.copy()
+    # Apply random amplitude [0.3..1.7) and delay [70..130)
+    # microseconds changes to each copy of original signal.
+    b.amp([1], [0.7]).dly([100], [30])
+    name = file_name_head + f"_{i + 1}.wav"
+    b.write(name)
 ```
 
 # Unit Tests
@@ -142,26 +147,27 @@ pytest
 
 # Reference
 MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples).
-| #|        Function        |            CLI option           |  Chain method   |     Description     |
+| #|        *Mcs* class method        |            CLI option           |  Method alias   |     Description     |
 |--|------------------------|---------------------------------|-----------------|------------------------|
-|1 | read(path)             | -c 'rd(path)'              | rd(path)        | Read MCS from WAV-file.|
-|2 | write(path, mcs_data, fs)  | -c 'wr(path)'              | wr(path)        | Save MCS to WAV-file.  |
-|3 | file_info(path)        | --info                     | info()          | Returns WAV-file info. |
-|4 |        -               | -i path                    |  -              | Input WAV-file path.   |
-|5 |        -               | -o path                    |  -              | Output WAV-file path.  |
-|6 | amplitude_ctrl(mcs_data.[c1,c2..cm])| -a "c1,c2..Cm"             | amp([c1,c2..Cm])| Change amplitudes of channels. |
-|7 | delay_ctrl(mcs_data,[t1,t2..tm])    | -d "t1,t2..tm"             | dly([t1,t2..tm])| Add delays to channels.        |
-|8 | echo _ctrl(mcs_data,[t1,t2..tm],[c1,c2..cm])|-d "t1,t2..tm / c1,c2..Cm"|dly([t1,t2..tm],[c1,c2..Cm])|Add echo to channels. |
-|9 |noise_ctrl(mcs_data,[c1,c2..cm])| -n "c1,c2..Cm"             | ns([c1,c2..cm]) | Add normal noise to channels. | 
-|10|copy(mcs_data)         | -                          | cpy(mcs_data)   | Makes copy of MCS. |
-|11|generate([f1,f2,f3 fm],duration,fs)|-|gen([f1,f2,f3 fm], duration, fs)|Creates MCS and generates sine signal for each channel.|
-|12|merge(mcs_data) | -|mrg(mcs_data)| Merges all channels to single and returns  mono MCS.|
-|13|pause_detect(mcs_data,relative_level)|-| - | Searchs pauses by selected levels. Returns array-mask.|
-|14|pause_measure(mcs_mask)|-| - | Measure lengths of pauses. Returns list of lists containing pairs(index, length).|
-|15|pause_set(mcs_data,pause_map,pause_sz)|-| - | Set pauses length to selected values. Returns updated MCS.|
-|16|rms(mcs_data) | - | rms() | Returns list of RMS calculated for channels.|
-|17|side_by_side(mcs_data1,mcs_data2) | - | sbs(mcs_data2) | Appends channels from mcs_data2 to mcs_data1.| 
-|18|split(mcs_data, m_channels)| - | split(m_channels) | Splits single channel to m_channels copies.|  
-|19|sum(mcs_data1,mcs_data2)| - | sum(mcs_data2) | Adds mcs_data2 channels values to mcs_data1 sample by sample. | 
+|1 | read(path)             | -c 'rd(path)'              | rd        | Read MCS from WAV-file.|
+|2 | write(path)            | -c 'wr(path)'              | wr        | Save MCS to WAV-file.  |
+|3 | file_info(path)        | --info                     | info          | Returns WAV-file info. |
+|4 |        -               | -i path                    |  -             | Input WAV-file path.   |
+|5 |        -               | -o path                    |  -             | Output WAV-file path.  |
+|6 | amplitude_ctrl([c1,c2..cm]) | -a "c1,c2..Cm"             | amp | Change amplitudes of channels. |
+|7 | delay_ctrl([t1,t2..tm])    | -d "t1,t2..tm"             | dly | Add delays to channels.        |
+|8 | echo _ctrl([t1,t2..tm],[c1,c2..cm]) |-d "t1,t2..tm / c1,c2..Cm"| echo |Add echo to channels. |
+|9 | noise_ctrl([c1,c2..cm]) | -n "c1,c2..Cm"             | ns | Add normal noise to channels. | 
+|10| copy         | -                          | cpy | Makes copy of MCS. |
+|11| generate([f1,f2,f3..fm],duration,fs)|-| gen |Creates MCS and generates sine signal for each channel.|
+|12| merge() | -| mrg | Merges all channels to single and returns  mono MCS.|
+|13| pause_detect(relative_level)|-| pdt | Searches pauses by selected levels. Returns array-mask.|
+|14| pause_measure(mcs_mask) | - | - | Measure lengths of pauses. Returns list of lists containing pairs(index, length).|
+|15| pause_set(pause_map,pause_sz) | - | - | Set pauses length to selected values. Returns updated MCS.|
+|16| rms() | - | rms | Returns list of RMS calculated for object channels.|
+|17| side_by_side(mcs) | - | sbs | Appends channels from mcs data as new channels.| 
+|18| split(m_channels) | - | splt | Splits single channel to m_channels copies.|  
+|19| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
+|20 | write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
  
 
