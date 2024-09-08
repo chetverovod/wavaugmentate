@@ -9,11 +9,11 @@ import common_test_functions as ctf
 
 def test_mcs_put():
     """
-    Test function to verify the functionality of the WaChain class's put method.
+    Test function to verify the functionality of the mcs class's put method.
 
     This function generates a multichannel sound using the generate function from
     the wau module with the given frequency list, time duration, and sample rate.
-    It then applies the put method of the WaChain class to the generated sound
+    It then applies the put method of the mcs class to the generated sound
     and asserts that the shape and data of the original sound are equal to the
     shape and data of the sound after applying the put method.
 
@@ -37,11 +37,11 @@ def test_mcs_put():
     assert np.array_equal(w2.data, w.get())
 
 
-def test_wachain_amp_control():
+def test_mcs_amp_control():
     """
-    Test function to verify the functionality of the WaChain class.
+    Test function to verify the functionality of the mcs class.
 
-    This function tests the amp method of the WaChain class by
+    This function tests the amp method of the mcs class by
     applying amplitude control to a generated multichannel sound.
 
     Args:
@@ -68,11 +68,11 @@ def test_wachain_amp_control():
     assert np.array_equal(res1.get(), res2)
 
 
-def test_wachain_dly_controls():
+def test_mcs_dly_controls():
     """
-    Test function to verify the functionality of the WaChain class.
+    Test function to verify the functionality of the mcs class.
 
-    This function tests the dly method of the WaChain class by
+    This function tests the dly method of the mcs class by
     applying delay controls to a generated multichannel sound.
 
     Args:
@@ -102,11 +102,11 @@ def test_wachain_dly_controls():
     assert np.array_equal(res1.get(), res2.get())
 
 
-def test_wachain_wr_rd():
+def test_mcs_wr_rd():
     """
-    Test function to verify the functionality of the WaChain class.
+    Test function to verify the functionality of the mcs class.
 
-    This function tests the wr and rd methods of the WaChain class by
+    This function tests the wr and rd methods of the mcs class by
     generating a multichannel sound, writing it to a file, reading it back,
     and comparing the original and read sound data.
 
@@ -170,13 +170,13 @@ def test_mcs_write_by_channel():
         assert abs(r[0] - 0.707*amplitude_list[i]) < 0.001
 
 
-def test_wachain_echo():
+def test_mcs_echo():
     """
     Test function to verify the functionality of the `echo` method in the
-    WaChain class.
+    mcs class.
 
     This function generates a multichannel sound using the `gen` method of the
-    WaChain class with the given frequency list, duration, and sample rate. It
+    mcs class with the given frequency list, duration, and sample rate. It
     then applies the `echo` method to the generated sound with the given delay
     list and amplitude list. Finally, it calculates the root mean square (RMS)
     values of the echoed sound and compares them to the expected values in the
@@ -206,13 +206,13 @@ def test_wachain_echo():
         assert abs(r - ref) < 0.001
 
 
-def test_wachain_noise():
+def test_mcs_noise():
     """
     Test function to verify the functionality of the `ns` method in the
-    `WaChain` class.
+    `mcs` class.
 
     This function generates a multichannel sound using the `gen` method of the
-    `WaChain` class with the given frequency list, duration, and sample rate. It
+    `mcs` class with the given frequency list, duration, and sample rate. It
     then applies the `ns` method to the generated sound with the given noise
     level list. Finally, it calculates the root mean square (RMS) values of the
     noise-controlled sound and compares them to the expected values in the
@@ -237,13 +237,13 @@ def test_wachain_noise():
         assert abs(r - ref) < 0.01
 
 
-def test_wachain_info():
+def test_mcs_info():
     """
-    Test the `info` method of the `WaChain` class.
+    Test the `info` method of the `mcs` class.
 
-    This function creates a `WaChain` object, generates a sound file with the
+    This function creates a `mcs` object, generates a sound file with the
     given frequency list, duration, and sample rate, and writes it to a file.
-    It then calls the `info` method of the `WaChain` object and prints the
+    It then calls the `info` method of the `mcs` object and prints the
     result.  Finally, it asserts that the returned dictionary matches the
     expected reference dictionary.
 
@@ -270,7 +270,7 @@ def test_wachain_info():
 
 
 #  Test not finished.
-def test_wachain_rn_rd():
+def test_mcs_rn_rd():
     """Test augmentation on the fly."""
 
     w = wau.Mcs()
@@ -294,7 +294,7 @@ def test_wachain_rn_rd():
     # !!! assert np.array_equal(w.data, b.data)
 
 
-def test_wachain_rn_aug_rd():
+def test_mcs_rn_aug_rd():
     """Test augmentation on the fly."""
 
     w = wau.Mcs()
@@ -329,9 +329,9 @@ def test_wachain_rn_aug_rd():
         assert not np.array_equal(a.data, b.data)
 
 
-def test_wachain_chain_class():
+def test_mcs_chain_class():
     """
-    Tests the functionality of the WaChain class by generating a multichannel
+    Tests the functionality of the mcs class by generating a multichannel
     sound, computing its RMS values, and comparing them to the expected values.
 
     Args:
@@ -409,7 +409,7 @@ def test_readme_examples():
     This function tests the functionality of examples for README file of the
     wavaugmentate module by generating a multichannel sound, applying various
     augmentations, and saving the results to WAV files. It also demonstrates
-    the usage of the WaChain class for object-oriented augmentation.
+    the usage of the mcs class for object-oriented augmentation.
 
     Args:
         None
@@ -588,10 +588,10 @@ def test_split():
 
 def test_chain_sum():
     """
-    Test the functionality of the `sum` method in the `WaChain` class.
+    Test the functionality of the `sum` method in the `mcs` class.
 
-    This function creates two instances of the `WaChain` class, `w` and `res`,
-    and generates a multichannel sound using the `gen` method of the `WaChain`
+    This function creates two instances of the `mcs` class, `w` and `res`,
+    and generates a multichannel sound using the `gen` method of the `mcs`
     class. It then copies the data of `w` to `res` and generates another
     multichannel sound using the `generate` function. The `sum` method is used
     to add the two sounds together, and the result is written to a file using
@@ -623,9 +623,9 @@ def test_chain_sum():
 
 def test_chain_merge():
     """
-    Tests the functionality of the `merge` method in the `WaChain` class.
+    Tests the functionality of the `merge` method in the `mcs` class.
 
-    This function creates an instance of the `WaChain` class, generates a
+    This function creates an instance of the `mcs` class, generates a
     multichannel sound using the `gen` method, merges the channels using the
     `mrg` method, writes the result to a file using the `wr` method, and
     calculates the root mean square (RMS) value of the merged sound using the
@@ -652,13 +652,13 @@ def test_chain_merge():
 
 def test_chain_split():
     """
-    Test the functionality of the `splt` and `wr` methods in the `WaChain`
+    Test the functionality of the `splt` and `wr` methods in the `mcs`
     class.
 
-    This function creates a `WaChain` instance and generates a multichannel
+    This function creates a `mcs` instance and generates a multichannel
     sound using the `gen` method. It then splits the channels using the `splt`
     method and writes the result to a file using the `wr` method. The function
-    then checks the shape of the `data` attribute of the `WaChain` instance and
+    then checks the shape of the `data` attribute of the `mcs` instance and
     compares it to the expected value. It also calculates the root mean square
     (RMS) value of the generated sound using the `rms` method and compares it
     to the expected value.
@@ -683,7 +683,7 @@ def test_chain_split():
 
 def test_chain_side_by_side():
     """
-    Tests the functionality of the `sbs` method in the `WaChain` class.
+    Tests the functionality of the `sbs` method in the `mcs` class.
 
     This function generates two multichannel sounds using the `generate`
     function from the `wau` module with the given frequency lists, time
@@ -780,7 +780,7 @@ def test_pause_detect():
 
 def test_chain_pause_detect():
     """
-    Tests the functionality of the WaChain class by creating two instances,
+    Tests the functionality of the mcs class by creating two instances,
     generating a multichannel sound, copying the sound, applying pause
     detection, and then asserting that the RMS values of the resulting sound
     are within a certain tolerance of the reference values.
@@ -975,10 +975,10 @@ def test_pause_set():
 def test_chain_add_chain():
     """
     Test function to verify the functionality of the `add_chain` method in the
-    `WaChain` class.
+    `mcs` class.
 
-    This function creates a `WaChain` instance, defines two chain commands as
-    strings, adds them to the `chains` list of the `WaChain` instance, evaluates
+    This function creates a `mcs` instance, defines two chain commands as
+    strings, adds them to the `chains` list of the `mcs` instance, evaluates
     the chains, and compares the result to the expected values.
 
     Args:
