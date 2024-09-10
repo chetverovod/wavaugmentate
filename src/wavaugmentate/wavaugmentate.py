@@ -830,8 +830,8 @@ class Mcs:
         _ = self.copy()
         print("_sample_rate:", _.sample_rate)
         cmd_prefix = "_."
-        for c in self.chains:
-            cmd_line = cmd_prefix + c
+        for chain in self.chains:
+            cmd_line = cmd_prefix + chain
             print("cmd_line:", cmd_line)
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
