@@ -877,7 +877,7 @@ SUCCESS_MARK = "Done."
 
 prog_name = os.path.basename(__file__).split(".")[0]
 
-application_info = f"{prog_name} application provides functions for \
+application_info = f"{prog_name.capitalize()} application provides functions for \
 multichannel WAV audio data augmentation."
 
 
