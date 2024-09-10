@@ -29,4 +29,5 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
-        pipenv run pylint $(git ls-files '*.py')
+        pipenv run pylint $(git ls-files 'src/*/*.py')
+        pipenv run pylint $(git ls-files 'tests/*/*.py')
