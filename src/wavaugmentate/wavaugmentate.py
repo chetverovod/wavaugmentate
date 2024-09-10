@@ -56,9 +56,9 @@ def delay_syntez(
 ) -> List[int]:
     """Make delays list"""
 
-    d = delay_us_list
+    d_list = delay_us_list
     if delay_deviation_list is not None:
-        d = []
+        d_list = []
         for delay, dev in zip(delay_us_list, delay_deviation_list):
             if dev > 0:
                 left = delay - dev
@@ -71,10 +71,10 @@ def delay_syntez(
                 right = delay + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
-                    d.append(local_ng.integers(left, right))
+                    d_list.append(local_ng.integers(left, right))
                 else:
-                    d.append(random_noise_gen.integers(left, right))
-    return d
+                    d_list.append(random_noise_gen.integers(left, right))
+    return d_list
 
 
 def pause_measure(mask: np.ndarray[int]) -> dict:
@@ -120,7 +120,7 @@ class Mcs:
     """
 
     def __init__(
-        self, np_data: np.ndarray = None, fs: int = -1, seed: int = -1
+        self, np_data: np.ndarray = None, samp_rt: int = -1, seed: int = -1
     ):
         """
         Initializes a new instance of the Mcs class.
@@ -143,7 +143,7 @@ class Mcs:
                 np_data.copy()
             )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
-        self.sample_rate = fs  # Sampling frequency, Hz.
+        self.sample_rate = samp_rt  # Sampling frequency, Hz.
         self.chains = []  # List of chains.
         self.seed = seed  # Flag for seeding random generator.
 
@@ -173,14 +173,14 @@ class Mcs:
             mean_square = np.mean(self.data[0:last_index] ** 2)
 
         # Calculate the square root of the mean of the squares
-        r = np.sqrt(mean_square)
+        single_chan_rms = np.sqrt(mean_square)
 
         # Round the result to the specified number of decimal places
         if decimals > 0:
-            r = round(r, decimals)
+            single_chan_rms = round(single_chan_rms, decimals)
 
         # Return the result
-        return r
+        return single_chan_rms
 
     def rms(self, last_index: int = -1, decimals: int = -1):
         """
@@ -201,11 +201,11 @@ class Mcs:
         shlen = len(self.data.shape)
         if shlen > 1:
             for i in range(0, self.data.shape[0]):
-                r = self.channel_rms(i, last_index, decimals)
-                res.append(r)
+                chan_rms = self.channel_rms(i, last_index, decimals)
+                res.append(chan_rms)
         else:
-            r = self.channel_rms(-1, last_index, decimals)
-            res.append(r)
+            chan_rms = self.channel_rms(-1, last_index, decimals)
+            res.append(chan_rms)
         return res
 
     def shape(self) -> Tuple:
@@ -221,7 +221,7 @@ class Mcs:
         self,
         frequency_list: List[int],
         duration: float = DEF_SIGNAL_LEN,
-        fs: int = -1,
+        samp_rt: int = -1,
         mode="sine",
     ) -> "Mcs":
         """
@@ -243,14 +243,14 @@ class Mcs:
         self (Mcs):  representing the generated multichannel sound.
         """
 
-        if fs > 0:
-            self.sample_rate = fs
+        if samp_rt > 0:
+            self.sample_rate = samp_rt
         self.data = None
         samples = np.arange(duration * self.sample_rate) / self.sample_rate
         channels = []
         if mode == "sine":
-            for f in frequency_list:
-                signal = np.sin(2 * np.pi * f * samples)
+            for freq in frequency_list:
+                signal = np.sin(2 * np.pi * freq * samples)
                 signal = np.float32(signal)
                 channels.append(signal)
             self.data = np.array(channels).copy()
@@ -258,15 +258,15 @@ class Mcs:
         if mode == "speech":
             if self.seed != -1:
                 random.seed(self.seed)
-            for f in frequency_list:
-                if f > 300 or f < 60:
+            for freq in frequency_list:
+                if freq > 300 or freq < 60:
                     print(
                         ERROR_MARK + "Use basic tone from interval 600..300 Hz"
                     )
                     sys.exit(1)
 
                 # Formants:
-                fbt = random.randint(f, 300)  # 60–300 Гц
+                fbt = random.randint(freq, 300)  # 60–300 Гц
                 freq_list = [fbt]
                 freq_list.append(random.randint(2 * fbt, 850))  # 150–850 Гц
                 freq_list.append(random.randint(3 * fbt, 2500))  # 500–2500 Гц
@@ -277,8 +277,8 @@ class Mcs:
                 for frm in freq_list:
                     signal += amp * np.sin(2 * np.pi * frm * samples)
                     amp -= 0.1
-                p = np.max(np.abs(signal))
-                signal = signal / p
+                peak_amplitude = np.max(np.abs(signal))
+                signal = signal / peak_amplitude
                 signal = np.float32(signal)
                 channels.append(signal)
                 self.data = np.array(channels).copy()
@@ -323,9 +323,9 @@ class Mcs:
         trimmed_path = path.split(".wav")
         for i in range(self.channels_count()):
             buf = self.data[i, :].T.copy()
-            fn = trimmed_path[0] + f"_{i + 1}.wav"
-            print(f"Writing {fn}...")
-            wavfile.write(fn, self.sample_rate, buf)
+            file_name = trimmed_path[0] + f"_{i + 1}.wav"
+            print(f"Writing {file_name}...")
+            wavfile.write(file_name, self.sample_rate, buf)
         return self
 
     def read(self, path: str) -> "Mcs":
@@ -376,7 +376,7 @@ class Mcs:
             )
             sys.exit(1)
 
-        a = amplitude_list
+        amp_list = amplitude_list
         if amplitude_deviation_list is not None:
             if self.channels_count() != len(amplitude_deviation_list):
                 print(
@@ -385,7 +385,7 @@ class Mcs:
                 )
                 sys.exit(1)
 
-            a = []
+            amp_list = []
             for amplitude, dev in zip(
                 amplitude_list, amplitude_deviation_list
             ):
@@ -394,12 +394,12 @@ class Mcs:
                     right = amplitude + dev
                     if self.seed != -1:
                         local_ng = np.random.default_rng(seed=self.seed)
-                        a.append(local_ng.uniform(left, right))
+                        amp_list.append(local_ng.uniform(left, right))
                     else:
-                        a.append(random_noise_gen.uniform(left, right))
+                        amp_list.append(random_noise_gen.uniform(left, right))
 
         channels = []
-        for signal, ampl in zip(self.data, a):
+        for signal, ampl in zip(self.data, amp_list):
             channels.append(signal * ampl)
 
         self.data = np.array(channels).copy()
@@ -441,12 +441,12 @@ class Mcs:
                 )
                 sys.exit(1)
 
-        d = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
+        d_list = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
         channels = []
         # In samples.
-        max_samples_delay = int(max(d) * 1.0e-6 * self.sample_rate)
+        max_samples_delay = int(max(d_list) * 1.0e-6 * self.sample_rate)
 
-        for signal, delay in zip(self.data, d):
+        for signal, delay in zip(self.data, d_list):
             samples_delay = int(
                 delay * 1.0e-6 * self.sample_rate
             )  # In samples.
@@ -486,15 +486,15 @@ class Mcs:
         Returns:
             self (Mcs): The echoed multichannel sound.
         """
-        a = self.copy()
-        a.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
-        e = a.copy()
-        e.delay_ctrl(delay_us_list, delay_deviation_list)
+        amplitude_change = self.copy()
+        amplitude_change.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
+        delay_change = amplitude_change.copy()
+        delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
-        for d in self.data:
-            zl = e.data.shape[1] - d.data.shape[0]
-            channels.append(np.append(d, np.zeros(zl)))
-        self.data = np.array(channels).copy() + e.data.copy()
+        for single_channel in self.data:
+            zeros_len = delay_change.data.shape[1] - single_channel.data.shape[0]
+            channels.append(np.append(single_channel, np.zeros(zeros_len)))
+        self.data = np.array(channels).copy() + delay_change.data.copy()
 
         return self
 
@@ -544,15 +544,15 @@ class Mcs:
             ones 0 - pause, 1 - not a pause.
         """
 
-        r = self.rms()
-        a = abs(self.data)
+        rms_list = self.rms()
+        modules_list = abs(self.data)
         mask = np.zeros(self.data.shape)
 
         for i in range(0, self.data.shape[0]):
-            ll = r[i] * relative_level[i]
-            mask[i] = np.clip(a[i], a_min=ll, a_max=1.1 * ll)
-            mask[i] -= ll
-            mask[i] /= 0.09 * ll
+            threshold = rms_list[i] * relative_level[i]
+            mask[i] = np.clip(modules_list[i], a_min=threshold, a_max=1.1 * threshold)
+            mask[i] -= threshold
+            mask[i] /= 0.09 * threshold
             mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
         return mask
 
@@ -607,8 +607,8 @@ class Mcs:
         for i in range(0, self.data.shape[0]):
             prev_index = 0
             local_list = []
-            for p in pause_map[i]:
-                index = p[0] + p[1]
+            for pause_info in pause_map[i]:
+                index = pause_info[0] + pause_info[1]
                 delta = index - prev_index
                 if delta > 0:
                     local_list.append(
@@ -619,21 +619,21 @@ class Mcs:
                     prev_index = index
 
             out_list.append(local_list)
-            a = []
+            a_list = []
             for elem in out_list:
-                a.append(np.concatenate(elem).copy())
+                a_list.append(np.concatenate(elem).copy())
 
             max_len = -1
-            for elem in a:
+            for elem in a_list:
                 max_len = max(max_len, len(elem))
 
-            c = []
-            for elem in a:
+            channels_list = []
+            for elem in a_list:
                 elem = np.concatenate(
                     [elem, np.zeros(max_len - len(elem))]
                 ).copy()
-                c.append(elem)
-        self.data = np.stack(c, axis=0).copy()
+                channels_list.append(elem)
+        self.data = np.stack(channels_list, axis=0).copy()
         return self
 
     def channels_count(self) -> int:
@@ -810,8 +810,8 @@ class Mcs:
             result, allowing for method chaining.
         """
 
-        for c in list_of_chains:
-            self.chains.append(c.strip())
+        for chain in list_of_chains:
+            self.chains.append(chain.strip())
         return self
 
     def eval(self) -> "Mcs":
@@ -881,7 +881,7 @@ application_info = f"{prog_name.capitalize()} application provides functions for
 multichannel WAV audio data augmentation."
 
 
-def validate_amp_list(ls: List[str]) -> None:
+def validate_amp_list(amplitude_list: List[str]) -> None:
     """
     Checks if all elements in the given amplitudes list are valid numbers.
 
@@ -896,18 +896,18 @@ def validate_amp_list(ls: List[str]) -> None:
         SystemExit: Exits the program with a status code of 3 if a non-number
         element is found.
     """
-    for n in ls:
+    for amplitude_value in amplitude_list:
         try:
-            float(n)
+            float(amplitude_value)
         except ValueError:
             print(
                 f"{ERROR_MARK}Amplitude list"
-                f" contains non number element: <{n}>."
+                f" contains non number element: <{amplitude_value}>."
             )
             sys.exit(3)
 
 
-def validate_delay_list(ls: List[str]) -> None:
+def validate_delay_list(delays_list: List[str]) -> None:
     """
     Checks if all elements in the given delays list are valid integers.
 
@@ -922,13 +922,13 @@ def validate_delay_list(ls: List[str]) -> None:
         SystemExit: Exits the program with a status code of 1 if a non-integer
         element is found.
     """
-    for n in ls:
+    for delay_value in delays_list:
         try:
-            int(n)
+            int(delay_value)
         except ValueError:
             print(
                 f"{ERROR_MARK}Delays list"
-                f" contains non integer element: <{n}>."
+                f" contains non integer element: <{delay_value}>."
             )
             sys.exit(1)
 
@@ -957,13 +957,13 @@ def chain_hdr(args):
     """
     if args.chain_code is None:
         return
-    c = args.chain_code.strip()
-    print("chain:", c)
-    w = Mcs()
-    cmd_prefix = "w."
-    str(eval(cmd_prefix + c.strip()))  # It is need for chain commands.
+    chain = args.chain_code.strip()
+    print("chain:", chain)
+    mcs = Mcs()
+    cmd_prefix = "mcs."
+    str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(SUCCESS_MARK)
-    w.info()
+    mcs.info()
     sys.exit(0)
 
 

@@ -26,7 +26,7 @@ def test_mcs_put():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
     w = wau.Mcs()
@@ -54,7 +54,7 @@ def test_mcs_amp_control():
     """
 
     a_list = [0.1, 0.3, 0.4, 1]
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     w = wau.Mcs(test_sound_1.data)
 
@@ -85,7 +85,7 @@ def test_mcs_dly_controls():
     """
 
     d_list = [100, 200, 300, 0]
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     w = test_sound_1.copy()
 
@@ -525,9 +525,9 @@ def test_sum():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = wau.Mcs(fs=ctf.FS)
+    test_sound_2 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.sum(test_sound_2)
@@ -558,7 +558,7 @@ def test_merge():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
@@ -589,7 +589,7 @@ def test_split():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
@@ -1001,7 +1001,7 @@ def test_chain_add_chain():
     Returns:
         None
     """
-    mcs = wau.Mcs(fs=ctf.FS)
+    mcs = wau.Mcs(samp_rt=ctf.FS)
     w = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
 
     # Define the first chain command

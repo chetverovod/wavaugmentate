@@ -23,7 +23,7 @@ def test_generate_sine():
     Returns:
         None
     """
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     assert test_sound_1.shape() == (4, 220500)
@@ -43,7 +43,7 @@ def test_generate_speech():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS, seed=42)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS, seed=42)
     test_sound_1.generate(ctf.frm_list, ctf.SIGNAL_TIME_LEN, mode="speech")
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     assert test_sound_1.shape() == (4, 220500)
@@ -70,7 +70,7 @@ def test_write():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
@@ -92,7 +92,7 @@ def test_read():
     Returns:
         None
     """
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_rs = wau.Mcs()
     assert test_rs.sample_rate == -1
@@ -149,7 +149,7 @@ def test_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     test_ac = test_sound_1.copy()
@@ -172,7 +172,7 @@ def test_rn_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
@@ -208,7 +208,7 @@ def test_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 0]
     test_dc = test_sound_1.delay_ctrl(delay_list)
@@ -243,7 +243,7 @@ def test_rn_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
@@ -281,7 +281,7 @@ def test_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 0]
     amplitude_list = [-0.3, -0.4, -0.5, 0]
@@ -316,7 +316,7 @@ def test_rn_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 100]
     amplitude_list = [-0.3, -0.4, -0.5, 0.1]
@@ -365,7 +365,7 @@ def test_echo_ctrl_option():
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
@@ -427,7 +427,7 @@ def test_noise_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = test_sound_1.noise_ctrl([1, 0.2, 0.3, 0])
@@ -466,7 +466,7 @@ def test_wavaugmentate_noise_option():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
