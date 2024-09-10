@@ -1224,8 +1224,6 @@ def parse_args():
 def main():
     """CLI arguments parsing."""
 
-    if sys.version_info[0:2] != (3, 11):
-        raise ValueError("Requires python 3.11")
     args = parse_args()
     chain_hdr(args)
     input_path_hdr(args)
