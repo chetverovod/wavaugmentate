@@ -1,13 +1,11 @@
-"""Module providing test functions for wavaugmentate.py  module."""
+"""Module provides test functions for mcs.py  module."""
 
 import sys
 import os
-import subprocess as sp
 import numpy as np
 import common_test_functions as ctf
 sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
-import wavaugmentate as wau
 
 
 def test_mcs_put():
@@ -886,7 +884,6 @@ def test_pause_measure():
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res_list = ms.pause_measure(mask)
-    print(res_list)
 
     ref_list = [
         [
@@ -947,8 +944,6 @@ def test_pause_set():
     test_sound_1.pause_set(pause_list, [10, 150])
     res = test_sound_1.copy()
     assert res.shape() == (2, 1618)
-    print("res shape:", res.shape())
-    print("res:", type(res.data[0, 1]))
     res.write(ctf.TEST_SOUND_1_FILE)
     rms_list = res.rms(decimals=3)
     ref_rms_list = [0.105, 0.113]

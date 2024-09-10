@@ -5,8 +5,6 @@ This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import copy
-from pathlib import Path
-import os
 import sys
 import random
 from typing import List, Tuple

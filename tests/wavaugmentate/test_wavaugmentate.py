@@ -5,8 +5,8 @@ import subprocess as sp
 import numpy as np
 import common_test_functions as ctf
 sys.path.insert(1, ctf.WAU_DIR)
-import wavaugmentate as wau
 import mcs as ms
+import wavaugmentate as wau
 
 
 def test_generate_sine():
@@ -841,4 +841,3 @@ def test_chain_option():
     assert out == ref
     exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
     assert exists is True
-

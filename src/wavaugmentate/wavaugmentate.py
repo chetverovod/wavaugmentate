@@ -8,9 +8,8 @@ import argparse
 from pathlib import Path
 import os
 import sys
-from typing import List, Tuple
+from typing import List
 from scipy.io import wavfile
-import numpy as np
 import mcs as ms
 
 

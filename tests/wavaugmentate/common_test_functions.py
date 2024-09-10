@@ -27,7 +27,7 @@ OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = SRC_DIR + wau.prog_name + ".py"
 
-ABS_ERR = 0.001
+ABS_ERR = 0.0001
 
 
 def shrink(text_for_shink: str):
