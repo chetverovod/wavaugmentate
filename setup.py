@@ -17,7 +17,7 @@ def read_pipenv_dependencies(fname):
 if __name__ == '__main__':
     setup(
         name='wavaugmetate',
-        version=os.getenv('PACKAGE_VERSION', '0.0.dev0'),
+        version=os.getenv('PACKAGE_VERSION', '0.1.dev0'),
         package_dir={'': 'src'},
         packages=find_packages('src', include=[
             'wavaugmetate*'
