@@ -27,11 +27,13 @@ OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = SRC_DIR + wau.prog_name + ".py"
 
+ABS_ERR = 0.001
 
-def shrink(s: str):
+
+def shrink(text_for_shink: str):
     """Drops white spaces, newlines, and tabs from a string."""
 
     subst_table = str.maketrans(
         {" ": None, "\n": None, "\t": None, "\r": None}
     )
-    return s.translate(subst_table)
+    return text_for_shink.translate(subst_table)

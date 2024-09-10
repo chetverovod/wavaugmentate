@@ -1,12 +1,11 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
-import common_test_functions as ctf
 import sys
 import os
-sys.path.insert(1, ctf.WAU_DIR)
-
 import subprocess as sp
 import numpy as np
+import common_test_functions as ctf
+sys.path.insert(1, ctf.WAU_DIR)
 import wavaugmentate as wau
 
 
@@ -27,17 +26,17 @@ def test_mcs_put():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
-    w = wau.Mcs()
-    w.put(test_sound_1)
+    mcs = wau.Mcs()
+    mcs.put(test_sound_1)
 
-    assert np.array_equal(test_sound_1.data, w.data)
-    assert np.array_equal(test_sound_1.data, w.get())
+    assert np.array_equal(test_sound_1.data, mcs.data)
+    assert np.array_equal(test_sound_1.data, mcs.get())
 
-    w2 = wau.Mcs(test_sound_1.data)
-    assert np.array_equal(w2.data, w.get())
+    mcs_2 = wau.Mcs(test_sound_1.data)
+    assert np.array_equal(mcs_2.data, mcs.get())
 
 
 def test_mcs_amp_control():
@@ -55,17 +54,17 @@ def test_mcs_amp_control():
     """
 
     a_list = [0.1, 0.3, 0.4, 1]
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    w = wau.Mcs(test_sound_1.data)
+    mcs = wau.Mcs(test_sound_1.data)
 
-    w.amp(a_list)
-    res1 = w
+    mcs.amp(a_list)
+    res1 = mcs
     print("res1 =", res1.data)
 
-    d = wau.Mcs()
+    dest = wau.Mcs()
 
-    res2 = d.put(test_sound_1).amp(a_list).get()
+    res2 = dest.put(test_sound_1).amp(a_list).get()
 
     print("res2 =", res2.data)
     assert np.array_equal(res1.get(), res2)
@@ -86,18 +85,18 @@ def test_mcs_dly_controls():
     """
 
     d_list = [100, 200, 300, 0]
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    w = test_sound_1.copy()
+    mcs = test_sound_1.copy()
 
-    w.dly(d_list)
-    res1 = w
+    mcs.dly(d_list)
+    res1 = mcs
     print("res1 shape =", res1.data.shape)
     print("res1 =", res1.data)
 
-    d = wau.Mcs()
-    d.put(test_sound_1)
-    res2 = d.dly(d_list)
+    dest = wau.Mcs()
+    dest.put(test_sound_1)
+    res2 = dest.dly(d_list)
 
     print("res2 shape =", res2.data.shape)
     print("res2 =", res2.data)
@@ -120,18 +119,39 @@ def test_mcs_wr_rd():
         None
     """
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    r = wau.Mcs()
-    r.rd(ctf.TEST_SOUND_1_FILE)
+    ref_mcs = wau.Mcs()
+    ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
 
-    assert np.array_equal(w.data, r.data)
+    assert np.array_equal(mcs.data, ref_mcs.data)
 
 
 def test_mcs_write_by_channel():
+    """
+    Test function to verify the functionality of the mcs class's
+    write_by_channel method.
+
+    This function generates a multichannel sound using the generate method of
+    the mcs class with the given frequency list, time duration, and sample rate.
+    It then writes the generated sound to a file using the write method of the
+    mcs class.  The function reads the written sound back into the mcs object
+    using the read method and changes the quantity of channels to 7 using the
+    split method.  It applies delays and amplitude changes to the sound using
+    the delay_ctrl and amplitude_ctrl methods, respectively.  Finally, it writes
+    the sound to separate WAV files for each channel using the write_by_channel
+    method and verifies the RMS values of the written sounds.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     # Preparations
     file_name = ctf.OUTPUTWAV_DIR + "sound.wav"
     if os.path.exists(file_name):
@@ -139,11 +159,11 @@ def test_mcs_write_by_channel():
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
-    fs = 44100  # Select sampling frequency, Hz.
+    samp_rt = 44100  # Select sampling frequency, Hz.
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1 = wau.Mcs().generate(freq_list, time_len, samp_rt)
     mcs1.write(file_name)
 
     # Create Mcs-object.
@@ -169,8 +189,8 @@ def test_mcs_write_by_channel():
 
     for i in range(7):
         mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
-        r = mcs.rms()
-        assert abs(r[0] - 0.707 * amplitude_list[i]) < 0.001
+        rms_value = mcs.rms()
+        assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
 
 
 def test_mcs_echo():
@@ -193,20 +213,20 @@ def test_mcs_echo():
     """
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.Mcs()
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = w.rms(decimals=3)
+    mcs = wau.Mcs()
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
+    rms_list = mcs.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
-    for r, ref in zip(rms_list, reference_list):
-        assert abs(r - ref) < 0.001
+    for rms_value, ref in zip(rms_list, reference_list):
+        assert abs(rms_value - ref) < ctf.ABS_ERR
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    w = wau.Mcs()
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = w.rms(decimals=3)
+    mcs = wau.Mcs()
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
+    rms_list = mcs.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
-    for r, ref in zip(rms_list, reference_list):
-        assert abs(r - ref) < 0.001
+    for rms_value, ref in zip(rms_list, reference_list):
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_mcs_noise():
@@ -230,14 +250,14 @@ def test_mcs_noise():
 
     n_list = [1, 0.2, 0.3, 0]
 
-    w = wau.Mcs()
-    w.set_seed(42)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
-    rms_list = w.rms(decimals=3)
+    mcs = wau.Mcs()
+    mcs.set_seed(42)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
+    rms_list = mcs.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
-    for r, ref in zip(rms_list, reference_list):
+    for rms_value, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
-        assert abs(r - ref) < 0.01
+        assert abs(rms_value - ref) < 0.01
 
 
 def test_mcs_info():
@@ -257,11 +277,11 @@ def test_mcs_info():
         None
     """
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-    print(w.info())
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    print(mcs.info())
 
     ref = {
         "path": "",
@@ -269,67 +289,67 @@ def test_mcs_info():
         "sample_rate": 44100,
         "length_s": 5.0,
     }
-    assert w.info() == ref
+    assert mcs.info() == ref
 
 
 #  Test not finished.
 def test_mcs_rn_rd():
     """Test augmentation on the fly."""
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.Mcs()
-    a.rd(ctf.TEST_SOUND_1_FILE)
+    mcs_for_chain = wau.Mcs()
+    mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.Mcs()
-    b.rd(ctf.TEST_SOUND_1_FILE)
+    assert np.array_equal(mcs.data, mcs_for_chain.data)
 
-    assert np.array_equal(w.data, a.data)
-    assert np.array_equal(w.data, b.data)
+    mcs_for_chain.amp([1, 0.7, 0.5, 0.3])
+    mcs.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(mcs.data, mcs_for_chain.data)
 
-    b.achn(["amp([1, 0.7, 0.5, 0.3])"])
-    res = b.rdac(ctf.TEST_SOUND_1_FILE)
-    print("res=", res.data[0])
+    mcs_for_chain.achn(["amp([1, 0.7, 0.5, 0.3])"])
+    res = mcs_for_chain.rdac(ctf.TEST_SOUND_1_FILE)
+    print("b = ", res[0].data)
 
-    # !!! assert np.array_equal(w.data, b.data)
+    assert np.array_equal(mcs.data, res[0].data)
 
 
 def test_mcs_rn_aug_rd():
     """Test augmentation on the fly."""
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    a = wau.Mcs()
-    a.rd(ctf.TEST_SOUND_1_FILE)
+    mcs_a = wau.Mcs()
+    mcs_a.rd(ctf.TEST_SOUND_1_FILE)
 
-    b = wau.Mcs()
-    b.rd(ctf.TEST_SOUND_1_FILE)
+    mcs_b = wau.Mcs()
+    mcs_b.rd(ctf.TEST_SOUND_1_FILE)
 
-    assert np.array_equal(w.data, a.data)
-    assert np.array_equal(w.data, b.data)
+    assert np.array_equal(mcs.data, mcs_a.data)
+    assert np.array_equal(mcs.data, mcs_b.data)
 
-    a.amp([1, 0.7, 0.5, 0.3])
-    b.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(a.data, b.data)
+    mcs_a.amp([1, 0.7, 0.5, 0.3])
+    mcs_b.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(mcs_a.data, mcs_b.data)
 
-    a.set_seed(42)
-    b.set_seed(42)
-    a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    assert np.array_equal(a.data, b.data)
+    mcs_a.set_seed(42)
+    mcs_b.set_seed(42)
+    mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    assert np.array_equal(mcs_a.data, mcs_b.data)
 
-    a.set_seed(-1)
-    b.set_seed(-1)
+    mcs_a.set_seed(-1)
+    mcs_b.set_seed(-1)
     for _ in range(10):
-        a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        assert not np.array_equal(a.data, b.data)
+        mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        assert not np.array_equal(mcs_a.data, mcs_b.data)
 
 
 def test_mcs_chain_class():
@@ -344,16 +364,16 @@ def test_mcs_chain_class():
         None
     """
 
-    w = wau.Mcs()
-    cmd_prefix = "w."
+    mcs = wau.Mcs()
+    cmd_prefix = "mcs."
     cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
-    s = str(eval(cmd_prefix + cmd.strip()))
-    out = ctf.shrink(s)
-    ref = "[0.70710844,0.7071083,0.707108,0.70710754]"
+    eval_results_list = str(eval(cmd_prefix + cmd.strip()))
+    out = ctf.shrink(eval_results_list)
+    ref_rms_list = "[0.70710844,0.7071083,0.707108,0.70710754]"
 
     print(out)
-    w.info()
-    assert out == ref
+    mcs.info()
+    assert out == ref_rms_list
 
 
 def test_chain_option():
@@ -391,8 +411,8 @@ def test_chain_option():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    s = str(res.stdout)
-    out = ctf.shrink(s)
+    responce_string = str(res.stdout)
+    out = ctf.shrink(responce_string)
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
         + ctf.TEST_SOUND_1_FILE
@@ -431,11 +451,11 @@ def test_readme_examples():
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
-    fs = 44100  # Select sampling frequency, Hz.
+    samp_rt = 44100  # Select sampling frequency, Hz.
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = wau.Mcs().generate(freq_list, time_len, fs)
+    mcs1 = wau.Mcs().generate(freq_list, time_len, samp_rt)
     mcs1.write(file_name)
 
     # Examples code for  README.md
@@ -477,34 +497,34 @@ def test_readme_examples():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
     # Create Mcs-object.
-    w = wau.Mcs(mcs)
+    mcs = wau.Mcs(mcs)
 
     # Apply all transformations of Example 1 in chain.
-    w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
+    mcs.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
         ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
     )
 
     # Augmentation result saving to 7 files, each 1 by channel.
-    w.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+    mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
 
     # How to make 100 augmented files (amplitude and delay) from 1 sound file.
 
     # Example 5:
 
     file_name = sound_file_path
-    v = wau.Mcs()
-    v.rd(file_name)  # Read original file with single channel.
+    mcs = wau.Mcs()
+    mcs.rd(file_name)  # Read original file with single channel.
     file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
 
     # Suppose we need 15 augmented files.
     aug_count = 15
     for i in range(aug_count):
-        b = v.copy()
+        signal = mcs.copy()
         # Apply random amplitude [0.3..1.7) and delay [70..130)
         # microseconds changes to each copy of original signal.
-        b.amp([1], [0.7]).dly([100], [30])
+        signal.amp([1], [0.7]).dly([100], [30])
         name = file_name_head + f"_{i + 1}.wav"
-        b.write(name)
+        signal.write(name)
 
 
 def test_sum():
@@ -526,18 +546,18 @@ def test_sum():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = wau.Mcs(fs=ctf.FS)
+    test_sound_2 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.sum(test_sound_2)
     res.write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for s, ref_value in zip([test_sound_1, test_sound_2, res], ref):
-        r = s.rms(decimals=3)
-        print(r)
-        assert abs(r[0] - ref_value) < 0.001
+    for sound, ref_value in zip([test_sound_1, test_sound_2, res], ref):
+        rms_value = sound.rms(decimals=3)
+        print(rms_value)
+        assert abs(rms_value[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_merge():
@@ -559,16 +579,16 @@ def test_merge():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
     res.write(ctf.TEST_SOUND_1_FILE)
     print("res.shape =", res.shape())
     ref_value = 1.0
-    r = res.rms(decimals=3)
-    print(r)
-    assert abs(r[0] - ref_value) < 0.001
+    rms_list = res.rms(decimals=3)
+    print(rms_list)
+    assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_split():
@@ -590,15 +610,15 @@ def test_split():
         None
     """
 
-    test_sound_1 = wau.Mcs(fs=ctf.FS)
+    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     ref_value = 0.707
-    r = test_sound_1.rms(decimals=3)
-    print(r)
+    rms_list = test_sound_1.rms(decimals=3)
+    print(rms_list)
     for i in range(0, test_sound_1.shape()[0]):
-        assert abs(r[i] - ref_value) < 0.001
+        assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_sum():
@@ -622,18 +642,18 @@ def test_chain_sum():
         None
     """
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     res = wau.Mcs()
-    w.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = w.copy()
+    mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    res = mcs.copy()
     test_sound_2 = wau.Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for s, ref_value in zip([w, test_sound_2, res], ref):
-        r = s.rms(decimals=3)
-        print(r)
-        assert abs(r[0] - ref_value) < 0.001
+    for sound, ref_value in zip([mcs, test_sound_2, res], ref):
+        rms_list = sound.rms(decimals=3)
+        print(rms_list)
+        assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_merge():
@@ -653,16 +673,16 @@ def test_chain_merge():
         None
     """
 
-    w = wau.Mcs()
-    r = (
-        w.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs = wau.Mcs()
+    rms_list = (
+        mcs.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
         .wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
     )
-    print(r)
+    print(rms_list)
     ref_value = 1.0
-    assert abs(r[0] - ref_value) < 0.001
+    assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_split():
@@ -685,15 +705,15 @@ def test_chain_split():
         None
     """
 
-    w = wau.Mcs()
-    w.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
-    c = w.data.shape[0]
-    assert c == 5
+    mcs = wau.Mcs()
+    mcs.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
+    channels = mcs.channels_count()
+    assert channels == 5
     ref_value = 0.707
-    r = w.rms(decimals=3)
-    print(r)
-    for i in range(0, c):
-        assert abs(r[i] - ref_value) < 0.001
+    rms_list = mcs.rms(decimals=3)
+    print(rms_list)
+    for i in range(0, channels):
+        assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_side_by_side():
@@ -717,19 +737,19 @@ def test_chain_side_by_side():
 
     test_sound_1 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
 
-    w = wau.Mcs()
-    r = (
-        w.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs = wau.Mcs()
+    rms_list = (
+        mcs.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .amp([0.3])
         .sbs(test_sound_1)
         .wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
     )
-    print(r)
+    print(rms_list)
     ref_value = [0.212, 0.707]
-    for r, ref in zip(r, ref_value):
-        print(r)
-        assert abs(r - ref) < 0.001
+    for rms_list, ref in zip(rms_list, ref_value):
+        print(rms_list)
+        assert abs(rms_list - ref) < ctf.ABS_ERR
 
 
 def test_side_by_side():
@@ -756,11 +776,11 @@ def test_side_by_side():
     test_sound_2 = wau.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_1.side_by_side(test_sound_2)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    ref_list = [0.212, 0.707]
-    r = test_sound_1.rms(decimals=3)
-    for r, ref in zip(r, ref_list):
-        print(r)
-        assert abs(r - ref) < 0.001
+    ref_rms_list = [0.212, 0.707]
+    rms_list = test_sound_1.rms(decimals=3)
+    for rms_list, ref in zip(rms_list, ref_rms_list):
+        print(rms_list)
+        assert abs(rms_list - ref) < ctf.ABS_ERR
 
 
 def test_pause_detect():
@@ -786,11 +806,11 @@ def test_pause_detect():
     test_sound_1.side_by_side(mask)
     print(test_sound_1)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    r = test_sound_1.rms(decimals=3)
-    ref_list = [0.707, 0.707, 0.865, 0.923]
-    for r, ref in zip(r, ref_list):
-        print(r)
-        assert abs(r - ref) < 0.001
+    rms_list = test_sound_1.rms(decimals=3)
+    ref_rms_list = [0.707, 0.707, 0.865, 0.923]
+    for rms_value, ref in zip(rms_list, ref_rms_list):
+        print(rms_value)
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_chain_pause_detect():
@@ -807,17 +827,17 @@ def test_chain_pause_detect():
         None
     """
 
-    w = wau.Mcs()
-    w1 = wau.Mcs()
-    w.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    w1 = w.copy()
-    mask = w.pdt([0.5, 0.3])
-    w1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
-    r = w1.rms(decimals=3)
-    ref = [0.707, 0.707, 0.865, 0.923]
-    for i, ri in enumerate(r):
-        print(ri)
-        assert abs(ri - ref[i]) < 0.001
+    mcs = wau.Mcs()
+    mcs_1 = wau.Mcs()
+    mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs_1 = mcs.copy()
+    mask = mcs.pdt([0.5, 0.3])
+    mcs_1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
+    rms_list = mcs_1.rms(decimals=3)
+    ref_rms_list = [0.707, 0.707, 0.865, 0.923]
+    for i, rms_value in enumerate(rms_list):
+        print(rms_value)
+        assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
 
 
 def test_pause_shrink_sine():
@@ -847,11 +867,11 @@ def test_pause_shrink_sine():
     print(res)
     test_sound_1.pause_shrink(mask, [20, 4])
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    r = test_sound_1.rms(decimals=3)
-    ref = [0.702, 0.706, 0.865, 0.923]
-    for r, ref in zip(r, ref):
-        print(r)
-        assert abs(r - ref) < 0.001
+    rms_list = test_sound_1.rms(decimals=3)
+    ref_rms_list = [0.702, 0.706, 0.865, 0.923]
+    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
+        print(rms_value)
+        assert abs(rms_value - ref_rms_value) < ctf.ABS_ERR
 
 
 def test_pause_shrink_speech():
@@ -884,11 +904,11 @@ def test_pause_shrink_speech():
     res.side_by_side(mask)
     res.write(ctf.TEST_SOUND_1_FILE)
     test_sound_1.pause_shrink(mask, [20, 4])
-    r = test_sound_1.rms(decimals=3)
-    ref = [0.331, 0.324]
-    for r, ref in zip(r, ref):
-        print(r)
-        assert abs(r - ref) < 0.001
+    rms_list = test_sound_1.rms(decimals=3)
+    ref_rms_list = [0.331, 0.324]
+    for rms_value, ref_value in zip(rms_list, ref_rms_list):
+        print(rms_value)
+        assert abs(rms_value - ref_value) < ctf.ABS_ERR
 
 
 def test_pause_measure():
@@ -980,11 +1000,11 @@ def test_pause_set():
     print("res shape:", res.shape())
     print("res:", type(res.data[0, 1]))
     res.write(ctf.TEST_SOUND_1_FILE)
-    r = res.rms(decimals=3)
-    ref = [0.105, 0.113]
-    for r, ref in zip(r, ref):
-        print(r)
-        assert abs(r - ref) < 0.001
+    rms_list = res.rms(decimals=3)
+    ref_rms_list = [0.105, 0.113]
+    for r_value, ref_value in zip(rms_list, ref_rms_list):
+        print(r_value)
+        assert abs(r_value - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_add_chain():
@@ -1002,33 +1022,33 @@ def test_chain_add_chain():
     Returns:
         None
     """
-    mcs = wau.Mcs(fs=ctf.FS)
-    w = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
+    mcs = wau.Mcs(samp_rt=ctf.FS)
+    mcs_1 = wau.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
 
     # Define the first chain command
-    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
+    chain_1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
     # Define the second chain command
-    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
-    w.achn([c1, c2])  # Add the chain commands to the chains list
-    print(c1)  # Print the first chain command
-    print(c2)  # Print the second chain command
-    r = w.eval()  # Evaluate the chains
-    print("r", r)  # Print the result
-    ref_value = [[0.212], [0.106]]  # Define the expected values
+    chain_2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
+    mcs_1.achn([chain_1, chain_2])  # Add the chain commands to the chains list
+    print(chain_1)  # Print the first chain command
+    print(chain_2)  # Print the second chain command
+    rms_list = mcs_1.eval()  # Evaluate the chains
+    print("rms list:", rms_list)  # Print the result
+    ref_rms_list = [[0.212], [0.106]]  # Define the expected values
     # Compare the result to the expected values
-    for r, ref in zip(r, ref_value):
-        print(r)  # Print the result
+    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
+        print(rms_value)  # Print the result
         # Assert that the result is within the expected tolerance
-        assert abs(r[0] - ref[0]) < 0.001
-    w = wau.Mcs(mcs.data, mcs.sample_rate)
-    c1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
-    c2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
-    w.achn([c1, c2])
-    print(c1)
-    print(c2)
-    r = w.eval()
-    print("r", r)
-    ref_value = [[0.212], [0.106]]
-    for r, ref in zip(r, ref_value):
-        print(r)
-        assert abs(r[0] - ref[0]) < 0.001
+        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
+    mcs_1 = wau.Mcs(mcs.data, mcs.sample_rate)
+    chain_1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
+    chain_2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
+    mcs_1.achn([chain_1, chain_2])
+    print(chain_1)
+    print(chain_2)
+    rms_list = mcs_1.eval()
+    print("r", rms_list)
+    ref_rms_list = [[0.212], [0.106]]
+    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
+        print(rms_value)
+        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR

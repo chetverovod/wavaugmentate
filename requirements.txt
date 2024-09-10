@@ -1,5 +1,0 @@
-audiostretchy==1.3.5
-numpy==1.25.2
-pyplnoise==1.4
-scipy==1.14.0
-scipy.io
