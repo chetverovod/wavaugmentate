@@ -29,7 +29,7 @@ def test_generate_sine():
     assert test_sound_1.shape() == (4, 220500)
     rms_list = test_sound_1.rms(decimals=3)
     for rms_value in rms_list:
-        assert abs(rms_value - 0.707) < 0.001
+        assert abs(rms_value - 0.707) < ctf.ABS_ERR
 
 
 def test_generate_speech():
@@ -50,7 +50,7 @@ def test_generate_speech():
     rms_list = test_sound_1.rms(decimals=3)
     ref_list = [0.327, 0.326, 0.33, 0.332]
     for rms_value, ref in zip(rms_list, ref_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_write():
@@ -184,7 +184,7 @@ def test_rn_amplitude_ctrl():
     rms_list = test_ac.rms(decimals=3)
     rms_ref_list = [0.109, 0.180, 0.251, 0.322]
     for rms_value, ref in zip(rms_list, rms_ref_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_delay_ctrl():
@@ -219,7 +219,7 @@ def test_delay_ctrl():
     rms_list = test_dc.rms(last_index=24, decimals=3)
     rms_ref_list = [0.511, 0.627, 0.445, 0.705]
     for rms_value, ref in zip(rms_list, rms_ref_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_rn_delay_ctrl():
@@ -256,7 +256,7 @@ def test_rn_delay_ctrl():
     rms_list = test_dc.rms(last_index=24, decimals=3)
     reference_list = [0.511, 0.627, 0.456, 0.699]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_echo_ctrl():
@@ -291,7 +291,7 @@ def test_echo_ctrl():
     rms_list = test_ec.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_rn_echo_ctrl():
@@ -334,7 +334,7 @@ def test_rn_echo_ctrl():
     rms_list = test_ec.rms(decimals=3)
     reference_list = [0.457, 0.471, 0.536, 0.52]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_echo_ctrl_option():
@@ -402,7 +402,7 @@ def test_echo_ctrl_option():
     print("rms_list:", rms_list)
     reference_list = [1.054, 0.716, 1.144, 0.749]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_noise_ctrl():
@@ -587,7 +587,7 @@ def test_wavaugmentate_amplitude_option():
     print("rms_list:", rms_list)
     reference_list = [0.354, 0.424, 0.495, 0.071]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_wavaugmentate_amplitude_option_fail_case1():
@@ -713,7 +713,7 @@ def test_wavaugmentate_delay_option():
     print("rms_list:", rms_list)
     reference_list = [0.707, 0.707, 0.707, 0.707]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_wavaugmentate_delay_option_fail_case1():

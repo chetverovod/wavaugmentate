@@ -131,6 +131,27 @@ def test_mcs_wr_rd():
 
 
 def test_mcs_write_by_channel():
+    """
+    Test function to verify the functionality of the mcs class's
+    write_by_channel method.
+
+    This function generates a multichannel sound using the generate method of
+    the mcs class with the given frequency list, time duration, and sample rate.
+    It then writes the generated sound to a file using the write method of the
+    mcs class.  The function reads the written sound back into the mcs object
+    using the read method and changes the quantity of channels to 7 using the
+    split method.  It applies delays and amplitude changes to the sound using
+    the delay_ctrl and amplitude_ctrl methods, respectively.  Finally, it writes
+    the sound to separate WAV files for each channel using the write_by_channel
+    method and verifies the RMS values of the written sounds.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
     # Preparations
     file_name = ctf.OUTPUTWAV_DIR + "sound.wav"
     if os.path.exists(file_name):
@@ -169,7 +190,7 @@ def test_mcs_write_by_channel():
     for i in range(7):
         mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
         rms_value = mcs.rms()
-        assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < 0.001
+        assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
 
 
 def test_mcs_echo():
@@ -197,7 +218,7 @@ def test_mcs_echo():
     rms_list = mcs.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     mcs = wau.Mcs()
@@ -205,7 +226,7 @@ def test_mcs_echo():
     rms_list = mcs.rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_mcs_noise():
@@ -284,7 +305,7 @@ def test_mcs_rn_rd():
     mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(mcs.data, mcs_for_chain.data)
-    
+
     mcs_for_chain.amp([1, 0.7, 0.5, 0.3])
     mcs.amp([1, 0.7, 0.5, 0.3])
     assert np.array_equal(mcs.data, mcs_for_chain.data)
@@ -299,10 +320,10 @@ def test_mcs_rn_rd():
 def test_mcs_rn_aug_rd():
     """Test augmentation on the fly."""
 
-    w = wau.Mcs()
+    mcs = wau.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    w.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
     mcs_a = wau.Mcs()
     mcs_a.rd(ctf.TEST_SOUND_1_FILE)
@@ -310,8 +331,8 @@ def test_mcs_rn_aug_rd():
     mcs_b = wau.Mcs()
     mcs_b.rd(ctf.TEST_SOUND_1_FILE)
 
-    assert np.array_equal(w.data, mcs_a.data)
-    assert np.array_equal(w.data, mcs_b.data)
+    assert np.array_equal(mcs.data, mcs_a.data)
+    assert np.array_equal(mcs.data, mcs_b.data)
 
     mcs_a.amp([1, 0.7, 0.5, 0.3])
     mcs_b.amp([1, 0.7, 0.5, 0.3])
@@ -534,9 +555,9 @@ def test_sum():
     res.write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([test_sound_1, test_sound_2, res], ref):
-        r = sound.rms(decimals=3)
-        print(r)
-        assert abs(r[0] - ref_value) < 0.001
+        rms_value = sound.rms(decimals=3)
+        print(rms_value)
+        assert abs(rms_value[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_merge():
@@ -567,7 +588,7 @@ def test_merge():
     ref_value = 1.0
     rms_list = res.rms(decimals=3)
     print(rms_list)
-    assert abs(rms_list[0] - ref_value) < 0.001
+    assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_split():
@@ -597,7 +618,7 @@ def test_split():
     rms_list = test_sound_1.rms(decimals=3)
     print(rms_list)
     for i in range(0, test_sound_1.shape()[0]):
-        assert abs(rms_list[i] - ref_value) < 0.001
+        assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_sum():
@@ -632,7 +653,7 @@ def test_chain_sum():
     for sound, ref_value in zip([mcs, test_sound_2, res], ref):
         rms_list = sound.rms(decimals=3)
         print(rms_list)
-        assert abs(rms_list[0] - ref_value) < 0.001
+        assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_merge():
@@ -661,7 +682,7 @@ def test_chain_merge():
     )
     print(rms_list)
     ref_value = 1.0
-    assert abs(rms_list[0] - ref_value) < 0.001
+    assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_split():
@@ -692,7 +713,7 @@ def test_chain_split():
     rms_list = mcs.rms(decimals=3)
     print(rms_list)
     for i in range(0, channels):
-        assert abs(rms_list[i] - ref_value) < 0.001
+        assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_side_by_side():
@@ -728,7 +749,7 @@ def test_chain_side_by_side():
     ref_value = [0.212, 0.707]
     for rms_list, ref in zip(rms_list, ref_value):
         print(rms_list)
-        assert abs(rms_list - ref) < 0.001
+        assert abs(rms_list - ref) < ctf.ABS_ERR
 
 
 def test_side_by_side():
@@ -759,7 +780,7 @@ def test_side_by_side():
     rms_list = test_sound_1.rms(decimals=3)
     for rms_list, ref in zip(rms_list, ref_rms_list):
         print(rms_list)
-        assert abs(rms_list - ref) < 0.001
+        assert abs(rms_list - ref) < ctf.ABS_ERR
 
 
 def test_pause_detect():
@@ -789,7 +810,7 @@ def test_pause_detect():
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for rms_value, ref in zip(rms_list, ref_rms_list):
         print(rms_value)
-        assert abs(rms_value - ref) < 0.001
+        assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
 def test_chain_pause_detect():
@@ -816,7 +837,7 @@ def test_chain_pause_detect():
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for i, rms_value in enumerate(rms_list):
         print(rms_value)
-        assert abs(rms_value - ref_rms_list[i]) < 0.001
+        assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
 
 
 def test_pause_shrink_sine():
@@ -850,7 +871,7 @@ def test_pause_shrink_sine():
     ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)
-        assert abs(rms_value - ref_rms_value) < 0.001
+        assert abs(rms_value - ref_rms_value) < ctf.ABS_ERR
 
 
 def test_pause_shrink_speech():
@@ -887,7 +908,7 @@ def test_pause_shrink_speech():
     ref_rms_list = [0.331, 0.324]
     for rms_value, ref_value in zip(rms_list, ref_rms_list):
         print(rms_value)
-        assert abs(rms_value - ref_value) < 0.001
+        assert abs(rms_value - ref_value) < ctf.ABS_ERR
 
 
 def test_pause_measure():
@@ -983,7 +1004,7 @@ def test_pause_set():
     ref_rms_list = [0.105, 0.113]
     for r_value, ref_value in zip(rms_list, ref_rms_list):
         print(r_value)
-        assert abs(r_value - ref_value) < 0.001
+        assert abs(r_value - ref_value) < ctf.ABS_ERR
 
 
 def test_chain_add_chain():
@@ -1018,7 +1039,7 @@ def test_chain_add_chain():
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)  # Print the result
         # Assert that the result is within the expected tolerance
-        assert abs(rms_value[0] - ref_rms_value[0]) < 0.001
+        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
     mcs_1 = wau.Mcs(mcs.data, mcs.sample_rate)
     chain_1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
     chain_2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
@@ -1026,8 +1047,8 @@ def test_chain_add_chain():
     print(chain_1)
     print(chain_2)
     rms_list = mcs_1.eval()
-    print("r", rms_value)
+    print("r", rms_list)
     ref_rms_list = [[0.212], [0.106]]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)
-        assert abs(rms_value[0] - ref_rms_value[0]) < 0.001
+        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
