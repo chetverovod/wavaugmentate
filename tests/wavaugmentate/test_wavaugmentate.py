@@ -6,6 +6,7 @@ import numpy as np
 import common_test_functions as ctf
 sys.path.insert(1, ctf.WAU_DIR)
 import wavaugmentate as wau
+import mcs as ms
 
 
 def test_generate_sine():
@@ -23,7 +24,7 @@ def test_generate_sine():
     Returns:
         None
     """
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     assert test_sound_1.shape() == (4, 220500)
@@ -43,7 +44,7 @@ def test_generate_speech():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS, seed=42)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS, seed=42)
     test_sound_1.generate(ctf.frm_list, ctf.SIGNAL_TIME_LEN, mode="speech")
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     assert test_sound_1.shape() == (4, 220500)
@@ -70,7 +71,7 @@ def test_write():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
@@ -92,9 +93,9 @@ def test_read():
     Returns:
         None
     """
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    test_rs = wau.Mcs()
+    test_rs = ms.Mcs()
     assert test_rs.sample_rate == -1
     test_rs.read(ctf.TEST_SOUND_1_FILE)
     assert test_rs.sample_rate == ctf.FS
@@ -120,7 +121,7 @@ def test_file_info():
     info = wau.file_info(ctf.TEST_SOUND_1_FILE)
     assert info["path"] == ctf.TEST_SOUND_1_FILE
     assert info["channels_count"] == 4
-    assert info["sample_rate"] == wau.DEF_FS
+    assert info["sample_rate"] == ms.DEF_FS
     assert info["length_s"] == 5.0
 
 
@@ -149,7 +150,7 @@ def test_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     test_ac = test_sound_1.copy()
@@ -172,7 +173,7 @@ def test_rn_amplitude_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     amplitude_list = [0.1, 0.2, 0.3, 0.4]
     amplitude_deviation_list = [0.1, 0.1, 0.1, 0.1]
@@ -208,7 +209,7 @@ def test_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 0]
     test_dc = test_sound_1.delay_ctrl(delay_list)
@@ -243,7 +244,7 @@ def test_rn_delay_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [100, 200, 300, 40]
     delay_deviation_list = [10, 20, 30, 15]
@@ -281,7 +282,7 @@ def test_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 0]
     amplitude_list = [-0.3, -0.4, -0.5, 0]
@@ -316,7 +317,7 @@ def test_rn_echo_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     delay_list = [1e6, 2e6, 3e6, 100]
     amplitude_list = [-0.3, -0.4, -0.5, 0.1]
@@ -365,7 +366,7 @@ def test_echo_ctrl_option():
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
@@ -387,14 +388,14 @@ def test_echo_ctrl_option():
     print("out:", out)
     full_ref = (
         "\ndelays: [100, 300, 400, 500]\n"
-        + f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.SUCCESS_MARK}\n"
+        + f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{ms.SUCCESS_MARK}\n"
     )
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
 
-    written = wau.Mcs()
+    written = ms.Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220522
@@ -427,7 +428,7 @@ def test_noise_ctrl():
         None
     """
 
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = test_sound_1.noise_ctrl([1, 0.2, 0.3, 0])
@@ -466,7 +467,7 @@ def test_wavaugmentate_noise_option():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = wau.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
@@ -486,12 +487,12 @@ def test_wavaugmentate_noise_option():
     responce_value = str(res.stdout)
     out = ctf.shrink(responce_value)
     print("out:", out)
-    full_ref = f"\nnoise levels: [0.5, 0.6, 0.7, 0.1]\n{wau.SUCCESS_MARK}\n"
+    full_ref = f"\nnoise levels: [0.5, 0.6, 0.7, 0.1]\n{ms.SUCCESS_MARK}\n"
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = wau.Mcs()
+    written = ms.Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220500
@@ -574,12 +575,12 @@ def test_wavaugmentate_amplitude_option():
     responce_string = str(res.stdout)
     out = ctf.shrink(responce_string)
     print("out:", out)
-    full_ref = f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{wau.SUCCESS_MARK}\n"
+    full_ref = f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{ms.SUCCESS_MARK}\n"
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = wau.Mcs()
+    written = ms.Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220500
@@ -620,7 +621,7 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     responce_string = str(res.stdout)
     out = ctf.shrink(responce_string)
-    full_ref = f"{wau.ERROR_MARK}Amplitude list contains non number element:"
+    full_ref = f"{ms.ERROR_MARK}Amplitude list contains non number element:"
     full_ref += " < abc>."
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
@@ -659,7 +660,7 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     out = ctf.shrink(responce_string)
     print("out:", out)
     full_ref = f"\namplitudes: [0.1, 0.3, 0.4]\n\
-    {wau.ERROR_MARK}Amplitude list length <3> does not match number of\n\
+    {ms.ERROR_MARK}Amplitude list length <3> does not match number of\n\
       channels. It should have <4> elements.\n"
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
@@ -698,14 +699,14 @@ def test_wavaugmentate_delay_option():
     responce_string = str(res.stdout)
     out = ctf.shrink(responce_string)
     print("out:", out)
-    full_ref = f"\ndelays: [100, 200, 300, 0]\n{wau.SUCCESS_MARK}\n"
+    full_ref = f"\ndelays: [100, 200, 300, 0]\n{ms.SUCCESS_MARK}\n"
     assert res.stdout == full_ref
     assert os.path.exists(ctf.OUTPUT_FILE)
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = wau.Mcs()
+    written = ms.Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220513
@@ -746,7 +747,7 @@ def test_wavaugmentate_delay_option_fail_case1():
     responce_string = str(res.stdout)
     out = ctf.shrink(responce_string)
     print("out:", out)
-    full_ref = f"{wau.ERROR_MARK}Delays list contains non integer element:"
+    full_ref = f"{ms.ERROR_MARK}Delays list contains non integer element:"
     full_ref += " <389.1>.\n"
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
@@ -784,8 +785,60 @@ def test_wavaugmentate_delay_option_fail_case2():
     out = ctf.shrink(responce_string)
     print("out:", out)
     full_ref = f"\ndelays: [100, 200, 300]\n\
-{wau.ERROR_MARK}Delays list length <3> does not match number of\
+{ms.ERROR_MARK}Delays list length <3> does not match number of\
  channels. It should have <4> elements.\n"
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
+
+
+def test_chain_option():
+    """
+    Test function to verify the functionality of the `-c` option in the command
+    line interface.
+
+    This function generates a multichannel sound using the `gen` function from
+    the `wavaugmentate` module with the given frequency list, number of
+    repetitions, and sample rate. It then applies amplitude control to the
+    generated sound using the `amp` function from the `wavaugmentate` module
+    with the given amplitude list. The generated sound is written to a file
+    using the `wr` function from the `wavaugmentate` module with the given file
+    path and sample rate.
+
+    This function runs the command with the `-c` option and asserts that the
+    output matches the expected output. It also checks that the output file
+    exists and has the correct shape and RMS values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    if os.path.exists(ctf.TEST_SOUND_1_FILE):
+        os.remove(ctf.TEST_SOUND_1_FILE)
+    cmd = [
+        ctf.PROG_NAME,
+        "-c",
+        'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).wr("'
+        + ctf.TEST_SOUND_1_FILE
+        + '")',
+    ]
+    print("\n", " ".join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True, check=False)
+    responce_string = str(res.stdout)
+    out = ctf.shrink(responce_string)
+    full_ref = (
+        'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).wr("'
+        + ctf.TEST_SOUND_1_FILE
+        + '")\n'
+        + f"{ms.SUCCESS_MARK}\n"
+    )
+    ref = ctf.shrink(full_ref)
+    print("out:", out)
+    print("ref:", ref)
+    assert out == ref
+    exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
+    assert exists is True
+

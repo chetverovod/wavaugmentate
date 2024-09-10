@@ -5,10 +5,10 @@ import sys
 cwd = os.getcwd()
 WAU_DIR = cwd + '/src/wavaugmentate'
 sys.path.insert(1, WAU_DIR)
-
+import mcs as ms
 import wavaugmentate as wau
 
-FS = wau.DEF_FS
+FS = ms.DEF_FS
 SIGNAL_TIME_LEN = 5
 f_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
