@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This module does multichannel audio flies augmentation.
+This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import argparse
@@ -13,7 +13,6 @@ import random
 from typing import List, Tuple
 from scipy.io import wavfile
 import numpy as np
-import mcs as wau
 
 # Default sampling frequency, Hz.
 DEF_FS = 44100
