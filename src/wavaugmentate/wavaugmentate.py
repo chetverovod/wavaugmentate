@@ -814,7 +814,7 @@ class Mcs:
             self.chains.append(chain.strip())
         return self
 
-    def eval(self) -> "Mcs":
+    def eval(self) -> list["Mcs"]:
         """
         Evaluate list of chains.
 
@@ -830,13 +830,13 @@ class Mcs:
         _ = self.copy()
         print("_sample_rate:", _.sample_rate)
         cmd_prefix = "_."
-        for chain in self.chains:
-            cmd_line = cmd_prefix + chain
+        for c in self.chains:
+            cmd_line = cmd_prefix + c
             print("cmd_line:", cmd_line)
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
-    def read_file_apply_chains(self, path: str) -> "Mcs":
+    def read_file_apply_chains(self, path: str) -> list["Mcs"]:
         """
         Reads data from a file at the specified path and updates the sample
         rate and data attributes and applies chains if they exist in object.
@@ -850,8 +850,8 @@ class Mcs:
         """
 
         self.read(path)
-        self.data = self.eval()
-        return self
+        res = self.eval()
+        return res
 
     # Alias Method Names
     rd = read
