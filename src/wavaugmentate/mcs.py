@@ -5,11 +5,12 @@ This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import copy
-import sys
 import random
+import sys
 from typing import List, Tuple
-from scipy.io import wavfile
+
 import numpy as np
+from scipy.io import wavfile
 
 ERROR_MARK = "Error: "
 SUCCESS_MARK = "Done."
@@ -172,8 +173,8 @@ class Mcs:
         """
 
         res = []
-        shlen = len(self.data.shape)
-        if shlen > 1:
+        shape_len = len(self.data.shape)
+        if shape_len > 1:
             for i in range(0, self.data.shape[0]):
                 chan_rms = self.channel_rms(i, last_index, decimals)
                 res.append(chan_rms)

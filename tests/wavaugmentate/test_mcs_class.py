@@ -1,9 +1,11 @@
 """Module provides test functions for mcs.py  module."""
 
-import sys
 import os
-import numpy as np
+import sys
+
 import common_test_functions as ctf
+import numpy as np
+
 sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
 
