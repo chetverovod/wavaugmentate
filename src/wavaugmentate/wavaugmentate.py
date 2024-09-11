@@ -128,11 +128,11 @@ def chain_hdr(args):
         return
     chain = args.chain_code.strip()
     print("chain:", chain)
-    mcs = Mcs()
-    cmd_prefix = "mcs."
+    ao = Aug()
+    cmd_prefix = "ao."
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
-    mcs.info()
+    ao.info()
     sys.exit(0)
 
 

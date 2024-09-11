@@ -451,9 +451,9 @@ def test_pause_shrink_sine():
     sample rate. It then applies the pause_detect function to the generated
     sound and writes the result to a file using the write function. The
     function then applies the pause_shrink function to the generated sound and
-    writes the result to a file using the write function. Finally, it calculates
-    the root mean square (RMS) value of the sound using the rms method and
-    compares it to the expected values.
+    writes the result to a file using the write function. Finally, it
+    calculates the root mean square (RMS) value of the sound using the rms
+    method and compares it to the expected values.
 
     Args:
         None

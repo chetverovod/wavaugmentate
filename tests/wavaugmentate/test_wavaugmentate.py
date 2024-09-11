@@ -459,16 +459,17 @@ def test_chain_option():
     cmd = [
         ctf.PROG_NAME,
         "-c",
-        'Aug(gen([100,250,100], 3, 44100)).amp([0.1, 0.2, 0.3]).get().wr("'
+        'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).get().wr("'
         + ctf.TEST_SOUND_1_FILE
         + '")',
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     responce_string = str(res.stdout)
+    print('responce_string:', responce_string)
     out = ctf.shrink(responce_string)
     full_ref = (
-        'chain:Aug(gen([100,250,100],3,44100)).amp([0.1,0.2,0.3]).get()wr("'
+        'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).get().wr("'
         + ctf.TEST_SOUND_1_FILE
         + '")\n'
         + f"{ms.SUCCESS_MARK}\n"

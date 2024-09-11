@@ -136,7 +136,20 @@ class Aug:
         Returns:
             np.ndarray: The multichannel sound data.
         """
-        return self.signal   
+        return self.signal
+
+    def generate(
+        self,
+        frequency_list: List[int],
+        duration: float = ms.DEF_SIGNAL_LEN,
+        samp_rt: int = -1,
+        mode="sine",
+    ) -> "Aug":
+
+        self.signal = self.signal.generate(
+            frequency_list, duration, samp_rt, mode
+        )
+        return self
 
     # Audio augmentation functions
     def amplitude_ctrl(
@@ -553,4 +566,5 @@ class Aug:
     pdt = pause_detect
     achn = add_chain
     rdac = read_file_apply_chains
+    gen = generate
     cpy = copy
