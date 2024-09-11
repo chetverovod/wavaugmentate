@@ -493,6 +493,11 @@ class Aug:
         for chain in list_of_chains:
             self.chains.append(chain.strip())
         return self
+    
+    def copy(self) -> "Aug":
+        """Deep Copy of the Mcs object."""
+
+        return copy.deepcopy(self)
 
     def eval(self) -> list["Mcs"]:
         """
@@ -508,7 +513,7 @@ class Aug:
 
         res = []
         _ = self.copy()
-        print("_sample_rate:", _.sample_rate)
+        print("_sample_rate:", _.get().sample_rate)
         cmd_prefix = "_."
         for chain in self.chains:
             cmd_line = cmd_prefix + chain
