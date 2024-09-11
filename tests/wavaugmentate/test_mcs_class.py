@@ -657,7 +657,7 @@ def test_chain_split():
 
     mcs = ms.Mcs()
     mcs.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
-    channels = mcs.channels_count()
+    channels = mcs.info()['channels_count']
     assert channels == 5
     ref_value = 0.707
     rms_list = mcs.rms(decimals=3)

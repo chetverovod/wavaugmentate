@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import List
 
 from scipy.io import wavfile
-
-sys.path.insert(1, "./src/wavaugmentate")
 import mcs as ms
 
 

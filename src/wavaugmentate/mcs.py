@@ -127,7 +127,7 @@ class Mcs:
 
         return copy.deepcopy(self)
 
-    def channel_rms(
+    def __channel_rms(
         self, chan_index: int, last_index: int, decimals: int
     ) -> float:
         """
@@ -176,10 +176,10 @@ class Mcs:
         shape_len = len(self.data.shape)
         if shape_len > 1:
             for i in range(0, self.data.shape[0]):
-                chan_rms = self.channel_rms(i, last_index, decimals)
+                chan_rms = self.__channel_rms(i, last_index, decimals)
                 res.append(chan_rms)
         else:
-            chan_rms = self.channel_rms(-1, last_index, decimals)
+            chan_rms = self.__channel_rms(-1, last_index, decimals)
             res.append(chan_rms)
         return res
 
@@ -296,7 +296,7 @@ class Mcs:
         """
 
         trimmed_path = path.split(".wav")
-        for i in range(self.channels_count()):
+        for i in range(self.__channels_count()):
             buf = self.data[i, :].T.copy()
             file_name = trimmed_path[0] + f"_{i + 1}.wav"
             print(f"Writing {file_name}...")
@@ -344,7 +344,7 @@ class Mcs:
         Returns:
             self (Mcs): The amplitude-controlled multichannel sound.
         """
-        if self.channels_count() != len(amplitude_list):
+        if self.__channels_count() != len(amplitude_list):
             print(
                 ERROR_MARK
                 + "Amplitude list length does not match number of channels."
@@ -353,7 +353,7 @@ class Mcs:
 
         amp_list = amplitude_list
         if amplitude_deviation_list is not None:
-            if self.channels_count() != len(amplitude_deviation_list):
+            if self.__channels_count() != len(amplitude_deviation_list):
                 print(
                     ERROR_MARK
                     + "Amplitude deviation list length does not match number of channels."
@@ -401,7 +401,7 @@ class Mcs:
 
         """
 
-        if self.channels_count() != len(delay_us_list):
+        if self.__channels_count() != len(delay_us_list):
             print(
                 ERROR_MARK
                 + "Delay list length does not match number of channels."
@@ -409,7 +409,7 @@ class Mcs:
             sys.exit(1)
 
         if delay_deviation_list is not None:
-            if self.channels_count() != len(delay_deviation_list):
+            if self.__channels_count() != len(delay_deviation_list):
                 print(
                     ERROR_MARK
                     + "Delay deviation list length does not match number of channels."
@@ -611,7 +611,7 @@ class Mcs:
         self.data = np.stack(channels_list, axis=0).copy()
         return self
 
-    def channels_count(self) -> int:
+    def __channels_count(self) -> int:
         """Returns the number of channels in the multichannel signal."""
 
         channels_count = 0
@@ -634,8 +634,8 @@ class Mcs:
             self (Mcs): The split multichannel signal, with each channel identical.
         """
 
-        print("channels_count:", self.channels_count())
-        if self.channels_count() > 1:
+        print("channels_count:", self.__channels_count())
+        if self.__channels_count() > 1:
             print(ERROR_MARK, "Can't split more than 1 channel signal.")
             sys.exit(1)
 
@@ -769,7 +769,7 @@ class Mcs:
         }
         if self.data is not None:
             length = self.data.shape[1] / self.sample_rate
-            res["channels_count"] = self.data.shape[0]
+            res["channels_count"] = self.__channels_count()
             res["length_s"] = length
         return res
 
