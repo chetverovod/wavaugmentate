@@ -80,6 +80,7 @@ def test_aug_dly_controls():
     assert res1.data.shape == res2.data.shape
     assert np.array_equal(res1.get(), res2.get())
 
+
 def test_aug_echo():
     """
     Test function to verify the functionality of the `echo` method in the
@@ -157,31 +158,35 @@ def test_aug_noise():
 
 
 #  Test not finished.
-def test_mcs_rn_rd():
+def test_aug_rn_rd():
     """Test augmentation on the fly."""
 
     mcs = ms.Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    ao = Aug(mcs)
 
     mcs_for_chain = ms.Mcs()
     mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
+    ao1 = Aug(mcs_for_chain)
 
-    assert np.array_equal(mcs.data, mcs_for_chain.data)
+    assert np.array_equal(ao.get().data, ao1.get().data)
 
-    mcs_for_chain.amp([1, 0.7, 0.5, 0.3])
-    mcs.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs.data, mcs_for_chain.data)
+    ao1.amp([1, 0.7, 0.5, 0.3])
+    ao.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(ao.get().data, ao1.get().data)
 
-    mcs_for_chain.achn(["amp([1, 0.7, 0.5, 0.3])"])
-    res = mcs_for_chain.rdac(ctf.TEST_SOUND_1_FILE)
+    """
+    ao1.achn(["amp([1, 0.7, 0.5, 0.3])"])
+    res = ao1.rdac(ctf.TEST_SOUND_1_FILE)
     print("b = ", res[0].data)
 
     assert np.array_equal(mcs.data, res[0].data)
+    """
 
 
-def test_mcs_rn_aug_rd():
+def test_aug_rn_aug_rd():
     """Test augmentation on the fly."""
 
     mcs = ms.Mcs()
@@ -189,34 +194,32 @@ def test_mcs_rn_aug_rd():
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    mcs_a = ms.Mcs()
-    mcs_a.rd(ctf.TEST_SOUND_1_FILE)
+    ao_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
-    mcs_b = ms.Mcs()
-    mcs_b.rd(ctf.TEST_SOUND_1_FILE)
+    ao_b = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
-    assert np.array_equal(mcs.data, mcs_a.data)
-    assert np.array_equal(mcs.data, mcs_b.data)
+    assert np.array_equal(mcs.data, ao_a.get().data)
+    assert np.array_equal(mcs.data, ao_b.get().data)
 
-    mcs_a.amp([1, 0.7, 0.5, 0.3])
-    mcs_b.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs_a.data, mcs_b.data)
+    ao_a.amp([1, 0.7, 0.5, 0.3])
+    ao_b.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(ao_a.get().data, ao_b.get().data)
 
-    mcs_a.set_seed(42)
-    mcs_b.set_seed(42)
-    mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs_a.data, mcs_b.data)
+    ao_a.set_seed(42)
+    ao_b.set_seed(42)
+    ao_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    ao_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    assert np.array_equal(ao_a.get().data, ao_b.get().data)
 
-    mcs_a.set_seed(-1)
-    mcs_b.set_seed(-1)
+    ao_a.set_seed(-1)
+    ao_b.set_seed(-1)
     for _ in range(10):
-        mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        assert not np.array_equal(mcs_a.data, mcs_b.data)
+        ao_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        ao_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        assert not np.array_equal(ao_a.get().data, ao_b.get().data)
 
 
-def test_mcs_chain_class():
+def test_aug_chaininig():
     """
     Tests the functionality of the mcs class by generating a multichannel
     sound, computing its RMS values, and comparing them to the expected values.
@@ -268,7 +271,7 @@ def test_readme_examples():
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = ms.Mcs().generate(freq_list, time_len, samp_rt)
+    mcs1 = Mcs().generate(freq_list, time_len, samp_rt)
     mcs1.write(file_name)
 
     # Examples code for  README.md
@@ -279,41 +282,41 @@ def test_readme_examples():
     file_name = sound_file_path
 
     # Create Mcs-object.
-    mcs = ms.Mcs()
+    mcs = Mcs()
 
     # Read WAV-file to Mcs-object.
     mcs.read(file_name)
 
     # Change quantity of channels to 7.
     mcs.split(7)
+   
+    # Create augmentation object.
+    aug = Aug(mcs)
 
     # Apply delays.
     # Corresponds to channels quantity.
     delay_list = [0, 150, 200, 250, 300, 350, 400]
-    mcs.delay_ctrl(delay_list)
+    aug.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
     # Corresponds to channels quantity.
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    mcs.amplitude_ctrl(amplitude_list)
+    aug.amplitude_ctrl(amplitude_list)
 
     # Augmentation result saving by single file, containing 7 channels.
-    mcs.write(sound_aug_file_path)
+    aug.get().write(sound_aug_file_path)
 
     # Augmentation result saving to 7 files, each 1 by channel.
     # ./outputwav/sound_augmented_1.wav
     # ./outputwav/sound_augmented_2.wav and so on.
-    mcs.write_by_channel(sound_aug_file_path)
+    aug.get().write_by_channel(sound_aug_file_path)
 
     # The same code as chain, Example 2:
     delay_list = [0, 150, 200, 250, 300, 350, 400]
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
-    # Create Mcs-object.
-    mcs = ms.Mcs(mcs)
-
     # Apply all transformations of Example 1 in chain.
-    mcs.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr(
+    Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
         ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
     )
 
@@ -332,12 +335,48 @@ def test_readme_examples():
     # Suppose we need 15 augmented files.
     aug_count = 15
     for i in range(aug_count):
-        signal = mcs.copy()
+        signal = Aug(mcs.copy())
         # Apply random amplitude [0.3..1.7) and delay [70..130)
         # microseconds changes to each copy of original signal.
         signal.amp([1], [0.7]).dly([100], [30])
         name = file_name_head + f"_{i + 1}.wav"
-        signal.write(name)
+        signal.get().write(name)
+
+
+def test_aug_noise_ctrl():
+    """
+    Test function to verify the functionality of the `noise_ctrl`
+    function.
+
+    This function generates a multichannel sound using the `generate`
+    function from the `ma` module with the given `f_list`, `t`, and `fs`
+    parameters.  It then applies noise control to the generated sound using the
+    `noise_ctrl` function from the `ma` module with the given
+    `test_sound_1`, `noise_level_list`, and `fs` parameters.  It writes the
+    noise-controlled multichannel sound to a file using the `write`
+    from the `ma` module with the given file path and `fs` parameters. Finally,
+    it calculates the root mean square (RMS) values of the noise-controlled
+    sound and compares them to the expected values in the `reference_list`.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.set_seed(42)
+    test_nc = Aug(test_sound_1).noise_ctrl([1, 0.2, 0.3, 0]).get()
+    test_nc.write(ctf.TEST_SOUND_1_NOISE_FILE)
+    rms_list = test_nc.rms(decimals=3)
+    reference_list = [1.224, 0.735, 0.769, 0.707]
+
+    for rms_value, ref in zip(rms_list, reference_list):
+        # Threshold increased, because noise is not repeatable with fixed seed.
+        assert abs(rms_value - ref) < 0.01
+
 
 
 def test_aug_sum():

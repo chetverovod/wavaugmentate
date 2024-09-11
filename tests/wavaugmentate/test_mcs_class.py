@@ -8,6 +8,8 @@ import numpy as np
 
 sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
+from mcs import Mcs
+from aug import Aug
 
 
 def test_mcs_put():
@@ -27,82 +29,17 @@ def test_mcs_put():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.put(test_sound_1)
 
     assert np.array_equal(test_sound_1.data, mcs.data)
     assert np.array_equal(test_sound_1.data, mcs.get())
 
-    mcs_2 = ms.Mcs(test_sound_1.data)
+    mcs_2 = Mcs(test_sound_1.data)
     assert np.array_equal(mcs_2.data, mcs.get())
-
-
-def test_mcs_amp_control():
-    """
-    Test function to verify the functionality of the mcs class.
-
-    This function tests the amp method of the mcs class by
-    applying amplitude control to a generated multichannel sound.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    a_list = [0.1, 0.3, 0.4, 1]
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    mcs = ms.Mcs(test_sound_1.data)
-
-    mcs.amp(a_list)
-    res1 = mcs
-    print("res1 =", res1.data)
-
-    dest = ms.Mcs()
-
-    res2 = dest.put(test_sound_1).amp(a_list).get()
-
-    print("res2 =", res2.data)
-    assert np.array_equal(res1.get(), res2)
-
-
-def test_mcs_dly_controls():
-    """
-    Test function to verify the functionality of the mcs class.
-
-    This function tests the dly method of the mcs class by
-    applying delay controls to a generated multichannel sound.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    d_list = [100, 200, 300, 0]
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    mcs = test_sound_1.copy()
-
-    mcs.dly(d_list)
-    res1 = mcs
-    print("res1 shape =", res1.data.shape)
-    print("res1 =", res1.data)
-
-    dest = ms.Mcs()
-    dest.put(test_sound_1)
-    res2 = dest.dly(d_list)
-
-    print("res2 shape =", res2.data.shape)
-    print("res2 =", res2.data)
-    assert res1.data.shape == res2.data.shape
-    assert np.array_equal(res1.get(), res2.get())
 
 
 def test_mcs_wr_rd():
@@ -120,12 +57,12 @@ def test_mcs_wr_rd():
         None
     """
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    ref_mcs = ms.Mcs()
+    ref_mcs = Mcs()
     ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
 
     assert np.array_equal(mcs.data, ref_mcs.data)
@@ -164,11 +101,11 @@ def test_mcs_write_by_channel():
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = ms.Mcs().generate(freq_list, time_len, samp_rt)
+    mcs1 = Mcs().generate(freq_list, time_len, samp_rt)
     mcs1.write(file_name)
 
     # Create Mcs-object.
-    mcs = ms.Mcs()
+    mcs = Mcs()
 
     # Read WAV-file to Mcs-object.
     mcs.read(file_name)
@@ -179,86 +116,20 @@ def test_mcs_write_by_channel():
     # Apply delays.
     # Corresponds to channels quantity.
     delay_list = [0, 150, 200, 250, 300, 350, 400]
-    mcs.delay_ctrl(delay_list)
+    ao = Aug(mcs)
+    ao.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
     # Corresponds to channels quantity.
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    mcs.amplitude_ctrl(amplitude_list)
+    ao.amplitude_ctrl(amplitude_list)
 
-    mcs.write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
+    ao.get().write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
 
     for i in range(7):
         mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
         rms_value = mcs.rms()
         assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
-
-
-def test_mcs_echo():
-    """
-    Test function to verify the functionality of the `echo` method in the
-    mcs class.
-
-    This function generates a multichannel sound using the `gen` method of the
-    mcs class with the given frequency list, duration, and sample rate. It
-    then applies the `echo` method to the generated sound with the given delay
-    list and amplitude list. Finally, it calculates the root mean square (RMS)
-    values of the echoed sound and compares them to the expected values in the
-    reference list.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-    d_list = [1e6, 2e6, 3e6, 0]
-    a_list = [-0.3, -0.4, -0.5, 0]
-    mcs = ms.Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = mcs.rms(decimals=3)
-    reference_list = [0.437, 0.461, 0.515, 0.559]
-    for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < ctf.ABS_ERR
-    d_list = [1e6, 2e6, 3e6, 0]
-    a_list = [-0.3, -0.4, -0.5, 0]
-    mcs = ms.Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = mcs.rms(decimals=3)
-    reference_list = [0.437, 0.461, 0.515, 0.559]
-    for rms_value, ref in zip(rms_list, reference_list):
-        assert abs(rms_value - ref) < ctf.ABS_ERR
-
-
-def test_mcs_noise():
-    """
-    Test function to verify the functionality of the `ns` method in the
-    `mcs` class.
-
-    This function generates a multichannel sound using the `gen` method of the
-    `mcs` class with the given frequency list, duration, and sample rate. It
-    then applies the `ns` method to the generated sound with the given noise
-    level list. Finally, it calculates the root mean square (RMS) values of the
-    noise-controlled sound and compares them to the expected values in the
-    reference list.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    n_list = [1, 0.2, 0.3, 0]
-
-    mcs = ms.Mcs()
-    mcs.set_seed(42)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
-    rms_list = mcs.rms(decimals=3)
-    reference_list = [1.224, 0.735, 0.769, 0.707]
-    for rms_value, ref in zip(rms_list, reference_list):
-        # Threshold increased, because noise is not repeatable with fixed seed.
-        assert abs(rms_value - ref) < 0.01
 
 
 def test_mcs_info():
@@ -278,7 +149,7 @@ def test_mcs_info():
         None
     """
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
@@ -291,91 +162,6 @@ def test_mcs_info():
         "length_s": 5.0,
     }
     assert mcs.info() == ref
-
-
-#  Test not finished.
-def test_mcs_rn_rd():
-    """Test augmentation on the fly."""
-
-    mcs = ms.Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-
-    mcs_for_chain = ms.Mcs()
-    mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
-
-    assert np.array_equal(mcs.data, mcs_for_chain.data)
-
-    mcs_for_chain.amp([1, 0.7, 0.5, 0.3])
-    mcs.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs.data, mcs_for_chain.data)
-
-    mcs_for_chain.achn(["amp([1, 0.7, 0.5, 0.3])"])
-    res = mcs_for_chain.rdac(ctf.TEST_SOUND_1_FILE)
-    print("b = ", res[0].data)
-
-    assert np.array_equal(mcs.data, res[0].data)
-
-
-def test_mcs_rn_aug_rd():
-    """Test augmentation on the fly."""
-
-    mcs = ms.Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-
-    mcs_a = ms.Mcs()
-    mcs_a.rd(ctf.TEST_SOUND_1_FILE)
-
-    mcs_b = ms.Mcs()
-    mcs_b.rd(ctf.TEST_SOUND_1_FILE)
-
-    assert np.array_equal(mcs.data, mcs_a.data)
-    assert np.array_equal(mcs.data, mcs_b.data)
-
-    mcs_a.amp([1, 0.7, 0.5, 0.3])
-    mcs_b.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs_a.data, mcs_b.data)
-
-    mcs_a.set_seed(42)
-    mcs_b.set_seed(42)
-    mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    assert np.array_equal(mcs_a.data, mcs_b.data)
-
-    mcs_a.set_seed(-1)
-    mcs_b.set_seed(-1)
-    for _ in range(10):
-        mcs_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        mcs_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        assert not np.array_equal(mcs_a.data, mcs_b.data)
-
-
-def test_mcs_chain_class():
-    """
-    Tests the functionality of the mcs class by generating a multichannel
-    sound, computing its RMS values, and comparing them to the expected values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    mcs = ms.Mcs()
-    cmd_prefix = "mcs."
-    cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
-    eval_results_list = str(eval(cmd_prefix + cmd.strip()))
-    out = ctf.shrink(eval_results_list)
-    ref_rms_list = "[0.70710844,0.7071083,0.707108,0.70710754]"
-
-    print(out)
-    mcs.info()
-    assert out == ref_rms_list
-
 
 
 def test_sum():
@@ -397,9 +183,9 @@ def test_sum():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_2 = Mcs(samp_rt=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.sum(test_sound_2)
@@ -430,7 +216,7 @@ def test_merge():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
@@ -461,7 +247,7 @@ def test_split():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
@@ -493,11 +279,11 @@ def test_chain_sum():
         None
     """
 
-    mcs = ms.Mcs()
-    res = ms.Mcs()
+    mcs = Mcs()
+    res = Mcs()
     mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = mcs.copy()
-    test_sound_2 = ms.Mcs()
+    test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
@@ -524,7 +310,7 @@ def test_chain_merge():
         None
     """
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     rms_list = (
         mcs.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
@@ -556,7 +342,7 @@ def test_chain_split():
         None
     """
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
     channels = mcs.info()['channels_count']
     assert channels == 5
@@ -565,42 +351,6 @@ def test_chain_split():
     print(rms_list)
     for i in range(0, channels):
         assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
-
-
-def test_chain_side_by_side():
-    """
-    Tests the functionality of the `sbs` method in the `mcs` class.
-
-    This function generates two multichannel sounds using the `generate`
-    function from the `wau` module with the given frequency lists, time
-    duration, and sample rate. It then applies the `sbs` method to the
-    generated sounds and writes the result to a file using the `wr` method.
-    The function then calculates the root mean square (RMS) value of the
-    side-by-side sound using the `rms` method and compares it to the expected
-    values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    test_sound_1 = ms.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-
-    mcs = ms.Mcs()
-    rms_list = (
-        mcs.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
-        .amp([0.3])
-        .sbs(test_sound_1)
-        .wr(ctf.TEST_SOUND_1_FILE)
-        .rms(decimals=3)
-    )
-    print(rms_list)
-    ref_value = [0.212, 0.707]
-    for rms_list, ref in zip(rms_list, ref_value):
-        print(rms_list)
-        assert abs(rms_list - ref) < ctf.ABS_ERR
 
 
 def test_side_by_side():
@@ -622,9 +372,10 @@ def test_side_by_side():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_1.amplitude_ctrl([0.3])
-    test_sound_2 = ms.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = Aug(test_sound_1)
+    test_sound_1 = ao.amplitude_ctrl([0.3]).get()
+    test_sound_2 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_1.side_by_side(test_sound_2)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     ref_rms_list = [0.212, 0.707]
@@ -652,7 +403,7 @@ def test_pause_detect():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     test_sound_1.side_by_side(mask)
     print(test_sound_1)
@@ -678,8 +429,8 @@ def test_chain_pause_detect():
         None
     """
 
-    mcs = ms.Mcs()
-    mcs_1 = ms.Mcs()
+    mcs = Mcs()
+    mcs_1 = Mcs()
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mcs_1 = mcs.copy()
     mask = mcs.pdt([0.5, 0.3])
@@ -711,7 +462,7 @@ def test_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
@@ -746,7 +497,7 @@ def test_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = ms.Mcs(seed=42)
+    test_sound_1 = Mcs(seed=42)
     test_sound_1.generate(
         [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech"
     )
@@ -782,7 +533,7 @@ def test_pause_measure():
         None
     """
 
-    test_sound_1 = ms.Mcs(seed=42).generate(
+    test_sound_1 = Mcs(seed=42).generate(
         [100, 300], 0.003, ctf.FS, mode="speech"
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
@@ -839,7 +590,7 @@ def test_pause_set():
         None
     """
 
-    test_sound_1 = ms.Mcs(seed=42).generate(
+    test_sound_1 = Mcs(seed=42).generate(
         [100, 300], 0.003, ctf.FS, mode="speech"
     )
     mask = test_sound_1.pause_detect([0.5, 0.3])
@@ -853,53 +604,3 @@ def test_pause_set():
     for r_value, ref_value in zip(rms_list, ref_rms_list):
         print(r_value)
         assert abs(r_value - ref_value) < ctf.ABS_ERR
-
-
-def test_chain_add_chain():
-    """
-    Test function to verify the functionality of the `add_chain` method in the
-    `mcs` class.
-
-    This function creates a `mcs` instance, defines two chain commands as
-    strings, adds them to the `chains` list of the `mcs` instance, evaluates
-    the chains, and compares the result to the expected values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-    mcs = ms.Mcs(samp_rt=ctf.FS)
-    mcs_1 = ms.Mcs(mcs.data, mcs.sample_rate)  # Create a Mcs instance
-
-    # Define the first chain command
-    chain_1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
-    # Define the second chain command
-    chain_2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
-    mcs_1.achn([chain_1, chain_2])  # Add the chain commands to the chains list
-    print(chain_1)  # Print the first chain command
-    print(chain_2)  # Print the second chain command
-    rms_list = mcs_1.eval()  # Evaluate the chains
-    print("rms list:", rms_list)  # Print the result
-    ref_rms_list = [[0.212], [0.106]]  # Define the expected values
-    # Compare the result to the expected values
-    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
-        print(rms_value)  # Print the result
-        # Assert that the result is within the expected tolerance
-        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
-    
-    """    
-    mcs_1 = ms.Mcs(mcs.data, mcs.sample_rate)
-    chain_1 = "gen([1000, 300], 5).amp([0.3, 0.2]).rms(decimals=3)"
-    chain_2 = "gen([700, 100], 5).amp([0.15, 0.1]).rms(decimals=3)"
-    mcs_1.achn([chain_1, chain_2])
-    print(chain_1)
-    print(chain_2)
-    rms_list = mcs_1.eval()
-    print("r", rms_list)
-    ref_rms_list = [[0.212], [0.106]]
-    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
-        print(rms_value)
-        assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
-    """    

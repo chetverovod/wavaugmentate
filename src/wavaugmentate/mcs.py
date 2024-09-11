@@ -24,34 +24,6 @@ DEF_SIGNAL_LEN = 5
 random_noise_gen = np.random.default_rng()
 
 
-def delay_syntez(
-    delay_us_list: List[int],
-    delay_deviation_list: List[int] = None,
-    seed: int = -1,
-) -> List[int]:
-    """Make delays list"""
-
-    d_list = delay_us_list
-    if delay_deviation_list is not None:
-        d_list = []
-        for delay, dev in zip(delay_us_list, delay_deviation_list):
-            if dev > 0:
-                left = delay - dev
-                if left < 0:
-                    print(
-                        f"{ERROR_MARK}"
-                        f"deviation value {dev} can give negative delay."
-                    )
-                    sys.exit(1)
-                right = delay + dev
-                if seed != -1:
-                    local_ng = np.random.default_rng(seed=seed)
-                    d_list.append(local_ng.integers(left, right))
-                else:
-                    d_list.append(random_noise_gen.integers(left, right))
-    return d_list
-
-
 def pause_measure(mask: np.ndarray[int]) -> dict:
     """
     Measures pauses in multichannel sound.
@@ -119,7 +91,6 @@ class Mcs:
             )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = samp_rt  # Sampling frequency, Hz.
-        self.chains = []  # List of chains.
         self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> "Mcs":
@@ -324,185 +295,6 @@ class Mcs:
 
     # Audio augmentation functions
 
-    def amplitude_ctrl(
-        self,
-        amplitude_list: List[float],
-        amplitude_deviation_list: List[float] = None,
-    ) -> "Mcs":
-        """
-        Apply amplitude control to a multichannel sound. If
-        amplitude_deviation_list is defined, you can get different
-        versions of tha same mcs data.
-
-        Args:
-            amplitude_list (List[float]): The list of amplitude coefficients to
-            apply to each channel.
-            amplitude_deviation_list (List[float]): If exists, sets amplitude values
-            random with uniform distribution in range
-            [amplitude - deviation, amplitude + deviation)].
-
-        Returns:
-            self (Mcs): The amplitude-controlled multichannel sound.
-        """
-        if self.channels_count() != len(amplitude_list):
-            print(
-                ERROR_MARK
-                + "Amplitude list length does not match number of channels."
-            )
-            sys.exit(1)
-
-        amp_list = amplitude_list
-        if amplitude_deviation_list is not None:
-            if self.channels_count() != len(amplitude_deviation_list):
-                print(
-                    ERROR_MARK
-                    + "Amplitude deviation list length does not match number of channels."
-                )
-                sys.exit(1)
-
-            amp_list = []
-            for amplitude, dev in zip(
-                amplitude_list, amplitude_deviation_list
-            ):
-                if dev > 0:
-                    left = amplitude - dev
-                    right = amplitude + dev
-                    if self.seed != -1:
-                        local_ng = np.random.default_rng(seed=self.seed)
-                        amp_list.append(local_ng.uniform(left, right))
-                    else:
-                        amp_list.append(random_noise_gen.uniform(left, right))
-
-        channels = []
-        for signal, ampl in zip(self.data, amp_list):
-            channels.append(signal * ampl)
-
-        self.data = np.array(channels).copy()
-        return self
-
-    def delay_ctrl(
-        self,
-        delay_us_list: List[int],
-        delay_deviation_list: List[int] = None,
-    ) -> "Mcs":
-        """
-            Add delays of channels of multichannel sound. Output data become longer.
-            Values of delay will be converted to count of samples.
-
-        Args:
-            delay_us_list (List[int]): The list of delay values in microseconds to
-            apply to each channel. Each value should be a positive integer.
-            sound data.
-            delay_deviation_list (List[int]): If exists, the list of delay
-            deviations makes delays uniformly distributed.
-
-        Returns:
-            self (Mcs): The delayed multichannel sound.
-
-        """
-
-        if self.channels_count() != len(delay_us_list):
-            print(
-                ERROR_MARK
-                + "Delay list length does not match number of channels."
-            )
-            sys.exit(1)
-
-        if delay_deviation_list is not None:
-            if self.channels_count() != len(delay_deviation_list):
-                print(
-                    ERROR_MARK
-                    + "Delay deviation list length does not match number of channels."
-                )
-                sys.exit(1)
-
-        d_list = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
-        channels = []
-        # In samples.
-        max_samples_delay = int(max(d_list) * 1.0e-6 * self.sample_rate)
-
-        for signal, delay in zip(self.data, d_list):
-            samples_delay = int(
-                delay * 1.0e-6 * self.sample_rate
-            )  # In samples.
-            res = np.zeros(samples_delay)
-            res = np.append(res, signal)
-            if samples_delay < max_samples_delay:
-                res = np.append(
-                    res, np.zeros(max_samples_delay - samples_delay)
-                )
-            channels.append(res)
-        self.data = np.array(channels).copy()
-        return self
-
-    def echo_ctrl(
-        self,
-        delay_us_list: List[int],
-        amplitude_list: List[float],
-        delay_deviation_list: List[int] = None,
-        amplitude_deviation_list: List[float] = None,
-    ) -> "Mcs":
-        """
-        Add echo to multichannel sound. The output data become longer. To each
-        channel will be added it's copy with corresponding delay delay and
-        amplitude. It looks like acoustic wave was reflected from the hard wall.
-
-        Args:
-            delay_us_list (List[int]): The list of delay values in microseconds to
-                apply to each channel. Each value should be a positive integer.
-            amplitude_list (List[float]): The list of amplitude coefficients to
-                apply to each channel.
-            delay_deviation_list (List[int]): If exists gives random deviation of
-            reflection delay.
-            amplitude_deviation_list (List[float]): If exists gives random
-            deviation of reflection amplitude.
-            seed (int): If exists seeds random generator.
-
-        Returns:
-            self (Mcs): The echoed multichannel sound.
-        """
-        amplitude_change = self.copy()
-        amplitude_change.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
-        delay_change = amplitude_change.copy()
-        delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
-        channels = []
-        for single_channel in self.data:
-            zeros_len = delay_change.data.shape[1] - single_channel.data.shape[0]
-            channels.append(np.append(single_channel, np.zeros(zeros_len)))
-        self.data = np.array(channels).copy() + delay_change.data.copy()
-
-        return self
-
-    def noise_ctrl(
-        self,
-        noise_level_list: List[float],
-    ) -> "Mcs":
-        """
-        Apply noise to a multichannel sound.
-
-        Args:
-            noise_level_list (List[float]): The list of noise levels to apply to
-            each channel.
-            seed (int): The seed for random number generation. Defaults to -1.
-
-        Returns:
-            self (Mcs): The noise-controlled multichannel sound.
-        """
-
-        channels = []
-        for signal, level in zip(self.data, noise_level_list):
-            if self.seed != -1:
-                local_ng = np.random.default_rng(seed=self.seed)
-                n_noise = local_ng.standard_normal(
-                    self.data.shape[1],
-                )
-            else:
-                n_noise = random_noise_gen.standard_normal(self.data.shape[1])
-            noise = n_noise
-            res = signal + level * noise
-            channels.append(res)
-        self.data = np.array(channels).copy()
-        return self
 
     def pause_detect(self, relative_level: List[float]) -> np.ndarray[int]:
         """
@@ -772,74 +564,14 @@ class Mcs:
             res["length_s"] = length
         return res
 
-    def add_chain(self, list_of_chains: List[str]) -> "Mcs":
-        """
-        Add chain to list of chains.
-
-        Args:
-            list_of_chains (List[str]): A list of chains to add.
-
-        Returns:
-            self (Mcs): The updated Mcs instance with added chains.
-            result, allowing for method chaining.
-        """
-
-        for chain in list_of_chains:
-            self.chains.append(chain.strip())
-        return self
-
-    def eval(self) -> list["Mcs"]:
-        """
-        Evaluate list of chains.
-
-        Args:
-            none
-
-        Returns:
-            self (Mcs): The updated Mcs instance with added chains.
-            result, allowing for method chaining.
-        """
-
-        res = []
-        _ = self.copy()
-        print("_sample_rate:", _.sample_rate)
-        cmd_prefix = "_."
-        for chain in self.chains:
-            cmd_line = cmd_prefix + chain
-            print("cmd_line:", cmd_line)
-            res.append(eval(cmd_line))  # It is need for chain commands.
-        return res
-
-    def read_file_apply_chains(self, path: str) -> list["Mcs"]:
-        """
-        Reads data from a file at the specified path and updates the sample
-        rate and data attributes and applies chains if they exist in object.
-
-        Args:
-            path (str): Path to the file containing the data.
-
-        Returns:
-            self (Mcs): The updated Mcs instance itself, allowing for method
-            chaining.
-        """
-
-        self.read(path)
-        res = self.eval()
-        return res
 
     # Alias Method Names
     rd = read
     wr = write
     wrbc = write_by_channel
-    amp = amplitude_ctrl
-    dly = delay_ctrl
-    echo = echo_ctrl
-    ns = noise_ctrl
     mrg = merge
     splt = split
     sbs = side_by_side
     pdt = pause_detect
-    achn = add_chain
-    rdac = read_file_apply_chains
     gen = generate
     cpy = copy

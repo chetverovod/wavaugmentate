@@ -12,6 +12,8 @@ from typing import List
 
 from scipy.io import wavfile
 import mcs as ms
+from mcs import Mcs
+from aug import Aug
 
 
 def file_info(path: str) -> dict:
@@ -126,7 +128,7 @@ def chain_hdr(args):
         return
     chain = args.chain_code.strip()
     print("chain:", chain)
-    mcs = ms.Mcs()
+    mcs = Mcs()
     cmd_prefix = "mcs."
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
@@ -212,9 +214,10 @@ def amplitude_hdr(args):
         )
         sys.exit(2)
 
-    mcs = ms.Mcs().read(args.in_path)
-    mcs.amplitude_ctrl(float_list)
-    mcs.write(args.out_path)
+    mcs = Mcs().read(args.in_path)
+    ao = Aug(mcs)
+    ao.amplitude_ctrl(float_list)
+    ao.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -241,8 +244,9 @@ def noise_hdr(args):
 
     mcs = ms.Mcs().read(args.in_path)
     mcs.read(args.in_path)
-    mcs.noise_ctrl(float_list)
-    mcs.write(args.out_path)
+    ao = Aug(mcs)
+    ao.noise_ctrl(float_list)
+    ao.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -288,8 +292,9 @@ def echo_hdr(args):
     print(f"amplitudes: {float_list}")
 
     mcs = ms.Mcs().read(args.in_path)
-    mcs.echo_ctrl(int_list, float_list)
-    mcs.write(args.out_path)
+    ao = Aug(mcs)
+    ao.echo_ctrl(int_list, float_list)
+    ao.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -315,8 +320,9 @@ def delay_hdr(args):
         sys.exit(2)
 
     mcs = ms.Mcs().read(args.in_path)
-    mcs.delay_ctrl(int_list)
-    mcs.write(args.out_path)
+    ao = Aug(mcs)
+    ao.delay_ctrl(int_list)
+    ao.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 

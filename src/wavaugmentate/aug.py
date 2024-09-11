@@ -108,6 +108,11 @@ class Aug:
 
         self.chains = []  # List of chains.
 
+    def set_seed(self, seed: int = -1):
+        """Set seeding value."""
+
+        self.signal.set_seed(seed)
+ 
     def put(self, signal: "Mcs") -> "Aug":
         """
         Updates the multichannel sound data and sample rate of the Mcs
@@ -183,7 +188,7 @@ class Aug:
                         local_ng = np.random.default_rng(seed=obj.seed)
                         amp_list.append(local_ng.uniform(left, right))
                     else:
-                        amp_list.append(random_noise_gen.uniform(left, right))
+                        amp_list.append(ms.random_noise_gen.uniform(left, right))
 
         channels = []
         for signal, ampl in zip(obj.data, amp_list):
@@ -254,7 +259,7 @@ class Aug:
         amplitude_list: List[float],
         delay_deviation_list: List[int] = None,
         amplitude_deviation_list: List[float] = None,
-    ) -> "Mcs":
+    ) -> "Aug":
         """
         Add echo to multichannel sound. The output data become longer. To each
         channel will be added it's copy with corresponding delay delay and
@@ -272,19 +277,18 @@ class Aug:
             seed (int): If exists seeds random generator.
 
         Returns:
-            self (Mcs): The echoed multichannel sound.
+            self (Aug): The echoed multichannel sound.
         """
 
-        obj = self.signal.copy() 
-        amplitude_change = obj.copy()
+        amplitude_change = self.copy()
         amplitude_change.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
         delay_change = amplitude_change.copy()
         delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
-        for single_channel in obj.data:
-            zeros_len = delay_change.data.shape[1] - single_channel.data.shape[0]
+        for single_channel in self.signal.data:
+            zeros_len = delay_change.signal.data.shape[1] - single_channel.data.shape[0]
             channels.append(np.append(single_channel, np.zeros(zeros_len)))
-        self.signal.data = np.array(channels).copy() + delay_change.data.copy()
+        self.signal.data = np.array(channels).copy() + delay_change.signal.data.copy()
 
         return self
 
@@ -313,7 +317,7 @@ class Aug:
                     obj.data.shape[1],
                 )
             else:
-                n_noise = random_noise_gen.standard_normal(obj.data.shape[1])
+                n_noise = ms.random_noise_gen.standard_normal(obj.data.shape[1])
             noise = n_noise
             res = signal + level * noise
             channels.append(res)
