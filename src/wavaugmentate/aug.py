@@ -356,6 +356,7 @@ class Aug:
         """
 
         obj = self.signal.copy()
+        print('obj.shape =', obj.data.shape)
         chans = obj.data.shape[0]
         out_data = np.zeros_like(obj.data, dtype=np.float32)
         for i in range(0, chans):

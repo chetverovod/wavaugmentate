@@ -643,14 +643,15 @@ def test_aug_pause_shrink_sine():
     Returns:
         None
     """
-
-    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(test_sound_1)
-    mask = ao.pause_detect([0.5, 0.3])
-    ao.side_by_side(mask)
-    ao.pause_shrink(mask, [20, 4])
-    ao.get().write(ctf.TEST_SOUND_2_FILE)
-    rms_list = ao.get().rms(decimals=3)
+    
+    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = test_sound_1.pause_detect([0.5, 0.3])
+    res = test_sound_1.copy()
+    res.side_by_side(mask)
+    print(res)
+    test_sound_1.pause_shrink(mask, [20, 4])
+    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    rms_list = test_sound_1.rms(decimals=3)
     ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)
