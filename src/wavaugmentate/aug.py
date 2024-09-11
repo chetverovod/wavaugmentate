@@ -11,8 +11,19 @@ from typing import List, Tuple
 
 import numpy as np
 from scipy.io import wavfile
+import mcs as ms
+from mcs import Mcs
 
+ERROR_MARK = "Error: "
+SUCCESS_MARK = "Done."
 
+# Default sampling frequency, Hz.
+DEF_FS = 44100
+
+# Default signal durance in seconds.
+DEF_SIGNAL_LEN = 5
+
+random_noise_gen = np.random.default_rng()
 
 
 def delay_syntez(
@@ -79,15 +90,13 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
     return out_list
 
 
-class Mcs:
+class Aug:
     """
-    Class provides support of  multichannel sound
-    data.
+    Class provides augmentation of  multichannel sound
+    data (Mcs class objects).
     """
 
-    def __init__(
-        self, np_data: np.ndarray = None, samp_rt: int = -1, seed: int = -1
-    ):
+    def __init__(self, signal: "Mcs") -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -101,225 +110,15 @@ class Mcs:
         Returns:
             None
         """
-
-        if np_data is None:
-            self.data = None  # np.ndarray: Multichannel sound data field.
-        else:
-            self.data = (
-                np_data.copy()
-            )  # np.ndarray: Multichannel sound data field.
-        self.path = ""  # Path to the sound file, from which the data was read.
-        self.sample_rate = samp_rt  # Sampling frequency, Hz.
+        self.signal = signal.copy()
         self.chains = []  # List of chains.
-        self.seed = seed  # Flag for seeding random generator.
-
-    def copy(self) -> "Mcs":
-        """Deep Copy of the Mcs object."""
-
-        return copy.deepcopy(self)
-
-    def __channel_rms(
-        self, chan_index: int, last_index: int, decimals: int
-    ) -> float:
-        """
-        Calculate the root mean square (RMS) of a single channel signal.
-
-        Args
-            signal_of_channel (array): Input signal of a single channel.
-            decimals (int): Number of decimal places to round the RMS value.
-
-        Returns:
-            float: The RMS value of the input signal.
-        """
-        # Calculate the mean of the squares of the signal values
-        mean_square = 0
-        if chan_index > -1:
-            mean_square = np.mean(self.data[chan_index, 0:last_index] ** 2)
-        else:
-            mean_square = np.mean(self.data[0:last_index] ** 2)
-
-        # Calculate the square root of the mean of the squares
-        single_chan_rms = np.sqrt(mean_square)
-
-        # Round the result to the specified number of decimal places
-        if decimals > 0:
-            single_chan_rms = round(single_chan_rms, decimals)
-
-        # Return the result
-        return single_chan_rms
-
-    def rms(self, last_index: int = -1, decimals: int = -1):
-        """
-        Calculate the root mean square (RMS) of a multichannel sound.
-
-        Args:
-            last_index (int): The last index to consider when calculating the RMS.
-            If -1, consider the entire array. Defaults to -1.
-            decimals (int): Number of decimal places to round the RMS value.
-            If -1, do not round. Defaults to -1.
-
-        Returns:
-            list: A list of RMS values for each channel in the multichannel sound.
-
-        """
-
-        res = []
-        shape_len = len(self.data.shape)
-        if shape_len > 1:
-            for i in range(0, self.data.shape[0]):
-                chan_rms = self.__channel_rms(i, last_index, decimals)
-                res.append(chan_rms)
-        else:
-            chan_rms = self.__channel_rms(-1, last_index, decimals)
-            res.append(chan_rms)
-        return res
-
-    def shape(self) -> Tuple:
-        """
-        Returns the shape of the multichannel sound data.
-
-        Returns:
-            Tuple: A tuple containing the shape of the multichannel sound data.
-        """
-        return self.data.shape
-
-    def generate(
-        self,
-        frequency_list: List[int],
-        duration: float = DEF_SIGNAL_LEN,
-        samp_rt: int = -1,
-        mode="sine",
-    ) -> "Mcs":
-        """
-        Generate a multichannel sound based on the given frequency list, duration,
-        sample rate, and mode. The mode can be 'sine' or 'speech'. In 'sine' mode,
-        output multichannel sound will be a list of sine waves. In 'speech' mode,
-        output will be a list of speech like signals. In this mode input
-        frequencies list will be used as basic tone frequency for corresponding
-        channel, it should be in interval 600..300.
-
-        Args:
-        frequency_list (list): A list of frequencies to generate sound for.
-        duration (float): The duration of the sound in seconds.
-        fs (int): The sample rate of the sound. Defaults to -1.
-        mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
-        Defaults to 'sine'.
-
-        Returns:
-        self (Mcs):  representing the generated multichannel sound.
-        """
-
-        if samp_rt > 0:
-            self.sample_rate = samp_rt
-        self.data = None
-        samples = np.arange(duration * self.sample_rate) / self.sample_rate
-        channels = []
-        if mode == "sine":
-            for freq in frequency_list:
-                signal = np.sin(2 * np.pi * freq * samples)
-                signal = np.float32(signal)
-                channels.append(signal)
-            self.data = np.array(channels).copy()
-
-        if mode == "speech":
-            if self.seed != -1:
-                random.seed(self.seed)
-            for freq in frequency_list:
-                if freq > 300 or freq < 60:
-                    print(
-                        ERROR_MARK + "Use basic tone from interval 600..300 Hz"
-                    )
-                    sys.exit(1)
-
-                # Formants:
-                fbt = random.randint(freq, 300)  # 60–300 Гц
-                freq_list = [fbt]
-                freq_list.append(random.randint(2 * fbt, 850))  # 150–850 Гц
-                freq_list.append(random.randint(3 * fbt, 2500))  # 500–2500 Гц
-                freq_list.append(random.randint(4 * fbt, 3500))  # 1500–3500 Гц
-                freq_list.append(random.randint(5 * fbt, 4500))  # 2500–4500 Гц
-                signal = 0
-                amp = 1
-                for frm in freq_list:
-                    signal += amp * np.sin(2 * np.pi * frm * samples)
-                    amp -= 0.1
-                peak_amplitude = np.max(np.abs(signal))
-                signal = signal / peak_amplitude
-                signal = np.float32(signal)
-                channels.append(signal)
-                self.data = np.array(channels).copy()
-        return self
-
-    def write(self, path: str) -> "Mcs":
-        """
-            Writes the given multichannel sound data to a WAV file at the specified
-            path.
-
-        Args:
-            path (str): The path to the WAV file.
-            mcs_data (np.ndarray): The multichannel sound data to write. The shape
-            of the array should be (num_channels, num_samples).
-
-        Returns:
-        self (Mcs):  representing saved multichannel sound.
-        """
-
-        buf = self.data.T.copy()
-        wavfile.write(path, self.sample_rate, buf)
-        return self
-
-    def write_by_channel(self, path: str) -> "Mcs":
-        """
-        Writes each channel of the multichannel sound data to a separate WAV
-        files, 1 for each channel.
-
-        File name will be modified to include the channel number. If path contains
-        ./outputwav/sound_augmented.wav the output file names will be
-        ./outputwav/sound_augmented_1.wav
-        ./outputwav/sound_augmented_2.wav and so on.
-
-        Args:
-            path (str): The path to the WAV file. The filename will be modified
-            to include the channel number.
-
-        Returns:
-            self (Mcs): The Mcs instance itself, allowing for method chaining.
-        """
-
-        trimmed_path = path.split(".wav")
-        for i in range(self.channels_count()):
-            buf = self.data[i, :].T.copy()
-            file_name = trimmed_path[0] + f"_{i + 1}.wav"
-            print(f"Writing {file_name}...")
-            wavfile.write(file_name, self.sample_rate, buf)
-        return self
-
-    def read(self, path: str) -> "Mcs":
-        """
-        Reads a multichannel sound from a WAV file.
-
-        Args:
-            path (str): The path to the WAV file.
-
-        Returns:
-            tuple[int, np.ndarray]: A tuple containing the sample rate and the
-            multichannel sound data.
-        """
-
-        self.sample_rate, buf = wavfile.read(path)
-        if len(buf.shape) != 2:
-            buf = np.expand_dims(buf, axis=1)
-        self.path = path
-        self.data = buf.T.copy()
-        return self
 
     # Audio augmentation functions
-
     def amplitude_ctrl(
         self,
         amplitude_list: List[float],
         amplitude_deviation_list: List[float] = None,
-    ) -> "Mcs":
+    ) -> "Aug":
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
@@ -335,18 +134,20 @@ class Mcs:
         Returns:
             self (Mcs): The amplitude-controlled multichannel sound.
         """
-        if self.channels_count() != len(amplitude_list):
+       
+        obj = self.signal.copy() 
+        if obj.info()['channels_count'] != len(amplitude_list):
             print(
-                ERROR_MARK
+                ms.ERROR_MARK
                 + "Amplitude list length does not match number of channels."
             )
             sys.exit(1)
 
         amp_list = amplitude_list
         if amplitude_deviation_list is not None:
-            if self.channels_count() != len(amplitude_deviation_list):
+            if obj.info()['channels_count'] != len(amplitude_deviation_list):
                 print(
-                    ERROR_MARK
+                    ms.ERROR_MARK
                     + "Amplitude deviation list length does not match number of channels."
                 )
                 sys.exit(1)
@@ -365,17 +166,17 @@ class Mcs:
                         amp_list.append(random_noise_gen.uniform(left, right))
 
         channels = []
-        for signal, ampl in zip(self.data, amp_list):
+        for signal, ampl in zip(obj.data, amp_list):
             channels.append(signal * ampl)
 
-        self.data = np.array(channels).copy()
+        self.signal.data = np.array(channels).copy()
         return self
 
     def delay_ctrl(
         self,
         delay_us_list: List[int],
         delay_deviation_list: List[int] = None,
-    ) -> "Mcs":
+    ) -> "Aug":
         """
             Add delays of channels of multichannel sound. Output data become longer.
             Values of delay will be converted to count of samples.
@@ -392,17 +193,18 @@ class Mcs:
 
         """
 
-        if self.channels_count() != len(delay_us_list):
+        obj = self.signal.copy()
+        if obj.info()['channels_count'] != len(delay_us_list):
             print(
-                ERROR_MARK
+                ms.ERROR_MARK
                 + "Delay list length does not match number of channels."
             )
             sys.exit(1)
 
         if delay_deviation_list is not None:
-            if self.channels_count() != len(delay_deviation_list):
+            if obj.info()['channels_count'] != len(delay_deviation_list):
                 print(
-                    ERROR_MARK
+                    ms.ERROR_MARK
                     + "Delay deviation list length does not match number of channels."
                 )
                 sys.exit(1)
@@ -412,7 +214,7 @@ class Mcs:
         # In samples.
         max_samples_delay = int(max(d_list) * 1.0e-6 * self.sample_rate)
 
-        for signal, delay in zip(self.data, d_list):
+        for signal, delay in zip(obj.data, d_list):
             samples_delay = int(
                 delay * 1.0e-6 * self.sample_rate
             )  # In samples.
@@ -423,7 +225,7 @@ class Mcs:
                     res, np.zeros(max_samples_delay - samples_delay)
                 )
             channels.append(res)
-        self.data = np.array(channels).copy()
+        self.signal.data = np.array(channels).copy()
         return self
 
     def echo_ctrl(
@@ -452,22 +254,24 @@ class Mcs:
         Returns:
             self (Mcs): The echoed multichannel sound.
         """
-        amplitude_change = self.copy()
+
+        obj = self.signal.copy() 
+        amplitude_change = obj.copy()
         amplitude_change.amplitude_ctrl(amplitude_list, amplitude_deviation_list)
         delay_change = amplitude_change.copy()
         delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
-        for single_channel in self.data:
+        for single_channel in obj.data:
             zeros_len = delay_change.data.shape[1] - single_channel.data.shape[0]
             channels.append(np.append(single_channel, np.zeros(zeros_len)))
-        self.data = np.array(channels).copy() + delay_change.data.copy()
+        self.signal.data = np.array(channels).copy() + delay_change.data.copy()
 
         return self
 
     def noise_ctrl(
         self,
         noise_level_list: List[float],
-    ) -> "Mcs":
+    ) -> "Aug":
         """
         Apply noise to a multichannel sound.
 
@@ -480,19 +284,20 @@ class Mcs:
             self (Mcs): The noise-controlled multichannel sound.
         """
 
+        obj = self.signal.copy()
         channels = []
-        for signal, level in zip(self.data, noise_level_list):
-            if self.seed != -1:
-                local_ng = np.random.default_rng(seed=self.seed)
+        for signal, level in zip(obj.data, noise_level_list):
+            if obj.seed != -1:
+                local_ng = np.random.default_rng(seed=obj.seed)
                 n_noise = local_ng.standard_normal(
-                    self.data.shape[1],
+                    obj.data.shape[1],
                 )
             else:
-                n_noise = random_noise_gen.standard_normal(self.data.shape[1])
+                n_noise = random_noise_gen.standard_normal(obj.data.shape[1])
             noise = n_noise
             res = signal + level * noise
             channels.append(res)
-        self.data = np.array(channels).copy()
+        self.signal.data = np.array(channels).copy()
         return self
 
     def pause_detect(self, relative_level: List[float]) -> np.ndarray[int]:
@@ -510,11 +315,12 @@ class Mcs:
             ones 0 - pause, 1 - not a pause.
         """
 
-        rms_list = self.rms()
+        obj = self.signal.copy() 
+        rms_list = obj.rms()
         modules_list = abs(self.data)
-        mask = np.zeros(self.data.shape)
+        mask = np.zeros(obj.data.shape)
 
-        for i in range(0, self.data.shape[0]):
+        for i in range(0, obj.data.shape[0]):
             threshold = rms_list[i] * relative_level[i]
             mask[i] = np.clip(modules_list[i], a_min=threshold, a_max=1.1 * threshold)
             mask[i] -= threshold
@@ -524,7 +330,7 @@ class Mcs:
 
     def pause_shrink(
         self, mask: np.ndarray[int], min_pause: List[int]
-    ) -> "Mcs":
+    ) -> "Aug":
         """
         Shrink pauses in multichannel sound.
 
@@ -535,28 +341,29 @@ class Mcs:
             each channel in samples.
 
         Returns:
-            self (Mcs): The multichannel sound with pauses shrunk.
+            self (Aug): The multichannel sound with pauses shrunk.
         """
 
-        chans = self.data.shape[0]
-        out_data = np.zeros_like(self.data, dtype=np.float32)
+        obj = self.signal.copy()
+        chans = obj.data.shape[0]
+        out_data = np.zeros_like(obj.data, dtype=np.float32)
         for i in range(0, chans):
             k = 0
             zero_count = 0
-            for j in range(0, self.data.shape[1]):
+            for j in range(0, obj.data.shape[1]):
                 if mask[i][j] == 0:
                     zero_count += 1
                     if zero_count < min_pause[i]:
-                        out_data[i][k] = self.data[i][j]
+                        out_data[i][k] = obj.data[i][j]
                         k += 1
                 else:
                     zero_count = 0
-                    out_data[i][k] = self.data[i][j]
+                    out_data[i][k] = obj.data[i][j]
                     k += 1
-        self.data = out_data.copy()
+        self.signal.data = out_data.copy()
         return self
 
-    def pause_set(self, pause_map: list, pause_sz: List[int]) -> "Mcs":
+    def pause_set(self, pause_map: list, pause_sz: List[int]) -> "Aug":
         """
         Set pauses lengths in multichannel sound to selected values.
 
@@ -569,8 +376,9 @@ class Mcs:
             self (Mcs): The multichannel sound with pauses shrunk.
         """
 
+        obj = self.signal.copy()
         out_list = []
-        for i in range(0, self.data.shape[0]):
+        for i in range(0, obj.data.shape[0]):
             prev_index = 0
             local_list = []
             for pause_info in pause_map[i]:
@@ -578,7 +386,7 @@ class Mcs:
                 delta = index - prev_index
                 if delta > 0:
                     local_list.append(
-                        self.data[i][prev_index : prev_index + delta]
+                        obj.data[i][prev_index : prev_index + delta]
                     )
                     stub = np.zeros(pause_sz[i])
                     local_list.append(stub)
@@ -599,21 +407,10 @@ class Mcs:
                     [elem, np.zeros(max_len - len(elem))]
                 ).copy()
                 channels_list.append(elem)
-        self.data = np.stack(channels_list, axis=0).copy()
+        self.signal.data = np.stack(channels_list, axis=0).copy()
         return self
 
-    def channels_count(self) -> int:
-        """Returns the number of channels in the multichannel signal."""
-
-        channels_count = 0
-        if self.data is not None:
-            if len(self.data.shape) > 1:
-                channels_count = self.data.shape[0]
-            else:
-                channels_count = 1
-        return channels_count
-
-    def split(self, channels_count: int) -> "Mcs":
+    def split(self, channels_count: int) -> "Aug":
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -622,31 +419,31 @@ class Mcs:
             channels_count (int): The number of channels to split the signal into.
 
         Returns:
-            self (Mcs): The split multichannel signal, with each channel identical.
+            self (Aug): The split multichannel signal, with each channel identical.
         """
 
-        print("channels_count:", self.channels_count())
-        if self.channels_count() > 1:
-            print(ERROR_MARK, "Can't split more than 1 channel signal.")
+        obj = self.signal.copy()
+        if obj.channels_count() > 1:
+            print(ms.ERROR_MARK, "Can't split more than 1 channel signal.")
             sys.exit(1)
 
         out_data = None
 
         if len(self.data.shape) > 1:
             out_data = np.zeros(
-                (channels_count, self.data.shape[1]), dtype=np.float32
+                (channels_count, obj.data.shape[1]), dtype=np.float32
             )
         else:
             out_data = np.zeros(
-                (channels_count, len(self.data)), dtype=np.float32
+                (channels_count, len(obj.data)), dtype=np.float32
             )
 
         for i in range(0, channels_count):
             out_data[i] = self.data.copy()
-        self.data = out_data
+        self.signal.data = out_data
         return self
 
-    def merge(self) -> "Mcs":
+    def merge(self) -> "Aug":
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -664,7 +461,7 @@ class Mcs:
         self.data = out_data
         return self
 
-    def sum(self, mcs_data2: "Mcs") -> "Mcs":
+    def sum(self, mcs_data2: "Mcs") -> "Aug":
         """
         Sums two multichannel sound signals.
 
@@ -675,11 +472,10 @@ class Mcs:
             self (Mcs): The sum of self._data and mcs_data2 signals as Mcs.
         """
 
-        out_data = self.data.copy() + mcs_data2.data.copy()
-        self.data = out_data
+        self.signal.sum(mcs_data2)
         return self
 
-    def side_by_side(self, mcs_data2: "Mcs") -> "Mcs":
+    def side_by_side(self, mcs_data2: "Mcs") -> "Aug":
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -690,79 +486,8 @@ class Mcs:
             self (Mcs): The concatenated sound signal containing channels of both
             MCS.
         """
-
-        out_data = np.zeros(
-            (self.data.shape[0] + mcs_data2.data.shape[0], self.data.shape[1]),
-            dtype=np.float32,
-        )
-        out_data[0 : self.data.shape[0], :] = self.data
-        out_data[self.data.shape[0] :, :] = mcs_data2.data
-        self.data = out_data.copy()
+        self.signal.side_by_side(mcs_data2)
         return self
-
-    def put(self, mcs: "Mcs") -> "Mcs":
-        """
-        Updates the multichannel sound data and sample rate of the Mcs
-        instance.
-
-        Args:
-            mcs_data (Mcs): source of multichannel sound data.
-            fs (int, optional): The new sample rate. Defaults to -1.
-
-        Returns:
-            Mcs: The updated Mcs instance.
-        """
-
-        self.data = mcs.data.copy()
-        self.sample_rate = mcs.sample_rate
-        self.path = mcs.path
-        return self
-
-    def get(self) -> np.ndarray:
-        """
-        Returns the multichannel sound data stored in the Mcs instance.
-
-        Returns:
-            np.ndarray: The multichannel sound data.
-        """
-        return self.data
-
-    def set_seed(self, seed: int = -1):
-        """Set seeding value."""
-
-        self.seed = seed
-
-    def info(self) -> dict:
-        """
-        Returns a dictionary containing metadata about the audio data.
-
-            The dictionary contains the following information:
-
-            * path: The file path where the audio data was loaded from.
-            * channels_count: The number of audio channels in the data
-              (1 for mono, 2 and more for stereo and other).
-            * sample_rate: The sampling rate at which the audio data is stored.
-            * length_s: The duration of the audio data in seconds.
-
-            If the data is not loaded, the `path`, `channels_count`, and
-            `length_s` values will be -1. Otherwise,
-            they will be populated with actual values.
-
-        Returns:
-        dict: A dictionary containing metadata about the audio data.
-        """
-
-        res = {
-            "path": self.path,
-            "channels_count": -1,
-            "sample_rate": self.sample_rate,
-            "length_s": -1,
-        }
-        if self.data is not None:
-            length = self.data.shape[1] / self.sample_rate
-            res["channels_count"] = self.channels_count()
-            res["length_s"] = length
-        return res
 
     def add_chain(self, list_of_chains: List[str]) -> "Mcs":
         """
