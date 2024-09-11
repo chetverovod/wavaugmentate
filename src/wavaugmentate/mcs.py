@@ -12,7 +12,16 @@ from typing import List, Tuple
 import numpy as np
 from scipy.io import wavfile
 
+ERROR_MARK = "Error: "
+SUCCESS_MARK = "Done."
 
+# Default sampling frequency, Hz.
+DEF_FS = 44100
+
+# Default signal durance in seconds.
+DEF_SIGNAL_LEN = 5
+
+random_noise_gen = np.random.default_rng()
 
 
 def delay_syntez(
@@ -625,7 +634,6 @@ class Mcs:
             self (Mcs): The split multichannel signal, with each channel identical.
         """
 
-        print("channels_count:", self.channels_count())
         if self.channels_count() > 1:
             print(ERROR_MARK, "Can't split more than 1 channel signal.")
             sys.exit(1)
@@ -661,7 +669,7 @@ class Mcs:
         channels_count = self.data.shape[0]
         for i in range(0, channels_count):
             out_data += self.data[i]
-        self.data = out_data
+        self.data = out_data.copy()
         return self
 
     def sum(self, mcs_data2: "Mcs") -> "Mcs":

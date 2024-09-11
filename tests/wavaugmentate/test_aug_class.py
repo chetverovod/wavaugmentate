@@ -8,39 +8,14 @@ import numpy as np
 
 sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
+import aug as am
+from mcs import Mcs
+from aug import Aug
 
 
-def test_mcs_put():
-    """
-    Test function to verify the functionality of the mcs class's put method.
-
-    This function generates a multichannel sound using the generate function from
-    the wau module with the given frequency list, time duration, and sample rate.
-    It then applies the put method of the mcs class to the generated sound
-    and asserts that the shape and data of the original sound are equal to the
-    shape and data of the sound after applying the put method.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-
-    mcs = ms.Mcs()
-    mcs.put(test_sound_1)
-
-    assert np.array_equal(test_sound_1.data, mcs.data)
-    assert np.array_equal(test_sound_1.data, mcs.get())
-
-    mcs_2 = ms.Mcs(test_sound_1.data)
-    assert np.array_equal(mcs_2.data, mcs.get())
 
 
-def test_mcs_amp_control():
+def test_aug_amp_control():
     """
     Test function to verify the functionality of the mcs class.
 
@@ -57,21 +32,21 @@ def test_mcs_amp_control():
     a_list = [0.1, 0.3, 0.4, 1]
     test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    mcs = ms.Mcs(test_sound_1.data)
-
-    mcs.amp(a_list)
-    res1 = mcs
+    ao = am.Aug(test_sound_1)
+    
+    ao.amp(a_list)
+    res1 = ao.signal
     print("res1 =", res1.data)
 
-    dest = ms.Mcs()
+    dest = am.Aug()
 
     res2 = dest.put(test_sound_1).amp(a_list).get()
 
     print("res2 =", res2.data)
-    assert np.array_equal(res1.get(), res2)
+    assert np.array_equal(res1.get(), res2.get())
 
 
-def test_mcs_dly_controls():
+def test_aug_dly_controls():
     """
     Test function to verify the functionality of the mcs class.
 
@@ -88,113 +63,24 @@ def test_mcs_dly_controls():
     d_list = [100, 200, 300, 0]
     test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    mcs = test_sound_1.copy()
+    #mcs = test_sound_1.copy()
+    ao = Aug(test_sound_1)
 
-    mcs.dly(d_list)
-    res1 = mcs
+    ao.dly(d_list)
+    res1 = ao.get()
     print("res1 shape =", res1.data.shape)
     print("res1 =", res1.data)
 
-    dest = ms.Mcs()
+    dest = Aug()
     dest.put(test_sound_1)
-    res2 = dest.dly(d_list)
+    res2 = dest.dly(d_list).get()
 
     print("res2 shape =", res2.data.shape)
     print("res2 =", res2.data)
     assert res1.data.shape == res2.data.shape
     assert np.array_equal(res1.get(), res2.get())
 
-
-def test_mcs_wr_rd():
-    """
-    Test function to verify the functionality of the mcs class.
-
-    This function tests the wr and rd methods of the mcs class by
-    generating a multichannel sound, writing it to a file, reading it back,
-    and comparing the original and read sound data.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    mcs = ms.Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-
-    ref_mcs = ms.Mcs()
-    ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
-
-    assert np.array_equal(mcs.data, ref_mcs.data)
-
-
-def test_mcs_write_by_channel():
-    """
-    Test function to verify the functionality of the mcs class's
-    write_by_channel method.
-
-    This function generates a multichannel sound using the generate method of
-    the mcs class with the given frequency list, time duration, and sample rate.
-    It then writes the generated sound to a file using the write method of the
-    mcs class.  The function reads the written sound back into the mcs object
-    using the read method and changes the quantity of channels to 7 using the
-    split method.  It applies delays and amplitude changes to the sound using
-    the delay_ctrl and amplitude_ctrl methods, respectively.  Finally, it writes
-    the sound to separate WAV files for each channel using the write_by_channel
-    method and verifies the RMS values of the written sounds.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    # Preparations
-    file_name = ctf.OUTPUTWAV_DIR + "sound.wav"
-    if os.path.exists(file_name):
-        os.remove(file_name)
-
-    # Frequencies list, corresponds to channels quantity.
-    freq_list = [400]
-    samp_rt = 44100  # Select sampling frequency, Hz.
-    time_len = 3  # Length of signal in seconds.
-
-    # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = ms.Mcs().generate(freq_list, time_len, samp_rt)
-    mcs1.write(file_name)
-
-    # Create Mcs-object.
-    mcs = ms.Mcs()
-
-    # Read WAV-file to Mcs-object.
-    mcs.read(file_name)
-
-    # Change quantity of channels to 7.
-    mcs.split(7)
-
-    # Apply delays.
-    # Corresponds to channels quantity.
-    delay_list = [0, 150, 200, 250, 300, 350, 400]
-    mcs.delay_ctrl(delay_list)
-
-    # Apply amplitude changes.
-    # Corresponds to channels quantity.
-    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    mcs.amplitude_ctrl(amplitude_list)
-
-    mcs.write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
-
-    for i in range(7):
-        mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
-        rms_value = mcs.rms()
-        assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
-
-
-def test_mcs_echo():
+def test_aug_echo():
     """
     Test function to verify the functionality of the `echo` method in the
     mcs class.
@@ -215,22 +101,27 @@ def test_mcs_echo():
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     mcs = ms.Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = mcs.rms(decimals=3)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = am.Aug(mcs)
+    ao.echo(d_list, a_list)
+    rms_list = ao.get().rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
         assert abs(rms_value - ref) < ctf.ABS_ERR
+
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     mcs = ms.Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).echo(d_list, a_list)
-    rms_list = mcs.rms(decimals=3)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = am.Aug(mcs)
+    ao.echo(d_list, a_list)
+    rms_list = ao.get().rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
         assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
-def test_mcs_noise():
+def test_aug_noise():
     """
     Test function to verify the functionality of the `ns` method in the
     `mcs` class.
@@ -253,44 +144,16 @@ def test_mcs_noise():
 
     mcs = ms.Mcs()
     mcs.set_seed(42)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).ns(n_list)
-    rms_list = mcs.rms(decimals=3)
+    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = Aug(mcs)
+    ao.ns(n_list)
+    rms_list = ao.get().rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
     for rms_value, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(rms_value - ref) < 0.01
 
 
-def test_mcs_info():
-    """
-    Test the `info` method of the `mcs` class.
-
-    This function creates a `mcs` object, generates a sound file with the
-    given frequency list, duration, and sample rate, and writes it to a file.
-    It then calls the `info` method of the `mcs` object and prints the
-    result.  Finally, it asserts that the returned dictionary matches the
-    expected reference dictionary.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    mcs = ms.Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-    print(mcs.info())
-
-    ref = {
-        "path": "",
-        "channels_count": 4,
-        "sample_rate": 44100,
-        "length_s": 5.0,
-    }
-    assert mcs.info() == ref
 
 
 #  Test not finished.
@@ -477,7 +340,7 @@ def test_readme_examples():
         signal.write(name)
 
 
-def test_sum():
+def test_aug_sum():
     """
     Test function to verify the functionality of the `sum` function.
 
@@ -500,17 +363,18 @@ def test_sum():
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
     test_sound_2 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
-    res = test_sound_1.copy()
+    
+    res = Aug(test_sound_1)
     res.sum(test_sound_2)
-    res.write(ctf.TEST_SOUND_1_FILE)
+    res.get().write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for sound, ref_value in zip([test_sound_1, test_sound_2, res], ref):
+    for sound, ref_value in zip([test_sound_1, test_sound_2, res.get()], ref):
         rms_value = sound.rms(decimals=3)
         print(rms_value)
         assert abs(rms_value[0] - ref_value) < ctf.ABS_ERR
 
 
-def test_merge():
+def test_aug_merge():
     """
     Test function to verify the functionality of the `merge` function.
 
@@ -531,17 +395,17 @@ def test_merge():
 
     test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
-    res = test_sound_1.copy()
+    res = Aug(test_sound_1.copy())
     res.merge()
-    res.write(ctf.TEST_SOUND_1_FILE)
-    print("res.shape =", res.shape())
+    res.get().write(ctf.TEST_SOUND_1_FILE)
+    print("res.get().shape =", res.get().shape())
     ref_value = 1.0
-    rms_list = res.rms(decimals=3)
+    rms_list = res.get().rms(decimals=3)
     print(rms_list)
     assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
-def test_split():
+def test_aug_split():
     """
     Test function to verify the functionality of the `split` function.
 
@@ -562,16 +426,17 @@ def test_split():
 
     test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
-    test_sound_1.split(5)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    ao = Aug(test_sound_1)
+    ao.split(5)
+    ao.get().write(ctf.TEST_SOUND_1_FILE)
     ref_value = 0.707
-    rms_list = test_sound_1.rms(decimals=3)
+    rms_list = ao.get().rms(decimals=3)
     print(rms_list)
-    for i in range(0, test_sound_1.shape()[0]):
+    for i in range(0, ao.get().shape()[0]):
         assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
-def test_chain_sum():
+def test_aug_chain_sum():
     """
     Test the functionality of the `sum` method in the `mcs` class.
 
@@ -595,18 +460,18 @@ def test_chain_sum():
     mcs = ms.Mcs()
     res = ms.Mcs()
     mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res = mcs.copy()
+    res = Aug(mcs.copy())
     test_sound_2 = ms.Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
+    res.sum(test_sound_2).get().wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for sound, ref_value in zip([mcs, test_sound_2, res], ref):
+    for sound, ref_value in zip([mcs, test_sound_2, res.get()], ref):
         rms_list = sound.rms(decimals=3)
         print(rms_list)
         assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
-def test_chain_merge():
+def test_aug_chain_merge():
     """
     Tests the functionality of the `merge` method in the `mcs` class.
 
@@ -623,9 +488,9 @@ def test_chain_merge():
         None
     """
 
-    mcs = ms.Mcs()
+    ao = Aug()
     rms_list = (
-        mcs.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+        ao.get().gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
         .wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
@@ -635,7 +500,7 @@ def test_chain_merge():
     assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
 
-def test_chain_split():
+def test_aug_chain_split():
     """
     Test the functionality of the `splt` and `wr` methods in the `mcs`
     class.
@@ -655,18 +520,19 @@ def test_chain_split():
         None
     """
 
-    mcs = ms.Mcs()
-    mcs.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
-    channels = mcs.info()['channels_count']
+    mcs = Mcs().gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = Aug(mcs)
+    ao.splt(5).get().wr(ctf.TEST_SOUND_1_FILE)
+    channels = ao.get().channels_count()
     assert channels == 5
     ref_value = 0.707
-    rms_list = mcs.rms(decimals=3)
+    rms_list = ao.get().rms(decimals=3)
     print(rms_list)
     for i in range(0, channels):
         assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
-def test_chain_side_by_side():
+def test_aug_chain_side_by_side():
     """
     Tests the functionality of the `sbs` method in the `mcs` class.
 
@@ -685,14 +551,14 @@ def test_chain_side_by_side():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    test_sound_1 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs = Mcs().gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
 
-    mcs = ms.Mcs()
+    ao = Aug(mcs)
     rms_list = (
-        mcs.gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
-        .amp([0.3])
+        ao.amp([0.3])
         .sbs(test_sound_1)
-        .wr(ctf.TEST_SOUND_1_FILE)
+        .get().wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
     )
     print(rms_list)
@@ -701,39 +567,7 @@ def test_chain_side_by_side():
         print(rms_list)
         assert abs(rms_list - ref) < ctf.ABS_ERR
 
-
-def test_side_by_side():
-    """
-    Tests the functionality of the side_by_side function.
-
-    This function generates two multichannel sounds using the generate function
-    from the wau module with the given frequency lists, time duration, and
-    sample rate.  It then applies the side_by_side function to the generated
-    sounds and writes the result to a file using the write function. The
-    function then calculates the root mean square (RMS) value of the
-    side-by-side sound using the rms method and compares it to the expected
-    values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    test_sound_1 = ms.Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_1.amplitude_ctrl([0.3])
-    test_sound_2 = ms.Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    test_sound_1.side_by_side(test_sound_2)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    ref_rms_list = [0.212, 0.707]
-    rms_list = test_sound_1.rms(decimals=3)
-    for rms_list, ref in zip(rms_list, ref_rms_list):
-        print(rms_list)
-        assert abs(rms_list - ref) < ctf.ABS_ERR
-
-
-def test_pause_detect():
+def test_aug_pause_detect():
     """
     Tests the functionality of the pause_detect function.
 
@@ -751,19 +585,20 @@ def test_pause_detect():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    test_sound_1.side_by_side(mask)
+    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = Aug(test_sound_1)
+    mask = ao.pause_detect([0.5, 0.3])
+    ao.side_by_side(mask)
     print(test_sound_1)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    rms_list = test_sound_1.rms(decimals=3)
+    ao.get().write(ctf.TEST_SOUND_1_FILE)
+    rms_list = ao.get().rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for rms_value, ref in zip(rms_list, ref_rms_list):
         print(rms_value)
         assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
-def test_chain_pause_detect():
+def test_aug_chain_pause_detect():
     """
     Tests the functionality of the mcs class by creating two instances,
     generating a multichannel sound, copying the sound, applying pause
@@ -777,20 +612,19 @@ def test_chain_pause_detect():
         None
     """
 
-    mcs = ms.Mcs()
-    mcs_1 = ms.Mcs()
+    mcs = Mcs()
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mcs_1 = mcs.copy()
-    mask = mcs.pdt([0.5, 0.3])
-    mcs_1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
-    rms_list = mcs_1.rms(decimals=3)
+    ao = Aug(mcs)
+    mask = ao.pdt([0.5, 0.3])
+    ao.sbs(mask).get().wr(ctf.TEST_SOUND_1_FILE)
+    rms_list = ao.get().rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for i, rms_value in enumerate(rms_list):
         print(rms_value)
         assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
 
 
-def test_pause_shrink_sine():
+def test_aug_pause_shrink_sine():
     """
     Tests the functionality of the pause_shrink function.
 
@@ -810,21 +644,20 @@ def test_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    res = test_sound_1.copy()
-    res.side_by_side(mask)
-    print(res)
-    test_sound_1.pause_shrink(mask, [20, 4])
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    rms_list = test_sound_1.rms(decimals=3)
+    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    ao = Aug(test_sound_1)
+    mask = ao.pause_detect([0.5, 0.3])
+    ao.side_by_side(mask)
+    ao.pause_shrink(mask, [20, 4])
+    ao.get().write(ctf.TEST_SOUND_2_FILE)
+    rms_list = ao.get().rms(decimals=3)
     ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)
         assert abs(rms_value - ref_rms_value) < ctf.ABS_ERR
 
 
-def test_pause_shrink_speech():
+def test_aug_pause_shrink_speech():
     """
     Tests the functionality of the pause_shrink function with speech-like
     input.
@@ -861,7 +694,7 @@ def test_pause_shrink_speech():
         assert abs(rms_value - ref_value) < ctf.ABS_ERR
 
 
-def test_pause_measure():
+def test_aug_pause_measure():
     """
     Tests the functionality of the pause_measure function.
 
@@ -918,7 +751,7 @@ def test_pause_measure():
         assert res == ref
 
 
-def test_pause_set():
+def test_aug_pause_set():
     """
     Tests the functionality of the pause_set function.
 
@@ -954,7 +787,7 @@ def test_pause_set():
         assert abs(r_value - ref_value) < ctf.ABS_ERR
 
 
-def test_chain_add_chain():
+def test_aug_chain_add_chain():
     """
     Test function to verify the functionality of the `add_chain` method in the
     `mcs` class.

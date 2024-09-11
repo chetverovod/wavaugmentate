@@ -14,16 +14,7 @@ from scipy.io import wavfile
 import mcs as ms
 from mcs import Mcs
 
-ERROR_MARK = "Error: "
-SUCCESS_MARK = "Done."
 
-# Default sampling frequency, Hz.
-DEF_FS = 44100
-
-# Default signal durance in seconds.
-DEF_SIGNAL_LEN = 5
-
-random_noise_gen = np.random.default_rng()
 
 
 def delay_syntez(
@@ -41,7 +32,7 @@ def delay_syntez(
                 left = delay - dev
                 if left < 0:
                     print(
-                        f"{ERROR_MARK}"
+                        f"{ms.ERROR_MARK}"
                         f"deviation value {dev} can give negative delay."
                     )
                     sys.exit(1)
@@ -50,7 +41,7 @@ def delay_syntez(
                     local_ng = np.random.default_rng(seed=seed)
                     d_list.append(local_ng.integers(left, right))
                 else:
-                    d_list.append(random_noise_gen.integers(left, right))
+                    d_list.append(ms.random_noise_gen.integers(left, right))
     return d_list
 
 
@@ -96,7 +87,7 @@ class Aug:
     data (Mcs class objects).
     """
 
-    def __init__(self, signal: "Mcs") -> None:
+    def __init__(self, signal: "Mcs" = None) -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -110,8 +101,37 @@ class Aug:
         Returns:
             None
         """
-        self.signal = signal.copy()
+        if signal is not None:
+            self.signal = signal.copy()
+        else:
+            self.signal = Mcs()
+
         self.chains = []  # List of chains.
+
+    def put(self, signal: "Mcs") -> "Aug":
+        """
+        Updates the multichannel sound data and sample rate of the Mcs
+        instance.
+
+        Args:
+            mcs_data (Mcs): source of multichannel sound data.
+            fs (int, optional): The new sample rate. Defaults to -1.
+
+        Returns:
+            Mcs: The updated Mcs instance.
+        """
+
+        self.signal = signal.copy()
+        return self
+
+    def get(self) -> "Mcs":
+        """
+        Returns the multichannel sound data stored in the Mcs instance.
+
+        Returns:
+            np.ndarray: The multichannel sound data.
+        """
+        return self.signal   
 
     # Audio augmentation functions
     def amplitude_ctrl(
@@ -159,8 +179,8 @@ class Aug:
                 if dev > 0:
                     left = amplitude - dev
                     right = amplitude + dev
-                    if self.seed != -1:
-                        local_ng = np.random.default_rng(seed=self.seed)
+                    if obj.seed != -1:
+                        local_ng = np.random.default_rng(seed=obj.seed)
                         amp_list.append(local_ng.uniform(left, right))
                     else:
                         amp_list.append(random_noise_gen.uniform(left, right))
@@ -209,14 +229,14 @@ class Aug:
                 )
                 sys.exit(1)
 
-        d_list = delay_syntez(delay_us_list, delay_deviation_list, self.seed)
+        d_list = delay_syntez(delay_us_list, delay_deviation_list, obj.seed)
         channels = []
         # In samples.
-        max_samples_delay = int(max(d_list) * 1.0e-6 * self.sample_rate)
+        max_samples_delay = int(max(d_list) * 1.0e-6 * obj.sample_rate)
 
         for signal, delay in zip(obj.data, d_list):
             samples_delay = int(
-                delay * 1.0e-6 * self.sample_rate
+                delay * 1.0e-6 * obj.sample_rate
             )  # In samples.
             res = np.zeros(samples_delay)
             res = np.append(res, signal)
@@ -315,17 +335,8 @@ class Aug:
             ones 0 - pause, 1 - not a pause.
         """
 
-        obj = self.signal.copy() 
-        rms_list = obj.rms()
-        modules_list = abs(self.data)
-        mask = np.zeros(obj.data.shape)
-
-        for i in range(0, obj.data.shape[0]):
-            threshold = rms_list[i] * relative_level[i]
-            mask[i] = np.clip(modules_list[i], a_min=threshold, a_max=1.1 * threshold)
-            mask[i] -= threshold
-            mask[i] /= 0.09 * threshold
-            mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
+        obj = self.signal.copy()
+        mask = obj.pause_detect(relative_level)
         return mask
 
     def pause_shrink(
@@ -422,25 +433,7 @@ class Aug:
             self (Aug): The split multichannel signal, with each channel identical.
         """
 
-        obj = self.signal.copy()
-        if obj.channels_count() > 1:
-            print(ms.ERROR_MARK, "Can't split more than 1 channel signal.")
-            sys.exit(1)
-
-        out_data = None
-
-        if len(self.data.shape) > 1:
-            out_data = np.zeros(
-                (channels_count, obj.data.shape[1]), dtype=np.float32
-            )
-        else:
-            out_data = np.zeros(
-                (channels_count, len(obj.data)), dtype=np.float32
-            )
-
-        for i in range(0, channels_count):
-            out_data[i] = self.data.copy()
-        self.signal.data = out_data
+        self.signal = self.signal.split(channels_count)
         return self
 
     def merge(self) -> "Aug":
@@ -453,12 +446,7 @@ class Aug:
         Returns:
             self (Mcs): The merged sound data, containing a single channel.
         """
-
-        out_data = np.zeros(self.data.shape[1], dtype=np.float32)
-        channels_count = self.data.shape[0]
-        for i in range(0, channels_count):
-            out_data += self.data[i]
-        self.data = out_data
+        self.signal = self.signal.merge()
         return self
 
     def sum(self, mcs_data2: "Mcs") -> "Aug":
@@ -545,9 +533,6 @@ class Aug:
         return res
 
     # Alias Method Names
-    rd = read
-    wr = write
-    wrbc = write_by_channel
     amp = amplitude_ctrl
     dly = delay_ctrl
     echo = echo_ctrl
@@ -558,5 +543,4 @@ class Aug:
     pdt = pause_detect
     achn = add_chain
     rdac = read_file_apply_chains
-    gen = generate
     cpy = copy
