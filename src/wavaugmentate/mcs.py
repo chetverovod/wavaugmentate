@@ -94,7 +94,7 @@ class Mcs:
         self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> "Mcs":
-        """Deep Copy of the Mcs object."""
+        """Deep copy of the Mcs object."""
 
         return copy.deepcopy(self)
 
@@ -372,7 +372,7 @@ class Mcs:
 
     def channels_len(self) -> int:
         """
-        Returns the number of sample in one  channel of multichannel
+        Returns the number of samples in one channel of multichannel
          signal.
         """
 

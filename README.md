@@ -18,16 +18,16 @@ Same types as in section [Input_data](#Input_data).
 
 # Augmentation Methods 
 1. Amplitude (volume change, inversion).
-2. Time shift.
-3. Echo.
-4. Adding noise.
-6. Time stretching. (**not implemented**)
-7. Tempo change. (**not implemented**)
-8. Pitch shift. (**not implemented**)
-9. Adding silence. 
-10. Frequency masking. (**not implemented**)
-11. Time masking. (**not implemented**)
-12. Combinations of methods.
+1. Time shift.
+1. Echo.
+1. Adding noise.
+1. Time stretching. (**not implemented**)
+1. Tempo change. (**not implemented**)
+1. Pitch shift. (**not implemented**)
+1. Adding silence. 
+1. Frequency masking. (**not implemented**)
+1. Time masking. (**not implemented**)
+1. Combinations of methods.
 
 # Additional Functionality
 1. Generation multichannel tonal signals of desired frequency, amplitude, durance.
@@ -35,20 +35,21 @@ Same types as in section [Input_data](#Input_data).
 
 # Interfaces
 Signal augmentation can be applied by two ways:
-1. As python module *Mcs* class methods.
-2. As console application with CLI interface options.
+1. As python module *Mcs*, *Aug* classes methods.
+2. As console application *wavaugmentate* with CLI interface options.
 
 ## Python Module
 
 Example 1 (procedural approach):
 ```Python
-import wavaugmentate as wau
+from mcs import Mcs
+from aug import Aug
 
 # File name of original sound.
 file_name = "./outputwav/sound.wav"
 
 # Create Mcs-object.
-mcs = wau.Mcs()
+mcs = Mcs()
 
 # Read WAV-file to Mcs-object.
 mcs.read(file_name)
@@ -56,23 +57,26 @@ mcs.read(file_name)
 # Change quantity of channels to 7.
 mcs.split(7)
 
+# Create augmentation object.
+aug = Aug(mcs)
+
 # Apply delays.
 # Corresponds to channels quantity.
 delay_list = [0, 150, 200, 250, 300, 350, 400]
-mcs.delay_ctrl(delay_list)
+aug.delay_ctrl(delay_list)
 
 # Apply amplitude changes.
 # Corresponds to channels quantity.
 amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-mcs.amplitude_ctrl(amplitude_list)
+aug.amplitude_ctrl(amplitude_list)
 
-# Augmentation result saving by single file, containning 7 channels.
-mcs.write("./outputwav/sound_augmented.wav")
+# Augmentation result saving by single file, containing 7 channels.
+aug.get().write(sound_aug_file_path)
 
 # Augmentation result saving to 7 files, each 1 by channel.
 # ./outputwav/sound_augmented_1.wav
 # ./outputwav/sound_augmented_2.wav and so on.
-mcs.write_by_channel("./outputwav/sound_augmented.wav")
+aug.get().write_by_channel(sound_aug_file_path)
 
 ```
 Original signal is shown on picture:
@@ -82,22 +86,22 @@ Output signal with augmented data (channel 1 contains original signal without ch
 ![Augmented signal](./pictures/example_1_augmented_signal.png)
 
 
-The same code as chain, Example 2:
+The same code as chain of operations, Example 2:
 
 ```Python
-import wavaugmentate as wau
+from mcs import Mcs
+from aug import Aug
 
 delay_list = [0, 150, 200, 250, 300, 350, 400]
 amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
-# Create Mcs-object.
-w = wau.Mcs(mcs)
-
 # Apply all transformations of Example 1 in chain.
-w.rd(file_name).splt(7).dly(delay_list).amp(amplitude_list).wr("./outputwav/sound_augmented_by_chain.wav")
+Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
+    ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
+)
 
 # Augmentation result saving to 7 files, each 1 by channel.
-w.wrbc("./outputwav/sound_augmented_by_chain.wav")
+mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
  
 ```
 ## CLI
@@ -146,8 +150,10 @@ for i in range(aug_count):
 
 Just run:
 ```shell
+export  PYTHONPATH='./src/wavaugmentate'
 pytest
 ```
+
 Test coverage:
 ```
 ---------- coverage: platform linux, python 3.11.4-final-0 -----------
