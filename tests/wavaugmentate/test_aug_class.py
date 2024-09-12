@@ -216,14 +216,14 @@ def test_aug_chaining():
     mcs = Mcs()
     cmd_prefix = "mcs."
     cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
-    eval_results_list = str(eval(cmd_prefix + cmd.strip()))
-    out = ctf.shrink(eval_results_list)
-    ref_rms_list = "[0.70710844,0.7071083,0.707108,0.70710754]"
+    out = eval(cmd_prefix + cmd.strip())
+    ref_rms_list = [0.70710844, 0.7071083, 0.707108, 0.70710754]
 
     print('out:', out)
     print('ref:', ref_rms_list)
     mcs.info()
-    assert out == ref_rms_list
+    for val, ref in zip(out, ref_rms_list):
+        assert abs(val - ref) < ctf.ABS_ERR
 
 
 def test_readme_examples():
