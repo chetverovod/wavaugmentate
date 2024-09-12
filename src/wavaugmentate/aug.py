@@ -47,7 +47,7 @@ class Aug:
     data (Mcs class objects).
     """
 
-    def __init__(self, signal: "Mcs" = None) -> None:
+    def __init__(self, signal: "Mcs" = None, seed = -1 ) -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -64,7 +64,7 @@ class Aug:
         if signal is not None:
             self.signal = signal.copy()
         else:
-            self.signal = Mcs()
+            self.signal = Mcs(seed=seed)
 
         self.chains = []  # List of chains.
 
@@ -369,14 +369,19 @@ class Aug:
             self (Aug): The multichannel sound with pauses shrunk.
         """
 
+        if mask.shape != self.signal.data.shape:
+            raise ValueError("Mask and signal data must have the same shape.")
+
         obj = self.signal.copy()
         print('obj.shape =', obj.data.shape)
-        chans = obj.data.shape[0]
+        chans = obj.channels_count()
         out_data = np.zeros_like(obj.data, dtype=np.float32)
+        print('outdata.shape =', out_data.shape)
+        print('mask.shape =', mask.shape)
         for i in range(0, chans):
             k = 0
             zero_count = 0
-            for j in range(0, obj.data.shape[1]):
+            for j in range(0, obj.channels_len()):
                 if mask[i][j] == 0:
                     zero_count += 1
                     if zero_count < min_pause[i]:
@@ -412,7 +417,8 @@ class Aug:
         Args:
             pause_map (list): A list of dictionaries containing pairs of
             (index, length) of pauses for each channel.
-            pause_sz (List[int]): A list of pause sizes for each channel.
+            pause_sz (List[int]): A list of pause sizes (in samples) for
+            each channel.
 
         Returns:
             self (Aug): The multichannel sound with pauses shrunk.

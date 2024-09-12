@@ -465,11 +465,11 @@ def test_pause_shrink_sine():
     print(res)
     test_sound_1.pause_shrink(mask, [20, 4])
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
-    rms_list = test_sound_1.rms(decimals=3)
-    ref_rms_list = [0.702, 0.706, 0.865, 0.923]
-    for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
-        print(rms_value)
-        assert abs(rms_value - ref_rms_value) < ctf.ABS_ERR
+    _rms_list = test_sound_1.rms(decimals=3)
+    _ref_rms_list = [0.702, 0.706, 0.865, 0.923]
+    for _rms_value, ref_rms_value in zip(_rms_list, _ref_rms_list):
+        print(_rms_value)
+        assert abs(_rms_value - ref_rms_value) < ctf.ABS_ERR
 
 
 def test_pause_shrink_speech():
