@@ -201,7 +201,7 @@ def test_aug_rn_aug_rd():
         assert not np.array_equal(aug_obj_a.get().data, aug_obj_b.get().data)
 
 
-def test_aug_chaininig():
+def test_aug_chaining():
     """
     Tests the functionality of the mcs class by generating a multichannel
     sound, computing its RMS values, and comparing them to the expected values.
@@ -220,7 +220,8 @@ def test_aug_chaininig():
     out = ctf.shrink(eval_results_list)
     ref_rms_list = "[0.70710844,0.7071083,0.707108,0.70710754]"
 
-    print(out)
+    print('out:', out)
+    print('ref:', ref_rms_list)
     mcs.info()
     assert out == ref_rms_list
 
