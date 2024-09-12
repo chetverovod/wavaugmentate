@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Usage &#8212; wavaugmentate 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="aug module" href="aug.html" />
+    <link rel="prev" title="Wavaugmentate package documentation" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<p>To use wavaugmentate, first install it using pip:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>wavaugmentate
+</pre></div>
+</div>
+</section>
+<section id="as-console-application">
+<h2>As Console Application<a class="headerlink" href="#as-console-application" title="Permalink to this heading">¶</a></h2>
+<p>To change time delay between channels:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>./wavaugmentate.py<span class="w"> </span>-i<span class="w"> </span>./test_sounds/test_sound_1.wav<span class="w"> </span>-o<span class="w"> </span>./outputwav/out.wav<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;100, 200, 300, 400&quot;</span>
+</pre></div>
+</div>
+<p>To change amplitudes of channels:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>./wavaugmentate.py<span class="w"> </span>-i<span class="w"> </span>./outputwav/out.wav<span class="w"> </span>-o<span class="w"> </span>./outputwav/out.wav<span class="w"> </span>-a<span class="w"> </span><span class="s2">&quot;0.1, 0.2, 0.3, 0.4&quot;</span>
+</pre></div>
+</div>
+<p>To apply sequence of augmentations just chain steps one by one:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>./wavaugmentate.py<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;rd(&quot;./test_sounds/test_sound_1.wav&quot;).dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(&quot;./outputwav/sound_delayed.wav&quot;)&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="in-python-code">
+<h2>In Python Code<a class="headerlink" href="#in-python-code" title="Permalink to this heading">¶</a></h2>
+<p>Augmentation step by step, Example 1:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
+<span class="kn">from</span> <span class="nn">aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+
+<span class="c1"># File name of original sound.</span>
+<span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
+
+<span class="c1"># Create Mcs-object.</span>
+<span class="n">mcs</span> <span class="o">=</span> <span class="n">Mcs</span><span class="p">()</span>
+
+<span class="c1"># Read WAV-file to Mcs-object.</span>
+<span class="n">mcs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+<span class="c1"># Change quantity of channels to 7.</span>
+<span class="n">mcs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+<span class="c1"># Create augmentation object.</span>
+<span class="n">aug</span> <span class="o">=</span> <span class="n">Aug</span><span class="p">(</span><span class="n">mcs</span><span class="p">)</span>
+
+<span class="c1"># Apply delays.</span>
+<span class="c1"># Corresponds to channels quantity.</span>
+<span class="n">delay_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
+<span class="n">aug</span><span class="o">.</span><span class="n">delay_ctrl</span><span class="p">(</span><span class="n">delay_list</span><span class="p">)</span>
+
+<span class="c1"># Apply amplitude changes.</span>
+<span class="c1"># Corresponds to channels quantity.</span>
+<span class="n">amplitude_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>
+<span class="n">aug</span><span class="o">.</span><span class="n">amplitude_ctrl</span><span class="p">(</span><span class="n">amplitude_list</span><span class="p">)</span>
+
+<span class="c1"># Augmentation result saving by single file, containing 7 channels.</span>
+<span class="n">aug</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sound_aug_file_path</span><span class="p">)</span>
+
+<span class="c1"># Augmentation result saving to 7 files, each 1 by channel.</span>
+<span class="c1"># ./outputwav/sound_augmented_1.wav</span>
+<span class="c1"># ./outputwav/sound_augmented_2.wav and so on.</span>
+<span class="n">aug</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">write_by_channel</span><span class="p">(</span><span class="n">sound_aug_file_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The same code as chain of operations, Example 2:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
+<span class="kn">from</span> <span class="nn">aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+<span class="n">delay_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
+<span class="n">amplitude_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>
+
+<span class="c1"># Apply all transformations of Example 1 in chain.</span>
+<span class="n">Aug</span><span class="p">(</span><span class="n">Mcs</span><span class="p">()</span><span class="o">.</span><span class="n">rd</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span><span class="o">.</span><span class="n">splt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">dly</span><span class="p">(</span><span class="n">delay_list</span><span class="p">)</span><span class="o">.</span><span class="n">amp</span><span class="p">(</span><span class="n">amplitude_list</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">wr</span><span class="p">(</span>
+<span class="n">ctf</span><span class="o">.</span><span class="n">OUTPUTWAV_DIR</span> <span class="o">+</span> <span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Augmentation result saving to 7 files, each 1 by channel.</span>
+<span class="n">mcs</span><span class="o">.</span><span class="n">wrbc</span><span class="p">(</span><span class="n">ctf</span><span class="o">.</span><span class="n">OUTPUTWAV_DIR</span> <span class="o">+</span> <span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">wavaugmentate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#as-console-application">As Console Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#in-python-code">In Python Code</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aug.html">aug module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcs.html">mcs module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wavaugmentate.html">wavaugmentate module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Wavaugmentate package documentation</a></li>
+      <li>Next: <a href="aug.html" title="next chapter">aug module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Igor Plastov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/source/usage.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

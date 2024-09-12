@@ -5,7 +5,7 @@
 
 Wavaugmentate package documentation
 ===================================
-.. image:: ../pictures/title_image.png
+.. image:: pictures/title_image.png
 
 The module **wavaugmentate** provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
 
