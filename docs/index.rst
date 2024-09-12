@@ -3,17 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-wavaugmentate documentation
-===========================
+Wavaugmentate package documentation
+===================================
+The module **wavaugmentate** provides the Mcs, Aug classes and console utility wavaugmentate.
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+Mcs is an object for  multi-channel audio.
+Aug helps to perform augmentation data inside Mcs objects for AI models learning purpose.
 
 
 .. toctree::
+   /source/usage.rst
+   /source/aug.rst
+   /source/mcs.rst
    /source/modules.rst
    :maxdepth: 2
    :caption: Contents:
+
+.. note::
+   This project is under active development.
 
 

@@ -394,7 +394,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def augmentate(args):
     """CLI arguments parsing."""
 
     args = parse_args()
@@ -406,6 +406,13 @@ def main():
     noise_hdr(args)
     delay_hdr(args)
     echo_hdr(args)
+
+
+def main():
+    """CLI arguments parsing."""
+
+    args = parse_args()
+    augmentate(args)
 
 
 if __name__ == "__main__":

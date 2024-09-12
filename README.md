@@ -146,8 +146,10 @@ for i in range(aug_count):
 
 Just run:
 ```shell
+export  PYTHONPATH='./src/wavaugmentate'
 pytest
 ```
+
 Test coverage:
 ```
 ---------- coverage: platform linux, python 3.11.4-final-0 -----------
