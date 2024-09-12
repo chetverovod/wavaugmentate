@@ -3,7 +3,9 @@
 
 ![alt text](./pictures/title_image.png)
 
-  The module provides the Mcs class, which helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
+  The module provides the Mcs and Aug classes.
+  - Mcs is a multi-channel audio.
+  - Aug helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
 
 # Input Data
 
