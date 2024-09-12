@@ -1,18 +1,11 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
-import sys
-
 import common_test_functions as ctf
 import numpy as np
-
-sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
-import aug as am
 from mcs import Mcs
 from aug import Aug
-
-
 
 
 def test_aug_amp_control():
@@ -30,15 +23,15 @@ def test_aug_amp_control():
     """
 
     a_list = [0.1, 0.3, 0.4, 1]
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    ao = am.Aug(test_sound_1)
-    
-    ao.amp(a_list)
-    res1 = ao.signal
+    aug_obj = Aug(test_sound_1)
+
+    aug_obj.amp(a_list)
+    res1 = aug_obj.signal
     print("res1 =", res1.data)
 
-    dest = am.Aug()
+    dest = Aug()
 
     res2 = dest.put(test_sound_1).amp(a_list).get()
 
@@ -61,13 +54,12 @@ def test_aug_dly_controls():
     """
 
     d_list = [100, 200, 300, 0]
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
-    #mcs = test_sound_1.copy()
-    ao = Aug(test_sound_1)
+    aug_obj = Aug(test_sound_1)
 
-    ao.dly(d_list)
-    res1 = ao.get()
+    aug_obj.dly(d_list)
+    res1 = aug_obj.get()
     print("res1 shape =", res1.data.shape)
     print("res1 =", res1.data)
 
@@ -101,22 +93,22 @@ def test_aug_echo():
     """
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = am.Aug(mcs)
-    ao.echo(d_list, a_list)
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj = Aug(mcs)
+    aug_obj.echo(d_list, a_list)
+    rms_list = aug_obj.get().rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
         assert abs(rms_value - ref) < ctf.ABS_ERR
 
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = am.Aug(mcs)
-    ao.echo(d_list, a_list)
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj = Aug(mcs)
+    aug_obj.echo(d_list, a_list)
+    rms_list = aug_obj.get().rms(decimals=3)
     reference_list = [0.437, 0.461, 0.515, 0.559]
     for rms_value, ref in zip(rms_list, reference_list):
         assert abs(rms_value - ref) < ctf.ABS_ERR
@@ -143,80 +135,70 @@ def test_aug_noise():
 
     n_list = [1, 0.2, 0.3, 0]
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.set_seed(42)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(mcs)
-    ao.ns(n_list)
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj = Aug(mcs)
+    aug_obj.ns(n_list)
+    rms_list = aug_obj.get().rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
     for rms_value, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(rms_value - ref) < 0.01
 
 
-
-
 #  Test not finished.
 def test_aug_rn_rd():
     """Test augmentation on the fly."""
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
-    ao = Aug(mcs)
+    aug_obj = Aug(mcs)
 
-    mcs_for_chain = ms.Mcs()
+    mcs_for_chain = Mcs()
     mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
-    ao1 = Aug(mcs_for_chain)
+    aug_obj_1 = Aug(mcs_for_chain)
 
-    assert np.array_equal(ao.get().data, ao1.get().data)
+    assert np.array_equal(aug_obj.get().data, aug_obj_1.get().data)
 
-    ao1.amp([1, 0.7, 0.5, 0.3])
-    ao.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(ao.get().data, ao1.get().data)
-
-    """
-    ao1.achn(["amp([1, 0.7, 0.5, 0.3])"])
-    res = ao1.rdac(ctf.TEST_SOUND_1_FILE)
-    print("b = ", res[0].data)
-
-    assert np.array_equal(mcs.data, res[0].data)
-    """
+    aug_obj_1.amp([1, 0.7, 0.5, 0.3])
+    aug_obj.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(aug_obj.get().data, aug_obj_1.get().data)
 
 
 def test_aug_rn_aug_rd():
     """Test augmentation on the fly."""
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
-    ao_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
+    aug_obj_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
-    ao_b = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
+    aug_obj_b = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
-    assert np.array_equal(mcs.data, ao_a.get().data)
-    assert np.array_equal(mcs.data, ao_b.get().data)
+    assert np.array_equal(mcs.data, aug_obj_a.get().data)
+    assert np.array_equal(mcs.data, aug_obj_b.get().data)
 
-    ao_a.amp([1, 0.7, 0.5, 0.3])
-    ao_b.amp([1, 0.7, 0.5, 0.3])
-    assert np.array_equal(ao_a.get().data, ao_b.get().data)
+    aug_obj_a.amp([1, 0.7, 0.5, 0.3])
+    aug_obj_b.amp([1, 0.7, 0.5, 0.3])
+    assert np.array_equal(aug_obj_a.get().data, aug_obj_b.get().data)
 
-    ao_a.set_seed(42)
-    ao_b.set_seed(42)
-    ao_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    ao_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-    assert np.array_equal(ao_a.get().data, ao_b.get().data)
+    aug_obj_a.set_seed(42)
+    aug_obj_b.set_seed(42)
+    aug_obj_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    aug_obj_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+    assert np.array_equal(aug_obj_a.get().data, aug_obj_b.get().data)
 
-    ao_a.set_seed(-1)
-    ao_b.set_seed(-1)
+    aug_obj_a.set_seed(-1)
+    aug_obj_b.set_seed(-1)
     for _ in range(10):
-        ao_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        ao_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
-        assert not np.array_equal(ao_a.get().data, ao_b.get().data)
+        aug_obj_a.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        aug_obj_b.amp([1, 0.7, 0.5, 0.3], [1, 0.7, 0.5, 0.3])
+        assert not np.array_equal(aug_obj_a.get().data, aug_obj_b.get().data)
 
 
 def test_aug_chaininig():
@@ -231,7 +213,7 @@ def test_aug_chaininig():
         None
     """
 
-    mcs = ms.Mcs()
+    mcs = Mcs()
     cmd_prefix = "mcs."
     cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
     eval_results_list = str(eval(cmd_prefix + cmd.strip()))
@@ -267,11 +249,10 @@ def test_readme_examples():
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
-    samp_rt = 44100  # Select sampling frequency, Hz.
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = Mcs().generate(freq_list, time_len, samp_rt)
+    mcs1 = Mcs().generate(freq_list, time_len, ms.DEF_FS)
     mcs1.write(file_name)
 
     # Examples code for  README.md
@@ -289,7 +270,7 @@ def test_readme_examples():
 
     # Change quantity of channels to 7.
     mcs.split(7)
-   
+
     # Create augmentation object.
     aug = Aug(mcs)
 
@@ -328,7 +309,7 @@ def test_readme_examples():
     # Example 5:
 
     file_name = sound_file_path
-    mcs = ms.Mcs()
+    mcs = Mcs()
     mcs.rd(file_name)  # Read original file with single channel.
     file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
 
@@ -365,7 +346,7 @@ def test_aug_noise_ctrl():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = Aug(test_sound_1).noise_ctrl([1, 0.2, 0.3, 0]).get()
@@ -376,7 +357,6 @@ def test_aug_noise_ctrl():
     for rms_value, ref in zip(rms_list, reference_list):
         # Threshold increased, because noise is not repeatable with fixed seed.
         assert abs(rms_value - ref) < 0.01
-
 
 
 def test_aug_sum():
@@ -398,11 +378,11 @@ def test_aug_sum():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_2 = Mcs(samp_rt=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
-    
+
     res = Aug(test_sound_1)
     res.sum(test_sound_2)
     res.get().write(ctf.TEST_SOUND_1_FILE)
@@ -432,7 +412,7 @@ def test_aug_merge():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = Aug(test_sound_1.copy())
     res.merge()
@@ -463,15 +443,15 @@ def test_aug_split():
         None
     """
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
-    ao = Aug(test_sound_1)
-    ao.split(5)
-    ao.get().write(ctf.TEST_SOUND_1_FILE)
+    aug_obj = Aug(test_sound_1)
+    aug_obj.split(5)
+    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
     ref_value = 0.707
-    rms_list = ao.get().rms(decimals=3)
+    rms_list = aug_obj.get().rms(decimals=3)
     print(rms_list)
-    for i in range(0, ao.get().shape()[0]):
+    for i in range(0, aug_obj.get().shape()[0]):
         assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
 
 
@@ -496,11 +476,11 @@ def test_aug_chain_sum():
         None
     """
 
-    mcs = ms.Mcs()
-    res = ms.Mcs()
+    mcs = Mcs()
+    res = Mcs()
     mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = Aug(mcs.copy())
-    test_sound_2 = ms.Mcs()
+    test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res.sum(test_sound_2).get().wr(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
@@ -527,11 +507,10 @@ def test_aug_chain_merge():
         None
     """
 
-    ao = Aug()
+    aug_obj = Aug()
     rms_list = (
-        ao.get().gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-        .mrg()
-        .wr(ctf.TEST_SOUND_1_FILE)
+        aug_obj.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+        .mrg().get().wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
     )
     print(rms_list)
@@ -541,16 +520,13 @@ def test_aug_chain_merge():
 
 def test_aug_chain_split():
     """
-    Test the functionality of the `splt` and `wr` methods in the `mcs`
-    class.
+    Tests the functionality of the `split` method in the `Aug` class.
 
-    This function creates a `mcs` instance and generates a multichannel
-    sound using the `gen` method. It then splits the channels using the `splt`
-    method and writes the result to a file using the `wr` method. The function
-    then checks the shape of the `data` attribute of the `mcs` instance and
-    compares it to the expected value. It also calculates the root mean square
-    (RMS) value of the generated sound using the `rms` method and compares it
-    to the expected value.
+    This function creates an instance of the `Aug` class, generates a
+    multichannel sound using the `gen` method, splits the sound into multiple
+    channels using the `splt` method, writes the result to a file using the
+    `wr` method, and calculates the root mean square (RMS) value of the split
+    sound using the `rms` method.
 
     Args:
         None
@@ -559,13 +535,12 @@ def test_aug_chain_split():
         None
     """
 
-    mcs = Mcs().gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(mcs)
-    ao.splt(5).get().wr(ctf.TEST_SOUND_1_FILE)
-    channels = ao.get().channels_count()
+    aug_obj = Aug().gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    aug_obj.splt(5).get().wr(ctf.TEST_SOUND_1_FILE)
+    channels = aug_obj.get().channels_count()
     assert channels == 5
     ref_value = 0.707
-    rms_list = ao.get().rms(decimals=3)
+    rms_list = aug_obj.get().rms(decimals=3)
     print(rms_list)
     for i in range(0, channels):
         assert abs(rms_list[i] - ref_value) < ctf.ABS_ERR
@@ -593,9 +568,9 @@ def test_aug_chain_side_by_side():
     test_sound_1 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mcs = Mcs().gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
 
-    ao = Aug(mcs)
+    aug_obj = Aug(mcs)
     rms_list = (
-        ao.amp([0.3])
+        aug_obj.amp([0.3])
         .sbs(test_sound_1)
         .get().wr(ctf.TEST_SOUND_1_FILE)
         .rms(decimals=3)
@@ -605,6 +580,7 @@ def test_aug_chain_side_by_side():
     for rms_list, ref in zip(rms_list, ref_value):
         print(rms_list)
         assert abs(rms_list - ref) < ctf.ABS_ERR
+
 
 def test_aug_pause_detect():
     """
@@ -625,14 +601,14 @@ def test_aug_pause_detect():
     """
 
     test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(test_sound_1)
-    mask = ao.pause_detect([0.5, 0.3])
-    ao.side_by_side(mask)
+    aug_obj = Aug(test_sound_1)
+    mask = aug_obj.pause_detect([0.5, 0.3])
+    aug_obj.side_by_side(mask)
     print(test_sound_1)
-    ao.get().write(ctf.TEST_SOUND_1_FILE)
-    rms_list = ao.get().rms(decimals=3)
-    ref_rms_list = [0.707, 0.707, 0.865, 0.923]
-    for rms_value, ref in zip(rms_list, ref_rms_list):
+    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
+    _rms_list = aug_obj.get().rms(decimals=3)
+    _ref_rms_list = [0.707, 0.707, 0.865, 0.923]
+    for rms_value, ref in zip(_rms_list, _ref_rms_list):
         print(rms_value)
         assert abs(rms_value - ref) < ctf.ABS_ERR
 
@@ -653,10 +629,10 @@ def test_aug_chain_pause_detect():
 
     mcs = Mcs()
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(mcs)
-    mask = ao.pdt([0.5, 0.3])
-    ao.sbs(mask).get().wr(ctf.TEST_SOUND_1_FILE)
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj = Aug(mcs)
+    mask = aug_obj.pdt([0.5, 0.3])
+    aug_obj.sbs(mask).get().wr(ctf.TEST_SOUND_1_FILE)
+    rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for i, rms_value in enumerate(rms_list):
         print(rms_value)
@@ -672,9 +648,9 @@ def test_aug_pause_shrink_sine():
     sample rate. It then applies the pause_detect function to the generated
     sound and writes the result to a file using the write function. The
     function then applies the pause_shrink function to the generated sound and
-    writes the result to a file using the write function. Finally, it calculates
-    the root mean square (RMS) value of the sound using the rms method and
-    compares it to the expected values.
+    writes the result to a file using the write function. Finally, it
+    calculates the root mean square (RMS) value of the sound using the rms
+    method and compares it to the expected values.
 
     Args:
         None
@@ -683,15 +659,15 @@ def test_aug_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = ms.Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(test_sound_1)
+    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    aug_obj = Aug(test_sound_1)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
     print(res)
-    ao.pause_shrink(mask, [20, 4])
-    ao.get().write(ctf.TEST_SOUND_1_FILE)
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj.pause_shrink(mask, [20, 4])
+    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
+    rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)
@@ -719,17 +695,17 @@ def test_aug_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = ms.Mcs(seed=42)
+    test_sound_1 = Mcs(seed=42)
     test_sound_1.generate(
         [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech"
     )
-    ao = Aug(test_sound_1)
+    aug_obj = Aug(test_sound_1)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
     res.write(ctf.TEST_SOUND_1_FILE)
-    ao.pause_shrink(mask, [20, 4])
-    rms_list = ao.get().rms(decimals=3)
+    aug_obj.pause_shrink(mask, [20, 4])
+    rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.331, 0.324]
     for rms_value, ref_value in zip(rms_list, ref_rms_list):
         print(rms_value)
@@ -756,15 +732,15 @@ def test_aug_pause_set():
         None
     """
 
-    test_sound_1 = ms.Mcs(seed=42).generate(
+    test_sound_1 = Mcs(seed=42).generate(
         [100, 300], 0.003, ctf.FS, mode="speech"
     )
 
-    ao = Aug(test_sound_1)
-    mask = ao.pause_detect([0.5, 0.3])
+    aug_obj = Aug(test_sound_1)
+    mask = aug_obj.pause_detect([0.5, 0.3])
     pause_list = ms.pause_measure(mask)
-    ao.pause_set(pause_list, [10, 150])
-    res = ao.get().copy()
+    aug_obj.pause_set(pause_list, [10, 150])
+    res = aug_obj.get().copy()
     assert res.shape() == (2, 1618)
     res.write(ctf.TEST_SOUND_1_FILE)
     rms_list = res.rms(decimals=3)
@@ -789,63 +765,27 @@ def test_aug_chain_add_chain():
     Returns:
         None
     """
-    mcs = ms.Mcs(samp_rt=ctf.FS).gen([1000, 300], 5)
-    mcs_1 = ms.Mcs(mcs.data, mcs.sample_rate).gen([700, 100], 5)  # Create a Mcs instance
-     
-    ao = Aug(mcs)
-    ao_1 = Aug(mcs_1)
-    
+    mcs = Mcs(samp_rt=ctf.FS).gen([1000, 300], 5)
+
+    # Create a Mcs instance
+    mcs_1 = Mcs(mcs.data, mcs.sample_rate).gen([700, 100], 5)
+
+    aug_obj = Aug(mcs_1)
+
     # Define the first chain command
     chain_1 = "amp([0.3, 0.2]).get().rms(decimals=3)"
     # Define the second chain command
     chain_2 = "amp([0.15, 0.1]).get().rms(decimals=3)"
-    ao_1.achn([chain_1, chain_2])  # Add the chain commands to the chains list
+
+    # Add the chain commands to the chains list
+    aug_obj.achn([chain_1, chain_2])
     print(chain_1)  # Print the first chain command
     print(chain_2)  # Print the second chain command
-    rms_list = ao_1.eval()  # Evaluate the chains
+    rms_list = aug_obj.eval()  # Evaluate the chains
     print("rms list:", rms_list)  # Print the result
-    #ref_rms_list = [[0.212], [0.106]]  # Define the expected values
     ref_rms_list = [[0.212], [0.032]]  # Define the expected values
     # Compare the result to the expected values
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
         print(rms_value)  # Print the result
         # Assert that the result is within the expected tolerance
         assert abs(rms_value[0] - ref_rms_value[0]) < ctf.ABS_ERR
-
-    
-def test_aug_pause_set():
-    """
-    Tests the functionality of the pause_set function.
-
-    This function generates a multichannel sound using the generate function
-    from the wau module with the given frequency lists, time duration, and
-    sample rate. It then applies the pause_detect function to the generated
-    sound and writes the result to a file using the write function. The
-    function then applies the pause_measure function to the generated sound
-    and writes the result to a file using the write function. Finally, it
-    calculates the root mean square (RMS) value of the sound using the rms
-    method and compares it to the expected values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    test_sound_1 = Mcs(seed=42).generate(
-        [100, 300], 0.003, ctf.FS, mode="speech"
-    )
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    pause_list = ms.pause_measure(mask)
-    aug = Aug(test_sound_1)  
-    aug.pause_set(pause_list, [10, 150])
-    # res = test_sound_1.copy()
-    res = aug.get().copy()
-    assert res.shape() == (2, 1618)
-    res.write(ctf.TEST_SOUND_1_FILE)
-    rms_list = res.rms(decimals=3)
-    ref_rms_list = [0.105, 0.113]
-    for r_value, ref_value in zip(rms_list, ref_rms_list):
-        print(r_value)
-        assert abs(r_value - ref_value) < ctf.ABS_ERR

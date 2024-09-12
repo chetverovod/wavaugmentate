@@ -133,13 +133,14 @@ class Mcs:
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-            last_index (int): The last index to consider when calculating the RMS.
-            If -1, consider the entire array. Defaults to -1.
-            decimals (int): Number of decimal places to round the RMS value.
+            last_index (int): The last index to consider when calculating the
+            RMS.  If -1, consider the entire array. Defaults to -1.  decimals
+            (int): Number of decimal places to round the RMS value.
             If -1, do not round. Defaults to -1.
 
         Returns:
-            list: A list of RMS values for each channel in the multichannel sound.
+            list: A list of RMS values for each channel in the multichannel
+            sound.
 
         """
 
@@ -171,12 +172,12 @@ class Mcs:
         mode="sine",
     ) -> "Mcs":
         """
-        Generate a multichannel sound based on the given frequency list, duration,
-        sample rate, and mode. The mode can be 'sine' or 'speech'. In 'sine' mode,
-        output multichannel sound will be a list of sine waves. In 'speech' mode,
-        output will be a list of speech like signals. In this mode input
-        frequencies list will be used as basic tone frequency for corresponding
-        channel, it should be in interval 600..300.
+        Generate a multichannel sound based on the given frequency list,
+        duration, sample rate, and mode. The mode can be 'sine' or 'speech'. In
+        'sine' mode, output multichannel sound will be a list of sine waves. In
+        'speech' mode, output will be a list of speech like signals. In this
+        mode input frequencies list will be used as basic tone frequency for
+        corresponding channel, it should be in interval 600..300.
 
         Args:
         frequency_list (list): A list of frequencies to generate sound for.
@@ -232,13 +233,13 @@ class Mcs:
 
     def write(self, path: str) -> "Mcs":
         """
-            Writes the given multichannel sound data to a WAV file at the specified
-            path.
+        Writes the given multichannel sound data to a WAV file at the specified
+        path.
 
         Args:
             path (str): The path to the WAV file.
-            mcs_data (np.ndarray): The multichannel sound data to write. The shape
-            of the array should be (num_channels, num_samples).
+            mcs_data (np.ndarray): The multichannel sound data to write. The
+            shape of the array should be (num_channels, num_samples).
 
         Returns:
         self (Mcs):  representing saved multichannel sound.
@@ -253,7 +254,8 @@ class Mcs:
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
 
-        File name will be modified to include the channel number. If path contains
+        File name will be modified to include the channel number. If path
+        contains
         ./outputwav/sound_augmented.wav the output file names will be
         ./outputwav/sound_augmented_1.wav
         ./outputwav/sound_augmented_2.wav and so on.
@@ -295,7 +297,6 @@ class Mcs:
 
     # Audio augmentation functions
 
-
     def pause_detect(self, relative_level: List[float]) -> np.ndarray[int]:
         """
             Detects pauses in a multichannel sound.
@@ -306,9 +307,9 @@ class Mcs:
             channel, signal below this level will be marked as pause.
 
         Returns:
-            np.ndarray: The mask indicating the pauses in the multichannel sound.
-            The mask has the same shape as the input sound. It contains zeros and
-            ones 0 - pause, 1 - not a pause.
+            np.ndarray: The mask indicating the pauses in the multichannel
+            sound.  The mask has the same shape as the input sound. It contains
+            zeros and ones 0 - pause, 1 - not a pause.
         """
 
         rms_list = self.rms()
@@ -317,7 +318,8 @@ class Mcs:
 
         for i in range(0, self.data.shape[0]):
             threshold = rms_list[i] * relative_level[i]
-            mask[i] = np.clip(modules_list[i], a_min=threshold, a_max=1.1 * threshold)
+            mask[i] = np.clip(modules_list[i], a_min=threshold,
+                              a_max=1.1 * threshold)
             mask[i] -= threshold
             mask[i] /= 0.09 * threshold
             mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
@@ -330,8 +332,8 @@ class Mcs:
         Shrink pauses in multichannel sound.
 
         Args:
-            mask (np.ndarray): The mask indicating the pauses in the multichannel
-            sound.
+            mask (np.ndarray): The mask indicating the pauses in the
+            multichannel sound.
             min_pause (List[int]): The list of minimum pause lengths for
             each channel in samples.
 
@@ -360,13 +362,27 @@ class Mcs:
     def channels_count(self) -> int:
         """Returns the number of channels in the multichannel signal."""
 
-        channels_count = 0
+        c_count = 0
         if self.data is not None:
             if len(self.data.shape) > 1:
-                channels_count = self.data.shape[0]
+                c_count = self.data.shape[0]
             else:
-                channels_count = 1
-        return channels_count
+                c_count = 1
+        return c_count
+
+    def channels_len(self) -> int:
+        """
+        Returns the number of sample in one  channel of multichannel
+         signal.
+        """
+
+        c_len = 0
+        if self.data is not None:
+            if len(self.data.shape) > 1:
+                c_len = self.data.shape[1]
+            else:
+                c_len = len(self.data)
+        return c_len
 
     def split(self, channels_count: int) -> "Mcs":
         """
@@ -374,10 +390,12 @@ class Mcs:
         identical channels.
 
         Args:
-            channels_count (int): The number of channels to split the signal into.
+            channels_count (int): The number of channels to split the signal
+            into.
 
         Returns:
-            self (Mcs): The split multichannel signal, with each channel identical.
+            self (Mcs): The split multichannel signal, with each channel
+            identical.
         """
 
         if self.channels_count() > 1:
@@ -441,8 +459,8 @@ class Mcs:
             mcs_data2 (Mcs): The second multichannel sound signal.
 
         Returns:
-            self (Mcs): The concatenated sound signal containing channels of both
-            MCS.
+            self (Mcs): The concatenated sound signal containing channels of
+            both MCS.
         """
 
         out_data = np.zeros(

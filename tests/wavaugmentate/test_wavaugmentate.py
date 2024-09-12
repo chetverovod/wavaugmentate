@@ -1,14 +1,9 @@
 """Module providing test functions for wavaugmentate.py  module."""
 import os
 import subprocess as sp
-import sys
-
 import common_test_functions as ctf
-import numpy as np
-
-sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
-
+from mcs import Mcs
 import wavaugmentate as wau
 
 def test_echo_ctrl_option():
@@ -39,7 +34,7 @@ def test_echo_ctrl_option():
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
 
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
@@ -68,7 +63,7 @@ def test_echo_ctrl_option():
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
 
-    written = ms.Mcs()
+    written = Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220522
@@ -105,7 +100,7 @@ def test_wavaugmentate_noise_option():
     """
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    test_sound_1 = ms.Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(samp_rt=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
@@ -130,7 +125,7 @@ def test_wavaugmentate_noise_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = ms.Mcs()
+    written = Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220500
@@ -218,7 +213,7 @@ def test_wavaugmentate_amplitude_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = ms.Mcs()
+    written = Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220500
@@ -344,7 +339,7 @@ def test_wavaugmentate_delay_option():
     print("ref:", ref)
     assert out == ref
     assert os.path.exists(ctf.OUTPUT_FILE)
-    written = ms.Mcs()
+    written = Mcs()
     written.read(ctf.OUTPUT_FILE)
     for channel in written.data:
         assert channel.shape[0] == 220513

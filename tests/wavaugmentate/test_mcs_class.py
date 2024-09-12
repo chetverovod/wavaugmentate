@@ -1,12 +1,8 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
-import sys
-
 import common_test_functions as ctf
 import numpy as np
-
-sys.path.insert(1, ctf.WAU_DIR)
 import mcs as ms
 from mcs import Mcs
 from aug import Aug
@@ -116,15 +112,15 @@ def test_mcs_write_by_channel():
     # Apply delays.
     # Corresponds to channels quantity.
     delay_list = [0, 150, 200, 250, 300, 350, 400]
-    ao = Aug(mcs)
-    ao.delay_ctrl(delay_list)
+    aug_obj = Aug(mcs)
+    aug_obj.delay_ctrl(delay_list)
 
     # Apply amplitude changes.
     # Corresponds to channels quantity.
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    ao.amplitude_ctrl(amplitude_list)
+    aug_obj.amplitude_ctrl(amplitude_list)
 
-    ao.get().write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
+    aug_obj.get().write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
 
     for i in range(7):
         mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
@@ -373,8 +369,8 @@ def test_side_by_side():
     """
 
     test_sound_1 = Mcs().generate([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    ao = Aug(test_sound_1)
-    test_sound_1 = ao.amplitude_ctrl([0.3]).get()
+    aug_obj = Aug(test_sound_1)
+    test_sound_1 = aug_obj.amplitude_ctrl([0.3]).get()
     test_sound_2 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_1.side_by_side(test_sound_2)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
