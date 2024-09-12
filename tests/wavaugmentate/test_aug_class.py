@@ -387,10 +387,10 @@ def test_aug_sum():
     res.sum(test_sound_2)
     res.get().write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
-    for sound, ref_value in zip([test_sound_1, test_sound_2, res.get()], ref):
-        rms_value = sound.rms(decimals=3)
-        print(rms_value)
-        assert abs(rms_value[0] - ref_value) < ctf.ABS_ERR
+    for _sound, ref_value in zip([test_sound_1, test_sound_2, res.get()], ref):
+        _rms_value = _sound.rms(decimals=4)
+        print(_rms_value)
+        assert abs(_rms_value[0] - ref_value) < ctf.ABS_ERR
 
 
 def test_aug_merge():
@@ -634,9 +634,9 @@ def test_aug_chain_pause_detect():
     aug_obj.sbs(mask).get().wr(ctf.TEST_SOUND_1_FILE)
     rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
-    for i, rms_value in enumerate(rms_list):
+    for rms_value, ref_rms in zip(rms_list, ref_rms_list):
         print(rms_value)
-        assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
+        assert abs(rms_value - ref_rms) < ctf.ABS_ERR
 
 
 def test_aug_pause_shrink_sine():
@@ -659,10 +659,9 @@ def test_aug_pause_shrink_sine():
         None
     """
 
-    test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    aug_obj = Aug(test_sound_1)
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    res = test_sound_1.copy()
+    aug_obj = Aug().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mask = aug_obj.pause_detect([0.5, 0.3])
+    res = aug_obj.copy()
     res.side_by_side(mask)
     print(res)
     aug_obj.pause_shrink(mask, [20, 4])
@@ -695,15 +694,14 @@ def test_aug_pause_shrink_speech():
         None
     """
 
-    test_sound_1 = Mcs(seed=42)
-    test_sound_1.generate(
+    aug_obj = Aug(seed=42)
+    aug_obj.generate(
         [100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS, mode="speech"
     )
-    aug_obj = Aug(test_sound_1)
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    res = test_sound_1.copy()
-    res.side_by_side(mask)
-    res.write(ctf.TEST_SOUND_1_FILE)
+    mask = aug_obj.pause_detect([0.5, 0.3])
+    aug_obj_1 = aug_obj.copy()
+    aug_obj_1.side_by_side(mask)
+    aug_obj_1.get().write(ctf.TEST_SOUND_1_FILE)
     aug_obj.pause_shrink(mask, [20, 4])
     rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.331, 0.324]
