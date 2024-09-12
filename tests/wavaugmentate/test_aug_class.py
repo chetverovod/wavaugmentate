@@ -703,9 +703,9 @@ def test_aug_pause_shrink_speech():
     aug_obj_1.side_by_side(mask)
     aug_obj_1.get().write(ctf.TEST_SOUND_1_FILE)
     aug_obj.pause_shrink(mask, [20, 4])
-    rms_list = aug_obj.get().rms(decimals=3)
-    ref_rms_list = [0.331, 0.324]
-    for rms_value, ref_value in zip(rms_list, ref_rms_list):
+    _rms_list = aug_obj.get().rms(decimals=3)
+    _ref_rms_list = [0.331, 0.324]
+    for rms_value, ref_value in zip(_rms_list, _ref_rms_list):
         print(rms_value)
         assert abs(rms_value - ref_value) < ctf.ABS_ERR
 
