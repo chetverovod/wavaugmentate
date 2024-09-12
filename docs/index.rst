@@ -15,7 +15,9 @@ Aug helps to perform augmentation data inside Mcs objects for AI models learning
    /source/usage.rst
    /source/aug.rst
    /source/mcs.rst
-   /source/modules.rst
+   /source/wavaugmentate.rst
+
+ 
    :maxdepth: 2
    :caption: Contents:
 

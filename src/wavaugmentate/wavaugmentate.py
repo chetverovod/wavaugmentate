@@ -9,7 +9,6 @@ import os
 import sys
 from pathlib import Path
 from typing import List
-
 from scipy.io import wavfile
 import mcs as ms
 from mcs import Mcs
@@ -46,8 +45,8 @@ def file_info(path: str) -> dict:
 
 prog_name = os.path.basename(__file__).split(".")[0]
 
-application_info = f"{prog_name.capitalize()} application provides functions for \
-multichannel WAV audio data augmentation."
+application_info = f"{prog_name.capitalize()} application provides functions \
+Gfor multichannel WAV audio data augmentation."
 
 
 def validate_amp_list(amplitude_list: List[str]) -> None:
@@ -395,9 +394,39 @@ def parse_args():
 
 
 def augmentate(args):
-    """CLI arguments parsing."""
+    """
+    Augmentates the input audio file based on the provided arguments.
 
-    args = parse_args()
+    Args:
+        args (argparse.Namespace): The command line arguments.
+
+    Returns:
+        None
+
+    Raises:
+        None
+
+    This function performs the following steps:
+
+    1. Calls the `chain_hdr` function to process the chain code from the
+       arguments and execute the corresponding WaChain commands.
+    2. Calls the `input_path_hdr` function to validate the input path.
+    3. Calls the `file_info_hdr` function to retrieve information about the
+       input file.
+    4. Calls the `output_path_hdr` function to validate the output path.
+    5. Calls the `amplitude_hdr` function to perform amplitude augmentation on
+       the input file.
+    6. Calls the `noise_hdr` function to perform noise augmentation on the
+       input file.
+    7. Calls the `delay_hdr` function to perform time delay augmentation on the
+       input file.
+    8. Calls the `echo_hdr` function to perform echo augmentation on the input
+       file.
+
+    Note: This function does not return any value. It is expected to be called
+    from the main function of the program.
+    """
+
     chain_hdr(args)
     input_path_hdr(args)
     file_info_hdr(args)
