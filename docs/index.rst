@@ -9,8 +9,8 @@ Wavaugmentate package documentation
 
 The module **wavaugmentate** provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
 
-Mcs is an object for  multi-channel audio.
-Aug helps to perform augmentation data inside Mcs objects for AI models learning purpose.
+- *Mcs* is an object for  multi-channel audio.
+- *Aug* helps to perform augmentation data inside Mcs objects for AI models learning purpose.
 
 Input Data
 ----------
