@@ -568,39 +568,3 @@ def test_pause_measure():
     for res, ref in zip(res_list, ref_list):
         print(res)
         assert res == ref
-
-
-def test_pause_set():
-    """
-    Tests the functionality of the pause_set function.
-
-    This function generates a multichannel sound using the generate function
-    from the wau module with the given frequency lists, time duration, and
-    sample rate. It then applies the pause_detect function to the generated
-    sound and writes the result to a file using the write function. The
-    function then applies the pause_measure function to the generated sound
-    and writes the result to a file using the write function. Finally, it
-    calculates the root mean square (RMS) value of the sound using the rms
-    method and compares it to the expected values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    test_sound_1 = Mcs(seed=42).generate(
-        [100, 300], 0.003, ctf.FS, mode="speech"
-    )
-    mask = test_sound_1.pause_detect([0.5, 0.3])
-    pause_list = ms.pause_measure(mask)
-    test_sound_1.pause_set(pause_list, [10, 150])
-    res = test_sound_1.copy()
-    assert res.shape() == (2, 1618)
-    res.write(ctf.TEST_SOUND_1_FILE)
-    rms_list = res.rms(decimals=3)
-    ref_rms_list = [0.105, 0.113]
-    for r_value, ref_value in zip(rms_list, ref_rms_list):
-        print(r_value)
-        assert abs(r_value - ref_value) < ctf.ABS_ERR

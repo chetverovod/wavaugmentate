@@ -5,16 +5,12 @@ This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import copy
-import random
 import sys
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
-from scipy.io import wavfile
 import mcs as ms
 from mcs import Mcs
-
-
 
 
 def delay_syntez(
@@ -45,42 +41,6 @@ def delay_syntez(
     return d_list
 
 
-def pause_measure(mask: np.ndarray[int]) -> dict:
-    """
-    Measures pauses in multichannel sound.
-
-    Args:
-        mask (np.ndarray): A mask indicating the pauses in the multichannel
-        sound.
-
-    Returns:
-        list: A list of lists containing pairs of (index, length) of pauses for
-        each channel.  Length is in samples."""
-
-    n_channels = mask.shape[0]
-    pause_list = []
-    out_list = []
-    index = 0
-    for i in range(0, n_channels):
-        zero_count = 0
-        prev_val = 1
-        for j in range(0, mask.shape[1]):
-            val = mask[i][j]
-            if val == 0:
-                if prev_val == 1:
-                    index = j
-                zero_count += 1
-            else:
-                if prev_val == 0:
-                    pause_list.append((index, zero_count))
-                    zero_count = 0
-            prev_val = val
-        out_list.append(pause_list)
-        pause_list = []
-
-    return out_list
-
-
 class Aug:
     """
     Class provides augmentation of  multichannel sound
@@ -108,11 +68,27 @@ class Aug:
 
         self.chains = []  # List of chains.
 
+    def info(self) -> dict:
+        """
+        Returns a dictionary containing information about the object.
+        
+        The dictionary includes the information returned by the `info()` method
+        of the `signal` attribute of the object, as well as a key-value pair
+        where the key is 'chains' and the value is the `chains` attribute of the
+        object.
+        
+        Returns:
+            dict: A dictionary containing information about the object.
+        """
+        res = self.signal.info()
+        res['chains'] = self.chains
+        return res
+
     def set_seed(self, seed: int = -1):
         """Set seeding value."""
 
         self.signal.set_seed(seed)
- 
+
     def put(self, signal: "Mcs") -> "Aug":
         """
         Updates the multichannel sound data and sample rate of the Mcs
@@ -145,6 +121,19 @@ class Aug:
         samp_rt: int = -1,
         mode="sine",
     ) -> "Aug":
+        """
+        Generates a multichannel sound based on the given frequency list, duration, 
+        sample rate, and mode.
+
+        Args:
+            frequency_list (List[int]): A list of frequencies to generate sound for.
+            duration (float): The duration of the sound in seconds. Defaults to ms.DEF_SIGNAL_LEN.
+            samp_rt (int): The sample rate of the sound. Defaults to -1.
+            mode (str): The mode of sound generation. Can be 'sine' or 'speech'. Defaults to 'sine'.
+
+        Returns:
+            Aug: The generated multichannel sound.
+        """
 
         self.signal = self.signal.generate(
             frequency_list, duration, samp_rt, mode
@@ -172,9 +161,9 @@ class Aug:
         Returns:
             self (Mcs): The amplitude-controlled multichannel sound.
         """
-       
-        obj = self.signal.copy() 
-        if obj.info()['channels_count'] != len(amplitude_list):
+
+        obj = self.signal.copy()
+        if obj.channels_count() != len(amplitude_list):
             print(
                 ms.ERROR_MARK
                 + "Amplitude list length does not match number of channels."
@@ -183,7 +172,7 @@ class Aug:
 
         amp_list = amplitude_list
         if amplitude_deviation_list is not None:
-            if obj.info()['channels_count'] != len(amplitude_deviation_list):
+            if obj.channels_count() != len(amplitude_deviation_list):
                 print(
                     ms.ERROR_MARK
                     + "Amplitude deviation list length does not match number of channels."
@@ -232,7 +221,7 @@ class Aug:
         """
 
         obj = self.signal.copy()
-        if obj.info()['channels_count'] != len(delay_us_list):
+        if obj.channels_count() != len(delay_us_list):
             print(
                 ms.ERROR_MARK
                 + "Delay list length does not match number of channels."
@@ -240,7 +229,7 @@ class Aug:
             sys.exit(1)
 
         if delay_deviation_list is not None:
-            if obj.info()['channels_count'] != len(delay_deviation_list):
+            if obj.channels_count() != len(delay_deviation_list):
                 print(
                     ms.ERROR_MARK
                     + "Delay deviation list length does not match number of channels."
@@ -510,7 +499,7 @@ class Aug:
         for chain in list_of_chains:
             self.chains.append(chain.strip())
         return self
-    
+
     def copy(self) -> "Aug":
         """Deep Copy of the Mcs object."""
 
@@ -551,7 +540,7 @@ class Aug:
             chaining.
         """
 
-        self.read(path)
+        self.signal.read(path)
         res = self.eval()
         return res
 

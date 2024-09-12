@@ -128,11 +128,11 @@ def chain_hdr(args):
         return
     chain = args.chain_code.strip()
     print("chain:", chain)
-    ao = Aug()
-    cmd_prefix = "ao."
+    aug_obj = Aug()
+    cmd_prefix = "aug_obj."
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
-    ao.info()
+    aug_obj.info()
     sys.exit(0)
 
 
@@ -215,9 +215,9 @@ def amplitude_hdr(args):
         sys.exit(2)
 
     mcs = Mcs().read(args.in_path)
-    ao = Aug(mcs)
-    ao.amplitude_ctrl(float_list)
-    ao.get().write(args.out_path)
+    aug_obj = Aug(mcs)
+    aug_obj.amplitude_ctrl(float_list)
+    aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -244,9 +244,9 @@ def noise_hdr(args):
 
     mcs = ms.Mcs().read(args.in_path)
     mcs.read(args.in_path)
-    ao = Aug(mcs)
-    ao.noise_ctrl(float_list)
-    ao.get().write(args.out_path)
+    aug_obj = Aug(mcs)
+    aug_obj.noise_ctrl(float_list)
+    aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -292,9 +292,9 @@ def echo_hdr(args):
     print(f"amplitudes: {float_list}")
 
     mcs = ms.Mcs().read(args.in_path)
-    ao = Aug(mcs)
-    ao.echo_ctrl(int_list, float_list)
-    ao.get().write(args.out_path)
+    aug_obj = Aug(mcs)
+    aug_obj.echo_ctrl(int_list, float_list)
+    aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 
@@ -320,9 +320,9 @@ def delay_hdr(args):
         sys.exit(2)
 
     mcs = ms.Mcs().read(args.in_path)
-    ao = Aug(mcs)
-    ao.delay_ctrl(int_list)
-    ao.get().write(args.out_path)
+    aug_obj = Aug(mcs)
+    aug_obj.delay_ctrl(int_list)
+    aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
     sys.exit(0)
 

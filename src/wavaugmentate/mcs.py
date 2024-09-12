@@ -357,52 +357,6 @@ class Mcs:
         self.data = out_data.copy()
         return self
 
-    def pause_set(self, pause_map: list, pause_sz: List[int]) -> "Mcs":
-        """
-        Set pauses lengths in multichannel sound to selected values.
-
-        Args:
-            pause_map (list): A list of dictionaries containing pairs of (index,
-            length) of pauses for each channel.
-            pause_sz (List[int]): A list of pause sizes for each channel.
-
-        Returns:
-            self (Mcs): The multichannel sound with pauses shrunk.
-        """
-
-        out_list = []
-        for i in range(0, self.data.shape[0]):
-            prev_index = 0
-            local_list = []
-            for pause_info in pause_map[i]:
-                index = pause_info[0] + pause_info[1]
-                delta = index - prev_index
-                if delta > 0:
-                    local_list.append(
-                        self.data[i][prev_index : prev_index + delta]
-                    )
-                    stub = np.zeros(pause_sz[i])
-                    local_list.append(stub)
-                    prev_index = index
-
-            out_list.append(local_list)
-            a_list = []
-            for elem in out_list:
-                a_list.append(np.concatenate(elem).copy())
-
-            max_len = -1
-            for elem in a_list:
-                max_len = max(max_len, len(elem))
-
-            channels_list = []
-            for elem in a_list:
-                elem = np.concatenate(
-                    [elem, np.zeros(max_len - len(elem))]
-                ).copy()
-                channels_list.append(elem)
-        self.data = np.stack(channels_list, axis=0).copy()
-        return self
-
     def channels_count(self) -> int:
         """Returns the number of channels in the multichannel signal."""
 
