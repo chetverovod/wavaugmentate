@@ -1,14 +1,9 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
-import os
-import sys
-cwd = os.getcwd()
-WAU_DIR = cwd + '/src/wavaugmentate'
-sys.path.insert(1, WAU_DIR)
-
+import mcs as ms
 import wavaugmentate as wau
 
-FS = wau.DEF_FS
+FS = ms.DEF_FS
 SIGNAL_TIME_LEN = 5
 f_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
@@ -27,7 +22,7 @@ OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = SRC_DIR + wau.prog_name + ".py"
 
-ABS_ERR = 0.001
+ABS_ERR = 0.0001
 
 
 def shrink(text_for_shink: str):

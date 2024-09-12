@@ -29,5 +29,6 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
+        export PYTHONPATH='./src/wavaugmentate'
         pipenv run pylint $(git ls-files 'src/*/*.py')
         pipenv run pylint $(git ls-files 'tests/*/*.py')
