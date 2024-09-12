@@ -159,7 +159,7 @@ class Aug:
             [amplitude - deviation, amplitude + deviation)].
 
         Returns:
-            self (Mcs): The amplitude-controlled multichannel sound.
+            self (Aug): The amplitude-controlled multichannel sound.
         """
 
         obj = self.signal.copy()
@@ -216,7 +216,7 @@ class Aug:
             deviations makes delays uniformly distributed.
 
         Returns:
-            self (Mcs): The delayed multichannel sound.
+            self (Aug): The delayed multichannel sound.
 
         """
 
@@ -307,7 +307,7 @@ class Aug:
             seed (int): The seed for random number generation. Defaults to -1.
 
         Returns:
-            self (Mcs): The noise-controlled multichannel sound.
+            self (Aug): The noise-controlled multichannel sound.
         """
 
         obj = self.signal.copy()
@@ -391,7 +391,7 @@ class Aug:
             pause_sz (List[int]): A list of pause sizes for each channel.
 
         Returns:
-            self (Mcs): The multichannel sound with pauses shrunk.
+            self (Aug): The multichannel sound with pauses shrunk.
         """
 
         obj = self.signal.copy()
@@ -451,7 +451,7 @@ class Aug:
             none
 
         Returns:
-            self (Mcs): The merged sound data, containing a single channel.
+            self (Aug): The merged sound data, containing a single channel.
         """
         self.signal = self.signal.merge()
         return self
@@ -464,7 +464,7 @@ class Aug:
             mcs_data2 (Mcs): The second multichannel sound signal.
 
         Returns:
-            self (Mcs): The sum of self._data and mcs_data2 signals as Mcs.
+            self (Aug): The sum of self._data and mcs_data2 signals as Mcs.
         """
 
         self.signal.sum(mcs_data2)
@@ -478,7 +478,7 @@ class Aug:
             mcs_data2 (Mcs): The second multichannel sound signal.
 
         Returns:
-            self (Mcs): The concatenated sound signal containing channels of both
+            self (Aug): The concatenated sound signal containing channels of both
             MCS.
         """
         self.signal.side_by_side(mcs_data2)
@@ -492,7 +492,7 @@ class Aug:
             list_of_chains (List[str]): A list of chains to add.
 
         Returns:
-            self (Mcs): The updated Mcs instance with added chains.
+            self (Aug): The updated Mcs instance with added chains.
             result, allowing for method chaining.
         """
 
@@ -513,7 +513,7 @@ class Aug:
             none
 
         Returns:
-            self (Mcs): The updated Mcs instance with added chains.
+            self (Aug): The updated Mcs instance with added chains.
             result, allowing for method chaining.
         """
 
@@ -536,7 +536,7 @@ class Aug:
             path (str): Path to the file containing the data.
 
         Returns:
-            self (Mcs): The updated Mcs instance itself, allowing for method
+            self (Aug): The updated Mcs instance itself, allowing for method
             chaining.
         """
 
