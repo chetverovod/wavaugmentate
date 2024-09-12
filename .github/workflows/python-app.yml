@@ -25,7 +25,6 @@ jobs:
         python-version: "3.9"
     - name: Install dependencies
       run: |
-        export PYTHONPATH='./src/wavaugmentate'
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -38,4 +37,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        export PYTHONPATH='./src/wavaugmentate'
         pytest
