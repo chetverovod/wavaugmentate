@@ -39,4 +39,4 @@ jobs:
     - name: Test with pytest
       run: |
         export PYTHONPATH='./src/wavaugmentate'
-        pytest
+        pytest -s
