@@ -5,10 +5,54 @@
 
 Wavaugmentate package documentation
 ===================================
-The module **wavaugmentate** provides the Mcs, Aug classes and console utility wavaugmentate.
+.. image:: ../pictures/title_image.png
+
+The module **wavaugmentate** provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
 
 Mcs is an object for  multi-channel audio.
 Aug helps to perform augmentation data inside Mcs objects for AI models learning purpose.
+
+Input Data
+----------
+
+WAV-file or NumPy array.
+
+.. code-block:: console
+
+   Array shape: (num_channels, num_samples).
+
+Output Data
+-----------
+
+Same types as in section **Input Data**.
+
+Augmentation Methods 
+--------------------
+
+   #. Amplitude (volume change, inversion).
+   #. Time shift.
+   #. Echo.
+   #. Adding noise.
+   #. Time stretching (**not implemented**).
+   #. Tempo change (**not implemented**).
+   #. Pitch shift (**not implemented**).
+   #. Adding silence. 
+   #. Frequency masking (**not implemented**).
+   #. Time masking (**not implemented**).
+   #. Combinations of methods.
+
+Additional Functionality
+------------------------
+
+#. Generation multichannel tonal signals of desired frequency, amplitude, durance.
+#. Generation multichannel speech-like signals of desired formants frequency, amplitude, durance.
+
+Interfaces
+----------
+
+Signal augmentation can be applied by two ways:
+1. As python module *Mcs*, *Aug* classes methods.
+2. As console application *wavaugmentate* with CLI interface options.
 
 
 .. toctree::

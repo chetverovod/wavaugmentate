@@ -35,13 +35,57 @@
             
   <section id="wavaugmentate-package-documentation">
 <h1>Wavaugmentate package documentation<a class="headerlink" href="#wavaugmentate-package-documentation" title="Permalink to this heading">¶</a></h1>
-<p>The module <strong>wavaugmentate</strong> provides the Mcs, Aug classes and console utility wavaugmentate.</p>
+<img alt="_images/title_image.png" src="_images/title_image.png" />
+<p>The module <strong>wavaugmentate</strong> provides the <em>Mcs</em>, <em>Aug</em> classes and <em>wavaugmentate</em> console utility.</p>
 <p>Mcs is an object for  multi-channel audio.
 Aug helps to perform augmentation data inside Mcs objects for AI models learning purpose.</p>
+<section id="input-data">
+<h2>Input Data<a class="headerlink" href="#input-data" title="Permalink to this heading">¶</a></h2>
+<p>WAV-file or NumPy array.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Array shape: (num_channels, num_samples).</span>
+</pre></div>
+</div>
+</section>
+<section id="output-data">
+<h2>Output Data<a class="headerlink" href="#output-data" title="Permalink to this heading">¶</a></h2>
+<p>Same types as in section <strong>Input Data</strong>.</p>
+</section>
+<section id="augmentation-methods">
+<h2>Augmentation Methods<a class="headerlink" href="#augmentation-methods" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Amplitude (volume change, inversion).</p></li>
+<li><p>Time shift.</p></li>
+<li><p>Echo.</p></li>
+<li><p>Adding noise.</p></li>
+<li><p>Time stretching (<strong>not implemented</strong>).</p></li>
+<li><p>Tempo change (<strong>not implemented</strong>).</p></li>
+<li><p>Pitch shift (<strong>not implemented</strong>).</p></li>
+<li><p>Adding silence.</p></li>
+<li><p>Frequency masking (<strong>not implemented</strong>).</p></li>
+<li><p>Time masking (<strong>not implemented</strong>).</p></li>
+<li><p>Combinations of methods.</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="additional-functionality">
+<h2>Additional Functionality<a class="headerlink" href="#additional-functionality" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Generation multichannel tonal signals of desired frequency, amplitude, durance.</p></li>
+<li><p>Generation multichannel speech-like signals of desired formants frequency, amplitude, durance.</p></li>
+</ol>
+</section>
+<section id="interfaces">
+<h2>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this heading">¶</a></h2>
+<p>Signal augmentation can be applied by two ways:
+1. As python module <em>Mcs</em>, <em>Aug</em> classes methods.
+2. As console application <em>wavaugmentate</em> with CLI interface options.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/usage.html">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="source/usage.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/usage.html#as-console-application">As Console Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/usage.html#in-python-code">In Python Code</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="source/aug.html">aug module</a></li>
@@ -53,6 +97,7 @@ Aug helps to perform augmentation data inside Mcs objects for AI models learning
 <p class="admonition-title">Note</p>
 <p>This project is under active development.</p>
 </div>
+</section>
 </section>
 
 
