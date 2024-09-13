@@ -206,7 +206,7 @@ Make clone of repository and look html-version of documentation:
 [html-documentation](docs/_build/html/index.html)
 
 ### Rebuild documentation
-'''shell
+```shell
 cd docs
 make html
-''' 
+``` 
