@@ -42,6 +42,8 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
+    
+import ctf
 from mcs import Mcs
 from aug import Aug
 
@@ -89,6 +91,8 @@ Output signal with augmented data (channel 1 contains original signal without ch
 The same code as chain of operations, Example 2:
 
 ```Python
+
+import ctf
 from mcs import Mcs
 from aug import Aug
 
@@ -128,22 +132,26 @@ Example 4 (OOP approach):
  ## How To
  ### Single file to several augmented
  Amplitudes and delays will be augmented by  code shown in example 5.
+
  Example 5 (single file augmentation):
  ```Python
+import ctf
+from mcs import Mcs
+from aug import Aug
 file_name = "./outputwav/sound.wav"
-v = wau.Mcs()
-v.rd(file_name)  # Read original file with single channel.
-file_name_head = "./outputwav/sound_augmented"
+mcs = Mcs()
+mcs.rd(file_name)  # Read original file with single channel.
+file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
 
 # Suppose we need 15 augmented files.
 aug_count = 15
 for i in range(aug_count):
-    b = v.copy()
+    signal = Aug(mcs.copy())
     # Apply random amplitude [0.3..1.7) and delay [70..130)
     # microseconds changes to each copy of original signal.
-    b.amp([1], [0.7]).dly([100], [30])
+    signal.amp([1], [0.7]).dly([100], [30])
     name = file_name_head + f"_{i + 1}.wav"
-    b.write(name)
+    signal.get().write(name)    
 ```
 
 # Unit Tests
@@ -197,3 +205,9 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 ## Documentation
 Make clone of repository and look html-version of documentation:
 [html-documentation](docs/_build/html/index.html)
+
+### Rebuild documentation
+'''shell
+cd docs
+make html
+''' 
