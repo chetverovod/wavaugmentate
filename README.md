@@ -205,7 +205,7 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 Make clone of repository and look html-version of documentation (docs/_build/html/index.html):
 [html-documentation](docs/_build/html/index.html)
 
-### Rebuild documentation
+### Rebuild Documentation
 ```shell
 cd docs
 make html
