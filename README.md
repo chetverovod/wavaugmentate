@@ -42,7 +42,6 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
-    
 import ctf
 from mcs import Mcs
 from aug import Aug
