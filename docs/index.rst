@@ -62,8 +62,6 @@ Signal augmentation can be applied by two ways:
    /source/wavaugmentate.rst
 
  
-   :maxdepth: 2
-   :caption: Contents:
 
 .. note::
    This project is under active development.

@@ -305,7 +305,7 @@ def test_readme_examples():
     # Augmentation result saving to 7 files, each 1 by channel.
     mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
 
-    # How to make 100 augmented files (amplitude and delay) from 1 sound file.
+    # How to make 15 augmented files (amplitude and delay) from 1 sound file.
 
     # Example 5:
 
