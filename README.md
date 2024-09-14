@@ -2,8 +2,7 @@
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
-
-  The module provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
+The module makes audio signal augmentation conversions. It provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
   - *Mcs* is a multi-channel audio.
   - *Aug* helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
 
