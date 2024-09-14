@@ -41,7 +41,6 @@ Augmentation step by step, Example 1:
 
 .. code-block:: python
 
-    import ctf
     from mcs import Mcs
     from aug import Aug
 
@@ -83,7 +82,6 @@ The same code as chain of operations, Example 2:
 
 .. code-block:: python
 
-    import ctf
     from mcs import Mcs
     from aug import Aug
     delay_list = [0, 150, 200, 250, 300, 350, 400]
@@ -91,11 +89,11 @@ The same code as chain of operations, Example 2:
 
     # Apply all transformations of Example 1 in chain.
     Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
-    ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
+    "sound_augmented_by_chain.wav"
     )
 
     # Augmentation result saving to 7 files, each 1 by channel.
-    mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+    mcs.wrbc("sound_augmented_by_chain.wav")
 
  
 How to get several augmented amplitudes and delays from single file.
@@ -104,14 +102,13 @@ Example 3 (single file augmentation):
 
 .. code-block:: python
 
-    import ctf
     from mcs import Mcs
     from aug import Aug
 
     file_name = "./outputwav/sound.wav"
     mcs = Mcs()
     mcs.rd(file_name)  # Read original file with single channel.
-    file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
+    file_name_head = "sound_augmented"
 
     # Suppose we need 15 augmented files.
     aug_count = 15

@@ -41,7 +41,6 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
-import ctf
 from mcs import Mcs
 from aug import Aug
 
@@ -90,7 +89,6 @@ The same code as chain of operations, Example 2:
 
 ```Python
 
-import ctf
 from mcs import Mcs
 from aug import Aug
 
@@ -99,11 +97,11 @@ amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
 # Apply all transformations of Example 1 in chain.
 Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
-    ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
+    "sound_augmented_by_chain.wav"
 )
 
 # Augmentation result saving to 7 files, each 1 by channel.
-mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+mcs.wrbc("sound_augmented_by_chain.wav")
  
 ```
 ## CLI
@@ -133,13 +131,12 @@ Example 4 (OOP approach):
 
  Example 5 (single file augmentation):
  ```Python
-import ctf
 from mcs import Mcs
 from aug import Aug
 file_name = "./outputwav/sound.wav"
 mcs = Mcs()
 mcs.rd(file_name)  # Read original file with single channel.
-file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
+file_name_head = "sound_augmented"
 
 # Suppose we need 15 augmented files.
 aug_count = 15
