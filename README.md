@@ -198,7 +198,6 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |18| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
 |19| write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
 
- 
 
 ## Documentation
 Make clone of repository and look html-version of documentation (docs/_build/html/index.html):
@@ -209,3 +208,16 @@ Make clone of repository and look html-version of documentation (docs/_build/htm
 cd docs
 make html
 ``` 
+
+# Build Package 
+
+Install *builder*:
+
+```shell
+python3 -m pip install --upgrade build
+```
+build package:
+
+```shell
+python3 -m build
+```
