@@ -41,8 +41,9 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
 
 # File name of original sound.
 file_name = "./outputwav/sound.wav"
@@ -89,19 +90,23 @@ The same code as chain of operations, Example 2:
 
 ```Python
 
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
+# File name of original sound.
+file_name = "./outputwav/sound.wav"
 
 delay_list = [0, 150, 200, 250, 300, 350, 400]
 amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
 # Apply all transformations of Example 1 in chain.
-Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
-    "sound_augmented_by_chain.wav"
+ao_obj = Aug(Mcs().rd(file_name))
+ao_obj.splt(7).dly(delay_list).amp(amplitude_list).get().wr(
+"sound_augmented_by_chain.wav"
 )
 
 # Augmentation result saving to 7 files, each 1 by channel.
-mcs.wrbc("sound_augmented_by_chain.wav")
+ao_obj.get().wrbc("sound_augmented_by_chain.wav")
  
 ```
 ## CLI
@@ -131,8 +136,9 @@ Example 4 (OOP approach):
 
  Example 5 (single file augmentation):
  ```Python
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
 file_name = "./outputwav/sound.wav"
 mcs = Mcs()
 mcs.rd(file_name)  # Read original file with single channel.
