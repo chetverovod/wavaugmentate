@@ -2,7 +2,7 @@
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
-The module makes audio signal augmentation conversions. It provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
+The module makes audio signal augmentation conversions. It provides the *Mcs*, *Aug* classes and *wavaug* console utility.
   - *Mcs* is a multi-channel audio.
   - *Aug* helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
 
@@ -111,23 +111,23 @@ ao_obj.get().wrbc("sound_augmented_by_chain.wav")
 ```
 ## CLI
 
-use for details:
+use for help:
 ```
-./wavaugmentate.py -h
+./wavaug.py -h
 ```
 
 command line interface  provides the same functionality.
 
 Example 3 (procedural approach):
 ```shell
-./wavaugmentate.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
-./wavaugmentate.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
+./wavaug.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
+./wavaug.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
 
 ```
 
 Example 4 (OOP approach):
 ```shell
-./wavaugmentate.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
+./wavaug.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
 
 ```
  ## How To

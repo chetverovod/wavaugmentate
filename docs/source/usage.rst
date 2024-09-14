@@ -103,6 +103,7 @@ The same code as chain of operations, Example 2:
  
 How to get several augmented amplitudes and delays from single file.
 
+
 Example 3 (single file augmentation):
 
 .. code-block:: python
@@ -124,3 +125,30 @@ Example 3 (single file augmentation):
         signal.amp([1], [0.7]).dly([100], [30])
         name = file_name_head + f"_{i + 1}.wav"
         signal.get().write(name)        
+
+As Console Application
+----------------------
+use for help:
+
+.. code-block:: console
+   
+    ./wavaug.py -h
+
+
+command line interface  provides the same functionality.
+
+Example 4 (procedural approach):
+
+.. code-block:: console
+
+    ./wavaug.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
+    ./wavaug.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
+
+
+
+Example 5 (OOP approach):
+
+.. code-block:: console
+
+    ./wavaug.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
+
