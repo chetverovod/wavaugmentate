@@ -1,7 +1,7 @@
 """Module providing test functions for wavaugmentate.py  module."""
 
 import mcs as ms
-import wavaugmentate as wau
+import wavaug as wau
 
 FS = ms.DEF_FS
 SIGNAL_TIME_LEN = 5

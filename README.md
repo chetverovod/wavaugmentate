@@ -159,7 +159,7 @@ for i in range(aug_count):
 
 Just run:
 ```shell
-export  PYTHONPATH='./src/wavaugmentate'
+export  PYTHONPATH='.'
 pytest
 ```
 
