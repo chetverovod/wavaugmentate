@@ -14,6 +14,8 @@ provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
 - *Mcs* is an object for  multi-channel audio.
 - *Aug* helps to perform augmentation data inside Mcs objects for AI models learning purpose.
 
+GitHub: https://github.com/chetverovod/wavaugmentate
+
 Input Data
 ----------
 
