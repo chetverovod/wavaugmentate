@@ -7,7 +7,7 @@ Wavaugmentate package documentation
 ===================================
 .. image:: _images/title_image.png
 
-The module **wavaugmentate** makes audio signal augmentation conversions. It
+The package **wavaugmentate** makes audio signal augmentation conversions. It
 provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
 
 
@@ -56,16 +56,15 @@ Interfaces
 
 Signal augmentation can be applied by two ways:
 1. As python module *Mcs*, *Aug* classes methods.
-2. As console application *wavaugmentate* with CLI interface options.
+2. As console application *wavaug-cli* with CLI interface options.
 
 
 .. toctree::
    /source/usage.rst
    /source/aug.rst
    /source/mcs.rst
-   /source/wavaugmentate.rst
-
- 
+   /source/wavaug.rst
+   /source/modules.rst 
 
 .. note::
    This project is under active development.

@@ -11,6 +11,7 @@ import numpy as np
 import wavaugmentate.mcs as ms
 from wavaugmentate.mcs import Mcs
 
+
 def delay_syntez(
     delay_us_list: List[int],
     delay_deviation_list: List[int] = None,

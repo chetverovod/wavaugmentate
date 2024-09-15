@@ -17,21 +17,21 @@ To change time delay between channels:
 
 .. code-block:: console
 
-    $ ./wavaugmentate.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
+    $ wavaug-cli -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
 
 
 To change amplitudes of channels:
 
 .. code-block:: console
 
-    $ ./wavaugmentate.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
+    $ wavaug-cli -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
 
 
 To apply sequence of augmentations just chain steps one by one:
 
 .. code-block:: console
 
-    $ ./wavaugmentate.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'    
+    $ wavaug-cli -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'    
 
 
 In Python Code
@@ -132,7 +132,7 @@ use for help:
 
 .. code-block:: console
    
-    ./wavaug-cli -h
+    wavaug-cli -h
 
 
 command line interface  provides the same functionality.
@@ -141,8 +141,8 @@ Example 4 (procedural approach):
 
 .. code-block:: console
 
-    ./wavaug-cli -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
-    ./wavaug-cli -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
+    wavaug-cli -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
+    wavaug-cli -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
 
 
 
@@ -150,5 +150,5 @@ Example 5 (OOP approach):
 
 .. code-block:: console
 
-    ./wavaug-cli -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
+    wavaug-cli -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
 

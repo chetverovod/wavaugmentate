@@ -15,7 +15,6 @@ from wavaugmentate.mcs import Mcs
 from wavaugmentate.aug import Aug
 
 
-
 def file_info(path: str) -> dict:
     """
     Returns a dictionary containing information about a WAV file.
