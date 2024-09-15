@@ -64,8 +64,7 @@ Signal augmentation can be applied by two ways:
    /source/aug.rst
    /source/mcs.rst
    /source/wavaug.rst
-
- 
+   /source/modules.rst 
 
 .. note::
    This project is under active development.
