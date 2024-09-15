@@ -19,7 +19,7 @@ TEST_SOUND_1_NOISE_FILE = TESTS_DIR + "test_sounds/test_sound_1_noise.wav"
 OUTPUTWAV_DIR = TESTS_DIR + "outputwav/"
 OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
 
-SRC_DIR = "./"
+SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = SRC_DIR + wau.prog_name + ".py"
 
 ABS_ERR = 0.0001
