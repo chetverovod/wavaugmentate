@@ -7,7 +7,7 @@ Wavaugmentate package documentation
 ===================================
 .. image:: _images/title_image.png
 
-The module **wavaugmentate** makes audio signal augmentation conversions. It
+The package **wavaugmentate** makes audio signal augmentation conversions. It
 provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
 
 

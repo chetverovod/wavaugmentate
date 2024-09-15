@@ -9,7 +9,7 @@
 project = 'wavaugmentate'
 copyright = '2024, Igor Plastov'
 author = 'Igor Plastov'
-release = '0.1.0'
+release = '0.1.13'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -32,4 +32,4 @@ extensions = ['sphinx.ext.napoleon',  'sphinx.ext.autodoc']
 
 import os
 import sys
-sys.path.insert(0,os.path.abspath('../src/wavaugmentate'))
+sys.path.insert(0, os.path.abspath('../src/wavaugmentate'))
