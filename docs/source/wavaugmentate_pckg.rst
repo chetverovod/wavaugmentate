@@ -22,6 +22,7 @@ wavaugmentate.mcs module
 
 wavaugmentate.wavaugmentate module
 ----------------------------------
+   .. autofunction::
 
 .. automodule:: wavaugmentate.wavaugmentate
    :members: 

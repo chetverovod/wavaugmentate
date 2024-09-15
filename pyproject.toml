@@ -1,0 +1,36 @@
+[build-system]
+requires = ['setuptools>=42']
+build-backend = 'setuptools.build_meta'
+
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "./tests"
+]
+
+[project]
+name = "wavaugmentate"
+version = "0.1.13"
+authors = [
+  {name="Igor Plastov", email="chetverovod@gmail.com"},
+]
+maintainers = [
+  {name="Igor Plastov", email="chetverovod@gmail.com"},
+]
+description = " The package wavaugmentate makes audio signal augmentation conversions."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+keywords = ["augmentation", "WAV", "ML", "DL", "audio", "sound"]
+
+[project.scripts]
+wavaug-cli = "wavaugmentate.wavaug:main"
+
+[project.urls]
+Homepage = "https://github.com/chetverovod/wavaugmentate"
+Issues = "https://github.com/chetverovod/wavaugmentate/issues"

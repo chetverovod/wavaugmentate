@@ -61,9 +61,8 @@
 <section id="in-python-code">
 <h2>In Python Code<a class="headerlink" href="#in-python-code" title="Permalink to this heading">¶</a></h2>
 <p>Augmentation step by step, Example 1:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ctf</span>
-<span class="kn">from</span> <span class="nn">mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">Aug</span>
 
 <span class="c1"># File name of original sound.</span>
 <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
@@ -100,31 +99,34 @@
 </pre></div>
 </div>
 <p>The same code as chain of operations, Example 2:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ctf</span>
-<span class="kn">from</span> <span class="nn">mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+
+<span class="c1"># File name of original sound.</span>
+<span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
+
 <span class="n">delay_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
 <span class="n">amplitude_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span>
 
 <span class="c1"># Apply all transformations of Example 1 in chain.</span>
-<span class="n">Aug</span><span class="p">(</span><span class="n">Mcs</span><span class="p">()</span><span class="o">.</span><span class="n">rd</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span><span class="o">.</span><span class="n">splt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">dly</span><span class="p">(</span><span class="n">delay_list</span><span class="p">)</span><span class="o">.</span><span class="n">amp</span><span class="p">(</span><span class="n">amplitude_list</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">wr</span><span class="p">(</span>
-<span class="n">ctf</span><span class="o">.</span><span class="n">OUTPUTWAV_DIR</span> <span class="o">+</span> <span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span>
+<span class="n">ao_obj</span> <span class="o">=</span> <span class="n">Aug</span><span class="p">(</span><span class="n">Mcs</span><span class="p">()</span><span class="o">.</span><span class="n">rd</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span>
+<span class="n">ao_obj</span><span class="o">.</span><span class="n">splt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">dly</span><span class="p">(</span><span class="n">delay_list</span><span class="p">)</span><span class="o">.</span><span class="n">amp</span><span class="p">(</span><span class="n">amplitude_list</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">wr</span><span class="p">(</span>
+<span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span>
 <span class="p">)</span>
 
 <span class="c1"># Augmentation result saving to 7 files, each 1 by channel.</span>
-<span class="n">mcs</span><span class="o">.</span><span class="n">wrbc</span><span class="p">(</span><span class="n">ctf</span><span class="o">.</span><span class="n">OUTPUTWAV_DIR</span> <span class="o">+</span> <span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span><span class="p">)</span>
+<span class="n">ao_obj</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">wrbc</span><span class="p">(</span><span class="s2">&quot;sound_augmented_by_chain.wav&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>How to get several augmented amplitudes and delays from single file.</p>
 <p>Example 3 (single file augmentation):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ctf</span>
-<span class="kn">from</span> <span class="nn">mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">aug</span> <span class="kn">import</span> <span class="n">Aug</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">Mcs</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">Aug</span>
 
 <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
 <span class="n">mcs</span> <span class="o">=</span> <span class="n">Mcs</span><span class="p">()</span>
 <span class="n">mcs</span><span class="o">.</span><span class="n">rd</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>  <span class="c1"># Read original file with single channel.</span>
-<span class="n">file_name_head</span> <span class="o">=</span> <span class="n">ctf</span><span class="o">.</span><span class="n">OUTPUTWAV_DIR</span> <span class="o">+</span> <span class="s2">&quot;sound_augmented&quot;</span>
+<span class="n">file_name_head</span> <span class="o">=</span> <span class="s2">&quot;sound_augmented&quot;</span>
 
 <span class="c1"># Suppose we need 15 augmented files.</span>
 <span class="n">aug_count</span> <span class="o">=</span> <span class="mi">15</span>
@@ -135,6 +137,23 @@
     <span class="n">signal</span><span class="o">.</span><span class="n">amp</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">])</span><span class="o">.</span><span class="n">dly</span><span class="p">([</span><span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">])</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">file_name_head</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.wav&quot;</span>
     <span class="n">signal</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>As Console Application<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>use for help:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./wavaug-cli -h</span>
+</pre></div>
+</div>
+<p>command line interface  provides the same functionality.</p>
+<p>Example 4 (procedural approach):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./wavaug-cli -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d &quot;100, 200, 300, 400&quot;</span>
+<span class="go">./wavaug-cli -i ./outputwav/out.wav -o ./outputwav/out.wav -a &quot;0.1, 0.2, 0.3, 0.4&quot;</span>
+</pre></div>
+</div>
+<p>Example 5 (OOP approach):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">./wavaug-cli -c &#39;rd(&quot;./test_sounds/test_sound_1.wav&quot;).dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr(&quot;./outputwav/sound_delayed.wav&quot;)&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -162,6 +181,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#as-console-application">As Console Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#in-python-code">In Python Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">As Console Application</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aug.html">aug module</a></li>

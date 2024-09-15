@@ -1,6 +1,8 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
+import sys
+sys.path.insert(0, './tests')
 import common_test_functions as ctf
 import numpy as np
 import mcs as ms

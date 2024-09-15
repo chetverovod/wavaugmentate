@@ -1,9 +1,8 @@
-# **Wavaugmentate** 0.1.0
+# **Wavaugmentate** 0.1.14
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
-
-  The module provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
+The module makes audio signal augmentation conversions. It provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
   - *Mcs* is a multi-channel audio.
   - *Aug* helps to perform augmentation of multi-channel audio signals for AI models learning purpose. 
 
@@ -42,9 +41,9 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
-import ctf
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
 
 # File name of original sound.
 file_name = "./outputwav/sound.wav"
@@ -91,41 +90,44 @@ The same code as chain of operations, Example 2:
 
 ```Python
 
-import ctf
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
+# File name of original sound.
+file_name = "./outputwav/sound.wav"
 
 delay_list = [0, 150, 200, 250, 300, 350, 400]
 amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
 # Apply all transformations of Example 1 in chain.
-Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
-    ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
+ao_obj = Aug(Mcs().rd(file_name))
+ao_obj.splt(7).dly(delay_list).amp(amplitude_list).get().wr(
+"sound_augmented_by_chain.wav"
 )
 
 # Augmentation result saving to 7 files, each 1 by channel.
-mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+ao_obj.get().wrbc("sound_augmented_by_chain.wav")
  
 ```
 ## CLI
 
-use for details:
+use for help:
 ```
-./wavaugmentate.py -h
+./wavaug-cli -h
 ```
 
 command line interface  provides the same functionality.
 
 Example 3 (procedural approach):
 ```shell
-./wavaugmentate.py -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
-./wavaugmentate.py -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
+./wavaug-cli -i ./test_sounds/test_sound_1.wav -o ./outputwav/out.wav -d "100, 200, 300, 400"
+./wavaug-cli -i ./outputwav/out.wav -o ./outputwav/out.wav -a "0.1, 0.2, 0.3, 0.4"
 
 ```
 
 Example 4 (OOP approach):
 ```shell
-./wavaugmentate.py -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
+./wavaug-cli -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).amp([0.1, 0.2, 0.3, 0.4]).wr("./outputwav/sound_delayed.wav")'
 
 ```
  ## How To
@@ -134,13 +136,13 @@ Example 4 (OOP approach):
 
  Example 5 (single file augmentation):
  ```Python
-import ctf
-from mcs import Mcs
-from aug import Aug
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
 file_name = "./outputwav/sound.wav"
 mcs = Mcs()
 mcs.rd(file_name)  # Read original file with single channel.
-file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
+file_name_head = "sound_augmented"
 
 # Suppose we need 15 augmented files.
 aug_count = 15
@@ -158,7 +160,7 @@ for i in range(aug_count):
 Just run:
 ```shell
 export  PYTHONPATH='./src/wavaugmentate'
-pytest
+python3 -m pytest
 ```
 
 Test coverage:
@@ -199,14 +201,26 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 |18| sum(mcs2) | - | sum | Adds mcs2 data channels values to object channels data sample by sample. | 
 |19| write_by_channel(path) | - | wrbc | Save MCS object channels to separate WAV-files.  |
 
- 
 
 ## Documentation
 Make clone of repository and look html-version of documentation (docs/_build/html/index.html):
 [html-documentation](docs/_build/html/index.html)
 
-### Rebuild documentation
+### Rebuild Documentation
 ```shell
 cd docs
 make html
 ``` 
+
+# Build Package 
+
+Install *builder*:
+
+```shell
+python3 -m pip install --upgrade build
+```
+build package:
+
+```shell
+python3 -m build
+```
