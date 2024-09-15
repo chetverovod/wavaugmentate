@@ -6,6 +6,16 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../src/wavaugmentate'))
+sys.path.insert(0, os.path.abspath('../..'))
+
+current_dir = os.path.dirname(__file__)
+project = os.path.abspath(os.path.join(current_dir, "../"))
+sys.path.append(project)
+
 project = 'wavaugmentate'
 copyright = '2024, Igor Plastov'
 author = 'Igor Plastov'
@@ -29,9 +39,3 @@ html_static_path = ['_static']
 
 # Add napoleon to the extensions list
 extensions = ['sphinx.ext.napoleon',  'sphinx.ext.autodoc']
-
-import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../src/wavaugmentate'))
-sys.path.insert(0, os.path.abspath('../..'))

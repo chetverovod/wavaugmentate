@@ -1,4 +1,4 @@
-# **Wavaugmentate** 0.1.14
+# **Wavaugmentate** 0.1.16
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
