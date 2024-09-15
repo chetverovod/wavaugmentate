@@ -32,5 +32,6 @@ keywords = ["augmentation", "WAV", "ML", "DL", "audio", "sound"]
 wavaug-cli = "wavaugmentate.wavaug:main"
 
 [project.urls]
+Documentation = "https://wavaugmentate.readthedocs.io/en/latest/"
 Homepage = "https://github.com/chetverovod/wavaugmentate"
 Issues = "https://github.com/chetverovod/wavaugmentate/issues"

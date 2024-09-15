@@ -56,14 +56,14 @@ Interfaces
 
 Signal augmentation can be applied by two ways:
 1. As python module *Mcs*, *Aug* classes methods.
-2. As console application *wavaugmentate* with CLI interface options.
+2. As console application *wavaug-cli* with CLI interface options.
 
 
 .. toctree::
    /source/usage.rst
    /source/aug.rst
    /source/mcs.rst
-   /source/wavaugmentate.rst
+   /source/wavaug.rst
 
  
 

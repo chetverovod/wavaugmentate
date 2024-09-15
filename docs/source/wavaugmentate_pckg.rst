@@ -20,11 +20,11 @@ wavaugmentate.mcs module
    :undoc-members:
    :show-inheritance:
 
-wavaugmentate.wavaugmentate module
+wavaugmentate.wavaug module
 ----------------------------------
    .. autofunction::
 
-.. automodule:: wavaugmentate.wavaugmentate
+.. automodule:: wavaugmentate.wavaug
    :members: 
    :undoc-members:
    :show-inheritance:

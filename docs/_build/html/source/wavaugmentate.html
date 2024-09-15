@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>wavaugmentate module &#8212; wavaugmentate 0.1.0 documentation</title>
+    <title>wavaugmentate package &#8212; wavaugmentate 0.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -16,7 +16,6 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="mcs module" href="mcs.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,45 +32,22 @@
 
           <div class="body" role="main">
             
-  <section id="wavaugmentate-module">
-<h1>wavaugmentate module<a class="headerlink" href="#wavaugmentate-module" title="Permalink to this heading">¶</a></h1>
-<section id="command-line-interface-options">
-<h2>Command line interface options<a class="headerlink" href="#command-line-interface-options" title="Permalink to this heading">¶</a></h2>
-<p>Actual console options can be observed by command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>wavaugmentate.py<span class="w"> </span>-h
-</pre></div>
-</div>
-<p>Example of response:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: wavaugmentate [-h] [-i IN_PATH] [-o OUT_PATH] [--info] [--amp AMPLITUDE_LIST] [--echo ECHO_LIST]</span>
-<span class="go">                 [--dly DELAY_LIST] [--ns NOISE_LIST] [--chain CHAIN_CODE]</span>
-
-<span class="go">WAV audio files augmentation utility.</span>
-
-<span class="go">options:</span>
-<span class="go">-h, --help            show this help message and exit</span>
-<span class="go">-i IN_PATH            Input audio file path.</span>
-<span class="go">-o OUT_PATH           Output audio file path.</span>
-<span class="go">--info                Print info about input audio file.</span>
-<span class="go">--amp AMPLITUDE_LIST, -a AMPLITUDE_LIST</span>
-<span class="go">                        Change amplitude (volume) of channels in audio file. Provide coefficients for every</span>
-<span class="go">                        channel, example: -a &quot;0.1, 0.2, 0.3, -1&quot;</span>
-<span class="go">--echo ECHO_LIST, -e ECHO_LIST</span>
-<span class="go">                        Add echo to channels in audio file. of channels in audio file. Provide coefficients</span>
-<span class="go">                        and delays (in microseconds) of reflected signal for every channel, example: -e &quot;0.1,</span>
-<span class="go">                        0.2, 0.3, -1 / 100, 200, 0, 300&quot;</span>
-<span class="go">--dly DELAY_LIST, -d DELAY_LIST</span>
-<span class="go">                        Add time delays to channels in audio file. Provide delay for every channel in</span>
-<span class="go">                        microseconds, example: -d &quot;100, 200, 300, 0&quot;</span>
-<span class="go">--ns NOISE_LIST, -n NOISE_LIST</span>
-<span class="go">                        Add normal noise to channels in audio file. Provide coefficients for every channel,</span>
-<span class="go">                        example: -n &quot;0.1, 0.2, 0.3, -1&quot;</span>
-<span class="go">--chain CHAIN_CODE, -c CHAIN_CODE</span>
-<span class="go">                        Execute chain of transformations. example: -c &#39;gen([100,250,100], 3, 44100).amp([0.1,</span>
-<span class="go">                        0.2, 0.3]).wr(&quot;./sines.wav&quot;)&#39;</span>
-
-<span class="go">Text at the bottom of help</span>
-</pre></div>
-</div>
+  <section id="wavaugmentate-package">
+<h1>wavaugmentate package<a class="headerlink" href="#wavaugmentate-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="wavaugmentate-aug-module">
+<h2>wavaugmentate.aug module<a class="headerlink" href="#wavaugmentate-aug-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="wavaugmentate-mcs-module">
+<h2>wavaugmentate.mcs module<a class="headerlink" href="#wavaugmentate-mcs-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="wavaugmentate-wavaug-module">
+<h2>wavaugmentate.wavaug module<a class="headerlink" href="#wavaugmentate-wavaug-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -92,21 +68,17 @@
 
 
 <h3>Navigation</h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aug.html">aug module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcs.html">mcs module</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">wavaugmentate module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#command-line-interface-options">Command line interface options</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="wavaug.html">wavaug module</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="mcs.html" title="previous chapter">mcs module</a></li>
   </ul></li>
 </ul>
 </div>
