@@ -10,7 +10,7 @@ pythonpath = [
 
 [project]
 name = "wavaugmentate"
-version = "0.1.11"
+version = "0.1.12"
 authors = [
   {name="Igor Plastov", email="chetverovod@gmail.com"},
 ]
@@ -29,7 +29,7 @@ classifiers = [
 keywords = ["augmentation", "WAV", "ML", "DL", "audio", "sound"]
 
 [project.scripts]
-wavaug-cli = "wavaug:main"
+wavaug-cli = "wavaugmentate.wavaug:main"
 
 [project.urls]
 Homepage = "https://github.com/chetverovod/wavaugmentate"

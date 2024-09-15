@@ -10,9 +10,10 @@ import sys
 from pathlib import Path
 from typing import List
 from scipy.io import wavfile
-import mcs as ms
-from mcs import Mcs
-from aug import Aug
+import wavaugmentate.mcs as ms
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
+
 
 
 def file_info(path: str) -> dict:

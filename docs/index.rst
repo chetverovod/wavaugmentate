@@ -8,7 +8,7 @@ Wavaugmentate package documentation
 .. image:: _images/title_image.png
 
 The module **wavaugmentate** makes audio signal augmentation conversions. It
-provides the *Mcs*, *Aug* classes and *wavaugmentate* console utility.
+provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
 
 
 - *Mcs* is an object for  multi-channel audio.

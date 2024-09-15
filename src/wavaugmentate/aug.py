@@ -7,11 +7,9 @@ This module defines multichannel audio flies augmentation class Mcs.
 import copy
 import sys
 from typing import List
-
 import numpy as np
-import mcs as ms
-from mcs import Mcs
-
+import wavaugmentate.mcs as ms
+from wavaugmentate.mcs import Mcs
 
 def delay_syntez(
     delay_us_list: List[int],
