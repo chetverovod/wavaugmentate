@@ -203,7 +203,11 @@ MCS - multi channel signal, it is NumPy array with shape (M_channels, N_samples)
 
 
 ## Documentation
-Make clone of repository and look html-version of documentation (docs/_build/html/index.html):
+
+[Documentation on the Read the Docs](https://wavaugmentate.readthedocs.io/en/latest/)
+
+
+For local documentation make clone of repository and look html-version of documentation (docs/_build/html/index.html):
 [html-documentation](docs/_build/html/index.html)
 
 ### Rebuild Documentation
