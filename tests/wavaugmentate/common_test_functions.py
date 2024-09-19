@@ -1,5 +1,7 @@
 """Module providing test functions for wavaugmentate.py  module."""
+import sys
 
+sys.path.append('/home/igor/Plastov/wavaugmentate/src/wavaugmentate')
 import mcs as ms
 import wavaug as wau
 
@@ -9,7 +11,7 @@ f_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
 
 # Output files names.
-TESTS_DIR = "./tests/"
+TESTS_DIR = "./tests/wavaugmentate/"
 TEST_SOUND_1_FILE = TESTS_DIR + "test_sounds/test_sound_1.wav"
 TEST_SOUND_1_AC_FILE = TESTS_DIR + "test_sounds/test_sound_1_ac.wav"
 TEST_SOUND_1_DELAY_FILE = TESTS_DIR + "test_sounds/test_sound_1_delay.wav"
