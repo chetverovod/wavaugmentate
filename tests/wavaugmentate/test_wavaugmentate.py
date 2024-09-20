@@ -1,10 +1,11 @@
 """Module providing test functions for wavaugmentate.py  module."""
+
 import os
 import subprocess as sp
 import common_test_functions as ctf
-import wavaugmentate.mcs as ms
-from wavaugmentate.mcs import Mcs
-import wavaugmentate.wavaug as wau
+import mcs as ms
+from mcs import Mcs
+import wavaug as wau
 
 
 def test_echo_ctrl_option():

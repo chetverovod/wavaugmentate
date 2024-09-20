@@ -2,12 +2,12 @@
 
 import os
 import sys
-sys.path.insert(0, './tests')
+import mcs as ms
+from mcs import Mcs
+from aug import Aug
 import common_test_functions as ctf
 import numpy as np
-import wavaugmentate.mcs as ms
-from wavaugmentate.mcs import Mcs
-from wavaugmentate.aug import Aug
+sys.path.insert(0, './tests')
 
 
 def test_aug_amp_control():
