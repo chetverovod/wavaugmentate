@@ -1,5 +1,5 @@
 """wavaugmentate package"""
 
-from wavaugmentate import mcs
-from wavaugmentate import aug
-from wavaugmentate import wavaug
+from . import mcs
+from . import aug
+from . import wavaug
