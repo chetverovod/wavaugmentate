@@ -38,5 +38,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        export PYTHONPATH='./src/wavaugmentate'
+        pwd
+        export PYTHONPATH="/home/runner/work/wavaugmentate/wavaugmentate/src/wavaugmentate:/home/runner/work/wavaugmentate/wavaugmentate/tests/wavaugmentate:$PYTHONPATH"
         python3 -m pytest

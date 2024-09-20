@@ -8,8 +8,8 @@ import copy
 import sys
 from typing import List
 import numpy as np
-import wavaugmentate.mcs as ms
-from wavaugmentate.mcs import Mcs
+import mcs as ms
+from mcs import Mcs
 
 
 def delay_syntez(

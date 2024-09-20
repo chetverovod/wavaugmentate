@@ -2,10 +2,10 @@
 
 import os
 import common_test_functions as ctf
-import numpy as np
 import mcs as ms
 from mcs import Mcs
 from aug import Aug
+import numpy as np
 
 
 def test_mcs_put():
