@@ -3,7 +3,7 @@ import os
 import sys
 # sys.path.append('/home/igor/Plastov/wavaugmentate/src/wavaugmentate')
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname( \
-    os.path.dirname(__file__))), "src/wavaugmentate"))
+    os.path.dirname(__file__))), "/src/wavaugmentate"))
 
 import wavaugmentate.mcs as ms
 import wavaugmentate.wavaug as wau
