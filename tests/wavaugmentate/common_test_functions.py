@@ -1,7 +1,7 @@
 """Module providing test functions for wavaugmentate.py  module."""
-import sys
-
-sys.path.append('/home/igor/Plastov/wavaugmentate/src/wavaugmentate')
+import os, sys
+# sys.path.append('/home/igor/Plastov/wavaugmentate/src/wavaugmentate')
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "src/wavaugmentate"))
 import mcs as ms
 import wavaug as wau
 
