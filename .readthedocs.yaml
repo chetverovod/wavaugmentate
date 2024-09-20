@@ -32,11 +32,4 @@ sphinx:
 #    - requirements: docs/requirements.txt
 python:
     install:
-#    - requirements: docs/requirements.txt
-    numpy
-    scipy
-    copy
-    typing
-    random
-    pathlib
-    argparse 
+     - requirements: docs/requirements.txt
