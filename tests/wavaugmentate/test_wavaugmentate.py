@@ -2,9 +2,9 @@
 import os
 import subprocess as sp
 import common_test_functions as ctf
-import mcs as ms
-from mcs import Mcs
-import wavaug as wau
+import wavaugmentate.mcs as ms
+from wavaugmentate.mcs import Mcs
+import wavaugmentate.wavaug as wau
 
 
 def test_echo_ctrl_option():

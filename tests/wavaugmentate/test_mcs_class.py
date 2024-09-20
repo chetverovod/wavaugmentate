@@ -3,9 +3,9 @@
 import os
 import common_test_functions as ctf
 import numpy as np
-import mcs as ms
-from mcs import Mcs
-from aug import Aug
+import wavaugmentate.mcs as ms
+from wavaugmentate.mcs import Mcs
+from wavaugmentate.aug import Aug
 
 
 def test_mcs_put():
