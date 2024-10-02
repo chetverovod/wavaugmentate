@@ -446,7 +446,7 @@ class MultiChannelSignal:
             self (Mcs): The sum of self._data and mcs_data2 signals as Mcs.
         """
 
-        out_data = self.data.copy() + mcs_data2.data.copy()
+        out_data = self.data + mcs_data2.data
         self.data = out_data
         return self
 
