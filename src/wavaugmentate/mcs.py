@@ -86,7 +86,7 @@ class MultiChannelSignal:
             self.data = None  # np.ndarray: Multichannel sound data field.
         else:
             self.data = (
-                np_data.copy()
+                np_data  # .copy()
             )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
         self.sample_rate = samp_rt  # Sampling frequency, Hz.
