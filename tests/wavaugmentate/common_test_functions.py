@@ -28,11 +28,11 @@ TEST_SOUND_1_ECHO_FILE = os.path.join(TESTS_DIR,
 TEST_SOUND_1_NOISE_FILE = os.path.join(TESTS_DIR,
                                        "test_sounds/test_sound_1_noise.wav")
 
-OUTPUTWAV_DIR = TESTS_DIR + "outputwav/"
-OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
+OUTPUTWAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
+OUTPUT_FILE = os.path.join(OUTPUTWAV_DIR, "out.wav") 
 
 SRC_DIR = "./src/wavaugmentate/"
-PROG_NAME = SRC_DIR + wau.prog_name + ".py"
+PROG_NAME = os.path.join(SRC_DIR, f"{wau.prog_name}.py")
 
 
 log.basicConfig(
