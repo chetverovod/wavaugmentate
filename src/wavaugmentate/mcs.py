@@ -215,10 +215,9 @@ class MultiChannelSignal:
                 random.seed(self.seed)
             for freq in frequency_list:
                 if freq > 300 or freq < 60:
-                    log.warning(
-                        f"{ERROR_MARK} Use basic tone from interval 600..300 Hz"
-                    )
-                    raise ValueError()
+                    msg = "Use basic tone from interval 600..300 Hz."
+                    log.error(msg)
+                    raise ValueError(msg)
 
                 # Formants:
                 fbt = random.randint(freq, 300)  # 60–300 Гц
@@ -282,7 +281,7 @@ class MultiChannelSignal:
         for i in range(self.channels_count()):
             buf = self.data[i, :].T
             file_name = trimmed_path[0] + f"_{i + 1}.wav"
-            print(f"Writing {file_name}...")
+            log.info(f"Writing {file_name}...")
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
@@ -409,8 +408,9 @@ class MultiChannelSignal:
         """
 
         if self.channels_count() > 1:
-            print(ERROR_MARK, "Can't split more than 1 channel signal.")
-            sys.exit(1)
+            msg = "Can't split more than 1 channel signal."
+            log.error(msg)
+            raise ValueError(msg)
 
         out_data = None
 
