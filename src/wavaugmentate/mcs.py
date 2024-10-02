@@ -199,7 +199,7 @@ class MultiChannelSignal:
                 signal = np.sin(2 * np.pi * freq * samples)
                 signal = np.float32(signal)
                 channels.append(signal)
-            self.data = np.array(channels).copy()
+            self.data = np.array(channels)
 
         if mode == "speech":
             if self.seed != -1:
@@ -227,7 +227,7 @@ class MultiChannelSignal:
                 signal = signal / peak_amplitude
                 signal = np.float32(signal)
                 channels.append(signal)
-                self.data = np.array(channels).copy()
+                self.data = np.array(channels)
         return self
 
     def write(self, path: str) -> "MultiChannelSignal":
@@ -244,7 +244,7 @@ class MultiChannelSignal:
         self (Mcs):  representing saved multichannel sound.
         """
 
-        buf = self.data.T.copy()
+        buf = self.data.T #.copy()
         wavfile.write(path, self.sample_rate, buf)
         return self
 
