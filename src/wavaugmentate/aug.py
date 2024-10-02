@@ -5,7 +5,6 @@ This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import copy
-import sys
 import logging as log
 import numpy as np
 import mcs as ms
@@ -363,11 +362,8 @@ class AudioAugmentation:
             raise ValueError("Mask and signal data must have the same shape.")
 
         obj = self.signal
-        print('obj.shape =', obj.data.shape)
         chans = obj.channels_count()
         out_data = np.zeros_like(obj.data, dtype=np.float32)
-        print('outdata.shape =', out_data.shape)
-        print('mask.shape =', mask.shape)
         for i in range(0, chans):
             k = 0
             zero_count = 0
@@ -539,11 +535,9 @@ class AudioAugmentation:
 
         res = []
         _ = self
-        print("_sample_rate:", _.get().sample_rate)
         cmd_prefix = "_."
         for chain in self.chains:
             cmd_line = cmd_prefix + chain
-            print("cmd_line:", cmd_line)
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
