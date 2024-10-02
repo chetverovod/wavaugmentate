@@ -98,7 +98,7 @@ class MultiChannelSignal:
 
         return copy.deepcopy(self)
 
-    def __channel_rms(
+    def _channel_rms(
         self, chan_index: int, last_index: int, decimals: int
     ) -> float:
         """
@@ -148,10 +148,10 @@ class MultiChannelSignal:
         shape_len = len(self.data.shape)
         if shape_len > 1:
             for i in range(0, self.data.shape[0]):
-                chan_rms = self.__channel_rms(i, last_index, decimals)
+                chan_rms = self._channel_rms(i, last_index, decimals)
                 res.append(chan_rms)
         else:
-            chan_rms = self.__channel_rms(-1, last_index, decimals)
+            chan_rms = self._channel_rms(-1, last_index, decimals)
             res.append(chan_rms)
         return res
 

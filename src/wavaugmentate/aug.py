@@ -46,7 +46,7 @@ class AudioAugmentation:
     data (Mcs class objects).
     """
 
-    def __init__(self, signal: "MultiChannelSignal" = None, seed = -1 ) -> None:
+    def __init__(self, signal: "MultiChannelSignal" = None, seed=-1 ) -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -393,7 +393,7 @@ class AudioAugmentation:
         self.signal.data = out_data.copy()
         return self
 
-    def __max_len(self, a_list) -> int:
+    def _max_len(self, a_list) -> int:
         """
         Returns the maximum length of a list of elements.
 
@@ -444,7 +444,7 @@ class AudioAugmentation:
             for elem in out_list:
                 a_list.append(np.concatenate(elem).copy())
 
-            max_len = self.__max_len(a_list)
+            max_len = self._max_len(a_list)
 
             channels_list = []
             for elem in a_list:
