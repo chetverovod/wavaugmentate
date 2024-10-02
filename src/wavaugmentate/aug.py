@@ -287,7 +287,7 @@ class AudioAugmentation:
         amplitude_change = self.copy()
         amplitude_change.amplitude_ctrl(amplitude_list,
                                         amplitude_deviation_list)
-        delay_change = amplitude_change.copy()
+        delay_change = amplitude_change 
         delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
         c_len = self.signal.channels_len()
@@ -315,7 +315,7 @@ class AudioAugmentation:
             self (Aug): The noise-controlled multichannel sound.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         channels = []
         for signal, level in zip(obj.data, noise_level_list):
             if obj.seed != -1:
@@ -329,7 +329,7 @@ class AudioAugmentation:
             noise = n_noise
             res = signal + level * noise
             channels.append(res)
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels) #.copy()
         return self
 
     def pause_detect(self, relative_level: list[float]) -> np.ndarray[int]:
