@@ -25,10 +25,9 @@ def delay_syntez(
             if dev > 0:
                 left = delay - dev
                 if left < 0:
-                    log.error(
-                        "deviation value %s can give negative delay.", dev
-                    )
-                    raise ValueError("deviation value %s can give negative delay." % dev)
+                    msg  = f"Deviation value {dev} can give negative delay."
+                    log.error(msg)
+                    raise ValueError(msg)
 
                 right = delay + dev
                 if seed != -1:
@@ -172,7 +171,7 @@ class AudioAugmentation:
                 msq = "Amplitude deviation list length does not match number" \
                       " of channels."
                 log.error(msg)
-                raise ValueError(msq)      
+                raise ValueError(msq)
             amp_list = []
             for amplitude, dev in zip(
                 amplitude_list, amplitude_deviation_list

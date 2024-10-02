@@ -156,7 +156,7 @@ def test_wavaugmentate_greeting():
 
     cmd = [ctf.PROG_NAME]
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    assert res.stdout == wau.application_info + "\n"
+    assert res.stdout == wau.APPLICATION_INFO + "\n"
 
 
 def test_wavaugmentate_info_option():
@@ -175,7 +175,7 @@ def test_wavaugmentate_info_option():
     """
     cmd = [ctf.PROG_NAME]
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    assert res.stdout == wau.application_info + "\n"
+    assert res.stdout == wau.APPLICATION_INFO + "\n"
 
 
 def test_wavaugmentate_amplitude_option():

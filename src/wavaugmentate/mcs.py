@@ -272,7 +272,7 @@ class MultiChannelSignal:
         for i in range(self.channels_count()):
             buf = self.data[i, :].T
             file_name = f"{trimmed_path[0]}_{i + 1}.wav"
-            log.info("Writing %s..." % file_name)
+            log.info("Writing %s...", file_name)
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 

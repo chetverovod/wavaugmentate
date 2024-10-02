@@ -46,7 +46,7 @@ def file_info(path: str) -> dict:
 
 prog_name = os.path.basename(__file__).split(".")[0]
 
-application_info = f"{prog_name.capitalize()} application provides functions \
+APPLICATION_INFO = f"{prog_name.capitalize()} application provides functions \
 Gfor multichannel WAV audio data augmentation."
 
 
@@ -68,10 +68,10 @@ def validate_amp_list(amplitude_list: List[str]) -> None:
     for amplitude_value in amplitude_list:
         try:
             float(amplitude_value)
-        except Exception as exc:  
+        except Exception as exc:
             msg = "Amplitude list contains non number element:" \
                   f"<{amplitude_value}>."
-            print(f"{ms.ERROR_MARK}{msg}")  
+            print(f"{ms.ERROR_MARK}{msg}")
             log.error(msg)
             raise ValueError(msg) from exc
 
@@ -104,7 +104,7 @@ def validate_delay_list(delays_list: List[str]) -> None:
 def print_help_and_info():
     """Function prints info about application"""
 
-    print(application_info)
+    print(APPLICATION_INFO)
     sys.exit(0)
 
 
