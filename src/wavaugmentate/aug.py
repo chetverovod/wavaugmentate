@@ -451,7 +451,7 @@ class AudioAugmentation:
                     [elem, np.zeros(max_len - len(elem))]
                 )
                 channels_list.append(elem)
-        self.signal.data = np.stack(channels_list, axis=0).copy()
+        self.signal.data = np.stack(channels_list, axis=0)
         return self
 
     def split(self, channels_count: int) -> "AudioAugmentation":
