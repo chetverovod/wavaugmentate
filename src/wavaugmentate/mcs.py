@@ -7,7 +7,6 @@ This module defines multichannel audio flies augmentation class Mcs.
 import copy
 import random
 import sys
-from typing import List, Tuple
 
 import numpy as np
 from scipy.io import wavfile
@@ -155,18 +154,18 @@ class MultiChannelSignal:
             res.append(chan_rms)
         return res
 
-    def shape(self) -> Tuple:
+    def shape(self) -> tuple:
         """
         Returns the shape of the multichannel sound data.
 
         Returns:
-            Tuple: A tuple containing the shape of the multichannel sound data.
+            tuple: A tuple containing the shape of the multichannel sound data.
         """
         return self.data.shape
 
     def generate(
         self,
-        frequency_list: List[int],
+        frequency_list: list[int],
         duration: float = DEF_SIGNAL_LEN,
         samp_rt: int = -1,
         mode="sine",
@@ -297,13 +296,13 @@ class MultiChannelSignal:
 
     # Audio augmentation functions
 
-    def pause_detect(self, relative_level: List[float]) -> np.ndarray[int]:
+    def pause_detect(self, relative_level: list[float]) -> np.ndarray[int]:
         """
             Detects pauses in a multichannel sound.
 
             Args:
             mcs_data (np.ndarray): The multichannel sound data.
-            relative_level (List[float]): The list of relative levels for each
+            relative_level (list[float]): The list of relative levels for each
             channel, signal below this level will be marked as pause.
 
         Returns:
@@ -326,7 +325,7 @@ class MultiChannelSignal:
         return mask
 
     def pause_shrink(
-        self, mask: np.ndarray[int], min_pause: List[int]
+        self, mask: np.ndarray[int], min_pause: list[int]
     ) -> "MultiChannelSignal":
         """
         Shrink pauses in multichannel sound.
@@ -334,7 +333,7 @@ class MultiChannelSignal:
         Args:
             mask (np.ndarray): The mask indicating the pauses in the
             multichannel sound.
-            min_pause (List[int]): The list of minimum pause lengths for
+            min_pause (list[int]): The list of minimum pause lengths for
             each channel in samples.
 
         Returns:
