@@ -5,18 +5,17 @@ This module defines multichannel audio flies augmentation class Mcs.
 """
 
 import copy
-import sys
-from typing import List
+import logging as log
 import numpy as np
 import mcs as ms
-from mcs import Mcs
+from mcs import MultiChannelSignal
 
 
 def delay_syntez(
-    delay_us_list: List[int],
-    delay_deviation_list: List[int] = None,
+    delay_us_list: list[int],
+    delay_deviation_list: list[int] = None,
     seed: int = -1,
-) -> List[int]:
+) -> list[int]:
     """Make delays list"""
 
     d_list = delay_us_list
@@ -26,11 +25,10 @@ def delay_syntez(
             if dev > 0:
                 left = delay - dev
                 if left < 0:
-                    print(
-                        f"{ms.ERROR_MARK}"
-                        f"deviation value {dev} can give negative delay."
-                    )
-                    sys.exit(1)
+                    msg  = f"Deviation value {dev} can give negative delay."
+                    log.error(msg)
+                    raise ValueError(msg)
+
                 right = delay + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
@@ -40,13 +38,13 @@ def delay_syntez(
     return d_list
 
 
-class Aug:
+class AudioAugmentation:
     """
-    Class provides augmentation of  multichannel sound
+    Class provides augmentation of multichannel sound
     data (Mcs class objects).
     """
 
-    def __init__(self, signal: "Mcs" = None, seed = -1 ) -> None:
+    def __init__(self, signal: MultiChannelSignal = None, seed=-1) -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -63,7 +61,7 @@ class Aug:
         if signal is not None:
             self.signal = signal.copy()
         else:
-            self.signal = Mcs(seed=seed)
+            self.signal = MultiChannelSignal(seed=seed)
 
         self.chains = []  # List of chains.
 
@@ -88,7 +86,7 @@ class Aug:
 
         self.signal.set_seed(seed)
 
-    def put(self, signal: "Mcs") -> "Aug":
+    def put(self, signal: MultiChannelSignal) -> "AudioAugmentation":
         """
         Updates the multichannel sound data and sample rate of the Mcs
         instance.
@@ -101,10 +99,10 @@ class Aug:
             Mcs: The updated Mcs instance.
         """
 
-        self.signal = signal.copy()
+        self.signal = signal #.copy()
         return self
 
-    def get(self) -> "Mcs":
+    def get(self) -> MultiChannelSignal:
         """
         Returns the multichannel sound data stored in the Mcs instance.
 
@@ -115,17 +113,17 @@ class Aug:
 
     def generate(
         self,
-        frequency_list: List[int],
+        frequency_list: list[int],
         duration: float = ms.DEF_SIGNAL_LEN,
         samp_rt: int = -1,
         mode="sine",
-    ) -> "Aug":
+    ) -> "AudioAugmentation":
         """
         Generates a multichannel sound based on the given frequency list,
         duration, sample rate, and mode.
 
         Args:
-            frequency_list (List[int]): A list of frequencies to generate sound
+            frequency_list (list[int]): A list of frequencies to generate sound
             for.  duration (float): The duration of the sound in seconds.
             Defaults to ms.DEF_SIGNAL_LEN.  samp_rt (int): The sample rate of
             the sound. Defaults to -1.  mode (str): The mode of sound
@@ -143,17 +141,17 @@ class Aug:
     # Audio augmentation functions
     def amplitude_ctrl(
         self,
-        amplitude_list: List[float],
-        amplitude_deviation_list: List[float] = None,
-    ) -> "Aug":
+        amplitude_list: list[float],
+        amplitude_deviation_list: list[float] = None,
+    ) -> "AudioAugmentation":
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
         versions of tha same mcs data.
 
         Args:
-            amplitude_list (List[float]): The list of amplitude coefficients to
-            apply to each channel.  amplitude_deviation_list (List[float]): If
+            amplitude_list (list[float]): The list of amplitude coefficients to
+            apply to each channel.  amplitude_deviation_list (list[float]): If
             exists, sets amplitude values random with uniform distribution in
             range [amplitude - deviation, amplitude + deviation)].
 
@@ -161,24 +159,19 @@ class Aug:
             self (Aug): The amplitude-controlled multichannel sound.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         if obj.channels_count() != len(amplitude_list):
-            print(
-                ms.ERROR_MARK
-                + "Amplitude list length does not match number of channels."
-            )
-            sys.exit(1)
+            msg = "Amplitude list length does not match number of channels."
+            log.error(msg)
+            raise ValueError(msg)
 
         amp_list = amplitude_list
         if amplitude_deviation_list is not None:
             if obj.channels_count() != len(amplitude_deviation_list):
-                print(
-                    ms.ERROR_MARK
-                    + "Amplitude deviation list length does not match number"
-                    + " of channels."
-                )
-                sys.exit(1)
-
+                msq = "Amplitude deviation list length does not match number" \
+                      " of channels."
+                log.error(msg)
+                raise ValueError(msq)
             amp_list = []
             for amplitude, dev in zip(
                 amplitude_list, amplitude_deviation_list
@@ -197,23 +190,23 @@ class Aug:
         for signal, ampl in zip(obj.data, amp_list):
             channels.append(signal * ampl)
 
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels)
         return self
 
     def delay_ctrl(
         self,
-        delay_us_list: List[int],
-        delay_deviation_list: List[int] = None,
-    ) -> "Aug":
+        delay_us_list: list[int],
+        delay_deviation_list: list[int] = None,
+    ) -> "AudioAugmentation":
         """
             Add delays of channels of multichannel sound. Output data become
             longer.  Values of delay will be converted to count of samples.
 
         Args:
-            delay_us_list (List[int]): The list of delay values in microseconds
+            delay_us_list (list[int]): The list of delay values in microseconds
             to apply to each channel. Each value should be a positive integer.
             sound data.
-            delay_deviation_list (List[int]): If exists, the list of delay
+            delay_deviation_list (list[int]): If exists, the list of delay
             deviations makes delays uniformly distributed.
 
         Returns:
@@ -221,22 +214,18 @@ class Aug:
 
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         if obj.channels_count() != len(delay_us_list):
-            print(
-                ms.ERROR_MARK
-                + "Delay list length does not match number of channels."
-            )
-            sys.exit(1)
+            msg = "Delay list length does not match number of channels."
+            log.error(msg)
+            raise ValueError(msg)
 
         if delay_deviation_list is not None:
             if obj.channels_count() != len(delay_deviation_list):
-                print(
-                    ms.ERROR_MARK
-                    + "Delay deviation list length does not match number"
-                    + " of channels."
-                )
-                sys.exit(1)
+                msg = "Delay deviation list length does not match number" \
+                      " of channels."
+                log.error(msg)
+                raise ValueError(msg)
 
         d_list = delay_syntez(delay_us_list, delay_deviation_list, obj.seed)
         channels = []
@@ -254,16 +243,16 @@ class Aug:
                     res, np.zeros(max_samples_delay - samples_delay)
                 )
             channels.append(res)
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels)
         return self
 
     def echo_ctrl(
         self,
-        delay_us_list: List[int],
-        amplitude_list: List[float],
-        delay_deviation_list: List[int] = None,
-        amplitude_deviation_list: List[float] = None,
-    ) -> "Aug":
+        delay_us_list: list[int],
+        amplitude_list: list[float],
+        delay_deviation_list: list[int] = None,
+        amplitude_deviation_list: list[float] = None,
+    ) -> "AudioAugmentation":
         """
         Add echo to multichannel sound. The output data become longer. To each
         channel will be added it's copy with corresponding delay delay and
@@ -271,12 +260,12 @@ class Aug:
         wall.
 
         Args:
-            delay_us_list (List[int]): The list of delay values in microseconds
+            delay_us_list (list[int]): The list of delay values in microseconds
             to apply to each channel. Each value should be a positive integer.
-            amplitude_list (List[float]): The list of amplitude coefficients to
+            amplitude_list (list[float]): The list of amplitude coefficients to
                 apply to each channel.
-            delay_deviation_list (List[int]): If exists gives random deviation
-            of reflection delay.  amplitude_deviation_list (List[float]): If
+            delay_deviation_list (list[int]): If exists gives random deviation
+            of reflection delay.  amplitude_deviation_list (list[float]): If
             exists gives random
             deviation of reflection amplitude.
             seed (int): If exists seeds random generator.
@@ -288,27 +277,27 @@ class Aug:
         amplitude_change = self.copy()
         amplitude_change.amplitude_ctrl(amplitude_list,
                                         amplitude_deviation_list)
-        delay_change = amplitude_change.copy()
+        delay_change = amplitude_change
         delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
         c_len = self.signal.channels_len()
         for single_channel in self.signal.data:
             zeros_len = delay_change.signal.data.shape[1] - c_len
             channels.append(np.append(single_channel, np.zeros(zeros_len)))
-        self.signal.data = np.array(channels).copy() \
-            + delay_change.signal.data.copy()
+        self.signal.data = np.array(channels) \
+            + delay_change.signal.data
 
         return self
 
     def noise_ctrl(
         self,
-        noise_level_list: List[float],
-    ) -> "Aug":
+        noise_level_list: list[float],
+    ) -> "AudioAugmentation":
         """
         Apply noise to a multichannel sound.
 
         Args:
-            noise_level_list (List[float]): The list of noise levels to apply
+            noise_level_list (list[float]): The list of noise levels to apply
             to each channel.
             seed (int): The seed for random number generation. Defaults to -1.
 
@@ -316,7 +305,7 @@ class Aug:
             self (Aug): The noise-controlled multichannel sound.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         channels = []
         for signal, level in zip(obj.data, noise_level_list):
             if obj.seed != -1:
@@ -330,16 +319,16 @@ class Aug:
             noise = n_noise
             res = signal + level * noise
             channels.append(res)
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels)
         return self
 
-    def pause_detect(self, relative_level: List[float]) -> np.ndarray[int]:
+    def pause_detect(self, relative_level: list[float]) -> np.ndarray[int]:
         """
             Detects pauses in a multichannel sound.
 
             Args:
             mcs_data (np.ndarray): The multichannel sound data.
-            relative_level (List[float]): The list of relative levels for each
+            relative_level (list[float]): The list of relative levels for each
             channel, signal below this level will be marked as pause.
 
         Returns:
@@ -348,20 +337,20 @@ class Aug:
             zeros and ones 0 - pause, 1 - not a pause.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         mask = obj.pause_detect(relative_level)
         return mask
 
     def pause_shrink(
-        self, mask: np.ndarray[int], min_pause: List[int]
-    ) -> "Aug":
+        self, mask: np.ndarray[int], min_pause: list[int]
+    ) -> "AudioAugmentation":
         """
         Shrink pauses in multichannel sound.
 
         Args:
             mask (np.ndarray): The mask indicating the pauses in the
             multichannel sound.
-            min_pause (List[int]): The list of minimum pause lengths for
+            min_pause (list[int]): The list of minimum pause lengths for
             each channel in samples.
 
         Returns:
@@ -371,12 +360,9 @@ class Aug:
         if mask.shape != self.signal.data.shape:
             raise ValueError("Mask and signal data must have the same shape.")
 
-        obj = self.signal.copy()
-        print('obj.shape =', obj.data.shape)
+        obj = self.signal
         chans = obj.channels_count()
         out_data = np.zeros_like(obj.data, dtype=np.float32)
-        print('outdata.shape =', out_data.shape)
-        print('mask.shape =', mask.shape)
         for i in range(0, chans):
             k = 0
             zero_count = 0
@@ -390,10 +376,10 @@ class Aug:
                     zero_count = 0
                     out_data[i][k] = obj.data[i][j]
                     k += 1
-        self.signal.data = out_data.copy()
+        self.signal.data = out_data
         return self
 
-    def __max_len(self, a_list) -> int:
+    def _max_len(self, a_list) -> int:
         """
         Returns the maximum length of a list of elements.
 
@@ -409,14 +395,14 @@ class Aug:
             max_len = max(max_len, len(elem))
         return max_len
 
-    def pause_set(self, pause_map: list, pause_sz: List[int]) -> "Aug":
+    def pause_set(self, pause_map: list, pause_sz: list[int]) -> "AudioAugmentation":
         """
         Set pauses lengths in multichannel sound to selected values.
 
         Args:
             pause_map (list): A list of dictionaries containing pairs of
             (index, length) of pauses for each channel.
-            pause_sz (List[int]): A list of pause sizes (in samples) for
+            pause_sz (list[int]): A list of pause sizes (in samples) for
             each channel.
 
         Returns:
@@ -442,20 +428,20 @@ class Aug:
 
             a_list = []
             for elem in out_list:
-                a_list.append(np.concatenate(elem).copy())
+                a_list.append(np.concatenate(elem))
 
-            max_len = self.__max_len(a_list)
+            max_len = self._max_len(a_list)
 
             channels_list = []
             for elem in a_list:
                 elem = np.concatenate(
                     [elem, np.zeros(max_len - len(elem))]
-                ).copy()
+                )
                 channels_list.append(elem)
-        self.signal.data = np.stack(channels_list, axis=0).copy()
+        self.signal.data = np.stack(channels_list, axis=0)
         return self
 
-    def split(self, channels_count: int) -> "Aug":
+    def split(self, channels_count: int) -> "AudioAugmentation":
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -471,7 +457,7 @@ class Aug:
         self.signal = self.signal.split(channels_count)
         return self
 
-    def merge(self) -> "Aug":
+    def merge(self) -> "AudioAugmentation":
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -484,7 +470,7 @@ class Aug:
         self.signal = self.signal.merge()
         return self
 
-    def sum(self, mcs_data2: "Mcs") -> "Aug":
+    def sum(self, mcs_data2: MultiChannelSignal) -> "AudioAugmentation":
         """
         Sums two multichannel sound signals.
 
@@ -498,7 +484,7 @@ class Aug:
         self.signal.sum(mcs_data2)
         return self
 
-    def side_by_side(self, mcs_data2: "Mcs") -> "Aug":
+    def side_by_side(self, mcs_data2: MultiChannelSignal) -> "AudioAugmentation":
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -513,12 +499,12 @@ class Aug:
         self.signal.side_by_side(mcs_data2)
         return self
 
-    def add_chain(self, list_of_chains: List[str]) -> "Mcs":
+    def add_chain(self, list_of_chains: list[str]) -> MultiChannelSignal:
         """
         Add chain to list of chains.
 
         Args:
-            list_of_chains (List[str]): A list of chains to add.
+            list_of_chains (list[str]): A list of chains to add.
 
         Returns:
             self (Aug): The updated Mcs instance with added chains.
@@ -529,12 +515,12 @@ class Aug:
             self.chains.append(chain.strip())
         return self
 
-    def copy(self) -> "Aug":
+    def copy(self) -> "AudioAugmentation":
         """Deep Copy of the Mcs object."""
 
         return copy.deepcopy(self)
 
-    def eval(self) -> list["Mcs"]:
+    def eval(self) -> list[MultiChannelSignal]:
         """
         Evaluate list of chains.
 
@@ -547,16 +533,14 @@ class Aug:
         """
 
         res = []
-        _ = self.copy()
-        print("_sample_rate:", _.get().sample_rate)
+        _ = self
         cmd_prefix = "_."
         for chain in self.chains:
             cmd_line = cmd_prefix + chain
-            print("cmd_line:", cmd_line)
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
-    def read_file_apply_chains(self, path: str) -> list["Mcs"]:
+    def read_file_apply_chains(self, path: str) -> list[MultiChannelSignal]:
         """
         Reads data from a file at the specified path and updates the sample
         rate and data attributes and applies chains if they exist in object.

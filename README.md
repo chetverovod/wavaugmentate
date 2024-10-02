@@ -1,4 +1,4 @@
-# **Wavaugmentate** 0.1.16
+# **Wavaugmentate** 0.2.1
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
@@ -46,8 +46,8 @@ Signal augmentation can be applied by two ways:
 
 Example 1 (procedural approach):
 ```Python
-from wavaugmentate.mcs import Mcs
-from wavaugmentate.aug import Aug
+from wavaugmentate.mcs import MultiChannelSignal as Mcs
+from wavaugmentate.aug import AudioAugmentation as Aug
 
 
 # File name of original sound.
@@ -95,8 +95,8 @@ The same code as chain of operations, Example 2:
 
 ```Python
 
-from wavaugmentate.mcs import Mcs
-from wavaugmentate.aug import Aug
+from wavaugmentate.mcs import MultiChannel as Mcs
+from wavaugmentate.aug import AudioAugmentation as Aug
 
 # File name of original sound.
 file_name = "./outputwav/sound.wav"
@@ -141,8 +141,8 @@ wavaug-cli -c 'rd("./test_sounds/test_sound_1.wav").dly([100, 200, 300, 400]).am
 
  Example 5 (single file augmentation):
  ```Python
-from wavaugmentate.mcs import Mcs
-from wavaugmentate.aug import Aug
+from wavaugmentate.mcs import MultiChannel as Mcs
+from wavaugmentate.aug import AudioAugmentation as Aug
 
 file_name = "./outputwav/sound.wav"
 mcs = Mcs()
