@@ -287,7 +287,7 @@ class AudioAugmentation:
         amplitude_change = self.copy()
         amplitude_change.amplitude_ctrl(amplitude_list,
                                         amplitude_deviation_list)
-        delay_change = amplitude_change 
+        delay_change = amplitude_change
         delay_change.delay_ctrl(delay_us_list, delay_deviation_list)
         channels = []
         c_len = self.signal.channels_len()

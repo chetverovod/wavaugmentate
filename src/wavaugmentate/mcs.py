@@ -4,6 +4,7 @@
 This module defines multichannel audio flies augmentation class Mcs.
 """
 
+from __future__ import annotations
 import copy
 import random
 import sys
@@ -92,7 +93,7 @@ class MultiChannelSignal:
         self.sample_rate = samp_rt  # Sampling frequency, Hz.
         self.seed = seed  # Flag for seeding random generator.
 
-    def copy(self) -> "MultiChannelSignal":
+    def copy(self) -> MultiChannelSignal:
         """Deep copy of the Mcs object."""
 
         return copy.deepcopy(self)
@@ -169,7 +170,7 @@ class MultiChannelSignal:
         duration: float = DEF_SIGNAL_LEN,
         samp_rt: int = -1,
         mode="sine",
-    ) -> "MultiChannelSignal":
+    ) -> MultiChannelSignal:
         """
         Generate a multichannel sound based on the given frequency list,
         duration, sample rate, and mode. The mode can be 'sine' or 'speech'. In
@@ -230,7 +231,7 @@ class MultiChannelSignal:
                 self.data = np.array(channels)
         return self
 
-    def write(self, path: str) -> "MultiChannelSignal":
+    def write(self, path: str) -> MultiChannelSignal:
         """
         Writes the given multichannel sound data to a WAV file at the specified
         path.
@@ -248,7 +249,7 @@ class MultiChannelSignal:
         wavfile.write(path, self.sample_rate, buf)
         return self
 
-    def write_by_channel(self, path: str) -> "MultiChannelSignal":
+    def write_by_channel(self, path: str) -> MultiChannelSignal:
         """
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
@@ -275,7 +276,7 @@ class MultiChannelSignal:
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
-    def read(self, path: str) -> "MultiChannelSignal":
+    def read(self, path: str) -> MultiChannelSignal:
         """
         Reads a multichannel sound from a WAV file.
 
@@ -326,7 +327,7 @@ class MultiChannelSignal:
 
     def pause_shrink(
         self, mask: np.ndarray[int], min_pause: list[int]
-    ) -> "MultiChannelSignal":
+    ) -> MultiChannelSignal:
         """
         Shrink pauses in multichannel sound.
 
@@ -363,11 +364,11 @@ class MultiChannelSignal:
 
         if self.data is None:
             return 0
-        else:
-            if len(self.data.shape) > 1:
-                return self.data.shape[0]
-            else:
-                return 1
+
+        if len(self.data.shape) > 1:
+            return self.data.shape[0]
+
+        return 1
 
     def channels_len(self) -> int:
         """
@@ -377,13 +378,13 @@ class MultiChannelSignal:
 
         if self.data is None:
             return 0
-        else:
-            if len(self.data.shape) > 1:
-                return self.data.shape[1]
-            else:
-                return len(self.data)
 
-    def split(self, channels_count: int) -> "MultiChannelSignal":
+        if len(self.data.shape) > 1:
+            return self.data.shape[1]
+
+        return len(self.data)
+
+    def split(self, channels_count: int) -> MultiChannelSignal:
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -417,7 +418,7 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def merge(self) -> "MultiChannelSignal":
+    def merge(self) -> MultiChannelSignal:
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -435,7 +436,7 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def sum(self, mcs_data2: "MultiChannelSignal") -> "MultiChannelSignal":
+    def sum(self, mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
         """
         Sums two multichannel sound signals.
 
@@ -450,7 +451,7 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def side_by_side(self, mcs_data2: "MultiChannelSignal") -> "MultiChannelSignal":
+    def side_by_side(self, mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -471,7 +472,7 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def put(self, mcs: "MultiChannelSignal") -> "MultiChannelSignal":
+    def put(self, mcs: MultiChannelSignal) -> MultiChannelSignal:
         """
         Updates the multichannel sound data and sample rate of the Mcs
         instance.
