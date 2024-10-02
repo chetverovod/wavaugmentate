@@ -29,7 +29,7 @@ TEST_SOUND_1_NOISE_FILE = os.path.join(TESTS_DIR,
                                        "test_sounds/test_sound_1_noise.wav")
 
 OUTPUTWAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
-OUTPUT_FILE = os.path.join(OUTPUTWAV_DIR, "out.wav") 
+OUTPUT_FILE = os.path.join(OUTPUTWAV_DIR, "out.wav")
 
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = os.path.join(SRC_DIR, f"{wau.prog_name}.py")
