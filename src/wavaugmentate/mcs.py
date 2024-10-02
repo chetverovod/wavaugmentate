@@ -362,13 +362,13 @@ class MultiChannelSignal:
     def channels_count(self) -> int:
         """Returns the number of channels in the multichannel signal."""
 
-        c_count = 0
-        if self.data is not None:
+        if self.data is None:
+            return 0
+        else:
             if len(self.data.shape) > 1:
-                c_count = self.data.shape[0]
+                return self.data.shape[0]
             else:
-                c_count = 1
-        return c_count
+                return 1
 
     def channels_len(self) -> int:
         """
