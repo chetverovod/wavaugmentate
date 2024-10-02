@@ -7,6 +7,7 @@ This module does multichannel audio flies augmentation.
 import argparse
 import os
 import sys
+import logging as log
 from pathlib import Path
 from typing import List
 from scipy.io import wavfile
@@ -67,12 +68,12 @@ def validate_amp_list(amplitude_list: List[str]) -> None:
     for amplitude_value in amplitude_list:
         try:
             float(amplitude_value)
-        except ValueError:
-            print(
-                f"{ms.ERROR_MARK}Amplitude list"
-                f" contains non number element: <{amplitude_value}>."
-            )
-            sys.exit(3)
+        except Exception as exc:  
+            msg = "Amplitude list contains non number element:" \
+                  f"<{amplitude_value}>."
+            print(f"{ms.ERROR_MARK}{msg}")  
+            log.error(msg)
+            raise ValueError(msg) from exc
 
 
 def validate_delay_list(delays_list: List[str]) -> None:
@@ -93,12 +94,12 @@ def validate_delay_list(delays_list: List[str]) -> None:
     for delay_value in delays_list:
         try:
             int(delay_value)
-        except ValueError:
-            print(
-                f"{ms.ERROR_MARK}Delays list"
-                f" contains non integer element: <{delay_value}>."
-            )
-            sys.exit(1)
+        except Exception as exc:
+            msg = f"Delays list contains non integer element: <{delay_value}>."
+            print(f"{ms.ERROR_MARK}{msg}")
+            log.error(msg)
+            
+            raise ValueError(msg) from exc
 
 
 def print_help_and_info():
@@ -140,8 +141,10 @@ def input_path_hdr(args):
     if args.in_path is None:
         print_help_and_info()
     if not os.path.exists(args.in_path) or not os.path.isfile(args.in_path):
-        print(f"{ms.ERROR_MARK}Input file <{args.in_path}> not found.")
-        sys.exit(1)
+        msg = f"Input file <{args.in_path}> not found."
+        log.error(msg)
+        print(msg)
+        raise ValueError(msg)
 
 
 def is_file_creatable(fullpath: str) -> bool:
@@ -165,12 +168,13 @@ def is_file_creatable(fullpath: str) -> bool:
     if isdir:
         try:
             Path(fullpath).touch(mode=0o777, exist_ok=True)
-        except Exception:
-            print(f"{ms.ERROR_MARK}Can't create file <{fullpath}>.")
-            raise
+        except Exception as exc:
+            msg = f"Can't create file <{fullpath}>."
+            log.error(msg)
+            raise ValueError(msg) from exc
     else:
-        print(f"{ms.ERROR_MARK}Path <{path}> is not exists.")
-        sys.exit(1)
+        msg = f"Path <{path}> is not exists."
+        log.error(msg)
 
     return True
 
@@ -179,8 +183,9 @@ def output_path_hdr(args):
     """Function checks of output file name and path."""
 
     if not is_file_creatable(args.out_path):
-        print(f"{ms.ERROR_MARK}Can't create file <{args.out_path}>.")
-        sys.exit(1)
+        msg = f"Can't create file <{args.out_path}>."
+        log.error(msg)
+        raise ValueError(msg)  
 
 
 def file_info_hdr(args):
@@ -206,12 +211,12 @@ def amplitude_hdr(args):
     print(f"amplitudes: {float_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(float_list):
-        print(
-            f"{ms.ERROR_MARK}Amplitude list length <{len(float_list)}>"
-            " does not match number of channels. It should have"
-            f" <{info['channels_count']}> elements."
-        )
-        sys.exit(2)
+        msg = f"Amplitude list length <{len(float_list)}>" \
+             " does not match number of channels. It should have" \
+             f" <{info['channels_count']}> elements."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
 
     mcs = MultiChannelSignal().read(args.in_path)
     aug_obj = AudioAugmentation(mcs)
@@ -234,12 +239,11 @@ def noise_hdr(args):
     print(f"noise levels: {float_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(float_list):
-        print(
-            f"{ms.ERROR_MARK}Noise list length <{len(float_list)}>"
-            " does not match number of channels. It should have"
+        msg = f"Noise list length <{len(float_list)}>" \
+            " does not match number of channels. It should have" \
             f" <{info['channels_count']}> elements."
-        )
-        sys.exit(2)
+        log.error(msg)
+        raise ValueError(msg)
 
     mcs = ms.MultiChannelSignal().read(args.in_path)
     mcs.read(args.in_path)
@@ -258,20 +262,18 @@ def echo_hdr(args):
 
     lists = args.echo_list.split("/")
     if len(lists) != 2:
-        print(
-            f"{ms.ERROR_MARK}Can't distinguish delay and amplitude"
-            f"lists <{args.echo_list}>."
-        )
-        sys.exit(1)
+        msg = "Can't distinguish delay and amplitude" \
+             "lists <{args.echo_list}>."
+        raise ValueError(msg)
 
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
     if len(amplitude_list) != len(delay_list):
-        print(
-            f"{ms.ERROR_MARK}Can't delay and amplitude lists lengths"
-            f"differ <{args.echo_list}>."
-        )
-        sys.exit(2)
+        msg = "Can't delay and amplitude lists lengths" \
+              f" differ <{args.echo_list}>."
+        log.error(msg)
+        raise ValueError(msg)     
+        
 
     validate_delay_list(delay_list)
     validate_amp_list(amplitude_list)
