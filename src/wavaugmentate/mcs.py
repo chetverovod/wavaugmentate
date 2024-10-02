@@ -8,7 +8,7 @@ from __future__ import annotations
 import copy
 import random
 import sys
-
+import logging as log
 import numpy as np
 from scipy.io import wavfile
 
@@ -23,6 +23,14 @@ DEF_SIGNAL_LEN = 5
 
 random_noise_gen = np.random.default_rng()
 
+log.basicConfig(
+    level=log.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        log.FileHandler("wavaugmentate.log"),
+        log.StreamHandler(),
+    ],
+)
 
 def pause_measure(mask: np.ndarray[int]) -> dict:
     """
@@ -207,18 +215,20 @@ class MultiChannelSignal:
                 random.seed(self.seed)
             for freq in frequency_list:
                 if freq > 300 or freq < 60:
-                    print(
-                        ERROR_MARK + "Use basic tone from interval 600..300 Hz"
+                    log.warning(
+                        f"{ERROR_MARK} Use basic tone from interval 600..300 Hz"
                     )
-                    sys.exit(1)
+                    raise ValueError()
 
                 # Formants:
                 fbt = random.randint(freq, 300)  # 60–300 Гц
-                freq_list = [fbt]
-                freq_list.append(random.randint(2 * fbt, 850))  # 150–850 Гц
-                freq_list.append(random.randint(3 * fbt, 2500))  # 500–2500 Гц
-                freq_list.append(random.randint(4 * fbt, 3500))  # 1500–3500 Гц
-                freq_list.append(random.randint(5 * fbt, 4500))  # 2500–4500 Гц
+                freq_list = [
+                    fbt,
+                    random.randint(2 * fbt, 850),  # 150–850 Гц
+                    random.randint(3 * fbt, 2500),  # 500–2500 Гц
+                    random.randint(4 * fbt, 3500),  # 1500–3500 Гц
+                    random.randint(5 * fbt, 4500)  # 2500–4500 Гц
+                ]
                 signal = 0
                 amp = 1
                 for frm in freq_list:
