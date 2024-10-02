@@ -22,14 +22,6 @@ DEF_SIGNAL_LEN = 5
 
 random_noise_gen = np.random.default_rng()
 
-log.basicConfig(
-    level=log.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        log.FileHandler("wavaugmentate.log"),
-        log.StreamHandler(),
-    ],
-)
 
 def pause_measure(mask: np.ndarray[int]) -> dict:
     """
@@ -279,8 +271,8 @@ class MultiChannelSignal:
         trimmed_path = path.split(".wav")
         for i in range(self.channels_count()):
             buf = self.data[i, :].T
-            file_name = trimmed_path[0] + f"_{i + 1}.wav"
-            log.info(f"Writing {file_name}...")
+            file_name = f"{trimmed_path[0]}_{i + 1}.wav"
+            log.info("Writing %s..." % file_name)
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
@@ -460,7 +452,8 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def side_by_side(self, mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
+    def side_by_side(self,
+                     mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -544,7 +537,6 @@ class MultiChannelSignal:
             res["channels_count"] = self.channels_count()
             res["length_s"] = length
         return res
-
 
     # Alias Method Names
     rd = read

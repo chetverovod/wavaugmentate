@@ -98,7 +98,6 @@ def validate_delay_list(delays_list: List[str]) -> None:
             msg = f"Delays list contains non integer element: <{delay_value}>."
             print(f"{ms.ERROR_MARK}{msg}")
             log.error(msg)
-            
             raise ValueError(msg) from exc
 
 
@@ -171,10 +170,13 @@ def is_file_creatable(fullpath: str) -> bool:
         except Exception as exc:
             msg = f"Can't create file <{fullpath}>."
             log.error(msg)
+            print(f"{ms.ERROR_MARK}{msg}")
             raise ValueError(msg) from exc
     else:
         msg = f"Path <{path}> is not exists."
+        print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
+        raise ValueError(msg)
 
     return True
 
@@ -184,8 +186,9 @@ def output_path_hdr(args):
 
     if not is_file_creatable(args.out_path):
         msg = f"Can't create file <{args.out_path}>."
+        print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
-        raise ValueError(msg)  
+        raise ValueError(msg)
 
 
 def file_info_hdr(args):
@@ -242,6 +245,7 @@ def noise_hdr(args):
         msg = f"Noise list length <{len(float_list)}>" \
             " does not match number of channels. It should have" \
             f" <{info['channels_count']}> elements."
+        print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise ValueError(msg)
 
@@ -264,6 +268,8 @@ def echo_hdr(args):
     if len(lists) != 2:
         msg = "Can't distinguish delay and amplitude" \
              "lists <{args.echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
         raise ValueError(msg)
 
     delay_list = lists[0].split(",")
@@ -271,9 +277,9 @@ def echo_hdr(args):
     if len(amplitude_list) != len(delay_list):
         msg = "Can't delay and amplitude lists lengths" \
               f" differ <{args.echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
-        raise ValueError(msg)     
-        
+        raise ValueError(msg)
 
     validate_delay_list(delay_list)
     validate_amp_list(amplitude_list)
@@ -282,12 +288,12 @@ def echo_hdr(args):
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
-        print(
-            f"{ms.ERROR_MARK}Delay list length <{len(int_list)}>"
-            " does not match number of channels. It should have"
-            f" <{info['channels_count']}> elements."
-        )
-        sys.exit(2)
+        msg = f"Delay list length <{len(int_list)}>" \
+              " does not match number of channels. It should have" \
+              f" <{info['channels_count']}> elements."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
 
     float_list = [float(i) for i in amplitude_list]
     print(f"amplitudes: {float_list}")
@@ -313,12 +319,12 @@ def delay_hdr(args):
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
-        print(
-            f"{ms.ERROR_MARK}Delays list length <{len(int_list)}>"
-            " does not match number of channels. It should have"
+        msg = f"Delays list length <{len(int_list)}>" \
+            " does not match number of channels. It should have" \
             f" <{info['channels_count']}> elements."
-        )
-        sys.exit(2)
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
 
     mcs = ms.MultiChannelSignal().read(args.in_path)
     aug_obj = AudioAugmentation(mcs)

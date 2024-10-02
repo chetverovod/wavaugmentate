@@ -1,11 +1,14 @@
 """Module providing test functions for wavaugmentate.py  module."""
 import os
 import sys
+import logging as log
 import mcs as ms
 import wavaug as wau
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(
     os.path.dirname(__file__))), "/src/wavaugmentate"))
+
+
 
 
 FS = ms.DEF_FS
@@ -30,6 +33,17 @@ OUTPUT_FILE = OUTPUTWAV_DIR + "out.wav"
 
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = SRC_DIR + wau.prog_name + ".py"
+
+
+log.basicConfig(
+    level=log.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        log.FileHandler("wavaugmentate.log"),
+        log.StreamHandler(),
+    ],
+)
+
 
 ABS_ERR = 0.0001
 
