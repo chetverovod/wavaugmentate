@@ -253,7 +253,7 @@ class AudioAugmentation:
                     res, np.zeros(max_samples_delay - samples_delay)
                 )
             channels.append(res)
-        self.signal.data = np.array(channels) #.copy()
+        self.signal.data = np.array(channels)
         return self
 
     def echo_ctrl(
@@ -294,8 +294,8 @@ class AudioAugmentation:
         for single_channel in self.signal.data:
             zeros_len = delay_change.signal.data.shape[1] - c_len
             channels.append(np.append(single_channel, np.zeros(zeros_len)))
-        self.signal.data = np.array(channels).copy() \
-            + delay_change.signal.data.copy()
+        self.signal.data = np.array(channels) \
+            + delay_change.signal.data
 
         return self
 
