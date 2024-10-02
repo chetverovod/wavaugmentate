@@ -376,13 +376,13 @@ class MultiChannelSignal:
          signal.
         """
 
-        c_len = 0
-        if self.data is not None:
+        if self.data is None:
+            return 0
+        else:
             if len(self.data.shape) > 1:
-                c_len = self.data.shape[1]
+                return self.data.shape[1]
             else:
-                c_len = len(self.data)
-        return c_len
+                return len(self.data)
 
     def split(self, channels_count: int) -> "MultiChannelSignal":
         """
