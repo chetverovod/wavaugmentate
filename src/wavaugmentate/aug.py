@@ -449,7 +449,7 @@ class AudioAugmentation:
             for elem in a_list:
                 elem = np.concatenate(
                     [elem, np.zeros(max_len - len(elem))]
-                ).copy()
+                )
                 channels_list.append(elem)
         self.signal.data = np.stack(channels_list, axis=0).copy()
         return self
