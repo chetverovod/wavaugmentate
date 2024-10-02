@@ -468,7 +468,7 @@ class MultiChannelSignal:
         )
         out_data[0 : self.data.shape[0], :] = self.data
         out_data[self.data.shape[0] :, :] = mcs_data2.data
-        self.data = out_data.copy()
+        self.data = out_data
         return self
 
     def put(self, mcs: "MultiChannelSignal") -> "MultiChannelSignal":
@@ -484,7 +484,7 @@ class MultiChannelSignal:
             Mcs: The updated Mcs instance.
         """
 
-        self.data = mcs.data.copy()
+        self.data = mcs.data
         self.sample_rate = mcs.sample_rate
         self.path = mcs.path
         return self
