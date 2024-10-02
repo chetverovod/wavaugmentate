@@ -6,7 +6,6 @@ This module defines multichannel audio flies augmentation class Mcs.
 
 import copy
 import sys
-#from typing import List
 import numpy as np
 import mcs as ms
 from mcs import MultiChannelSignal
@@ -46,7 +45,7 @@ class AudioAugmentation:
     data (Mcs class objects).
     """
 
-    def __init__(self, signal: MultiChannelSignal = None, seed=-1 ) -> None:
+    def __init__(self, signal: MultiChannelSignal = None, seed=-1) -> None:
         """
         Initializes a new instance of the Mcs class.
 
@@ -101,7 +100,7 @@ class AudioAugmentation:
             Mcs: The updated Mcs instance.
         """
 
-        self.signal = signal.copy()
+        self.signal = signal #.copy()
         return self
 
     def get(self) -> MultiChannelSignal:
@@ -161,7 +160,7 @@ class AudioAugmentation:
             self (Aug): The amplitude-controlled multichannel sound.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         if obj.channels_count() != len(amplitude_list):
             print(
                 ms.ERROR_MARK
@@ -197,7 +196,7 @@ class AudioAugmentation:
         for signal, ampl in zip(obj.data, amp_list):
             channels.append(signal * ampl)
 
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels)
         return self
 
     def delay_ctrl(
@@ -221,7 +220,7 @@ class AudioAugmentation:
 
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         if obj.channels_count() != len(delay_us_list):
             print(
                 ms.ERROR_MARK
@@ -254,7 +253,7 @@ class AudioAugmentation:
                     res, np.zeros(max_samples_delay - samples_delay)
                 )
             channels.append(res)
-        self.signal.data = np.array(channels).copy()
+        self.signal.data = np.array(channels) #.copy()
         return self
 
     def echo_ctrl(
