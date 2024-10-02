@@ -4,7 +4,7 @@ import os
 import subprocess as sp
 import common_test_functions as ctf
 import mcs as ms
-from mcs import Mcs
+from mcs import MultiChannelSignal as Mcs
 import wavaug as wau
 
 

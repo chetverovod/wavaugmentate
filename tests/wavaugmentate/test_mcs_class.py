@@ -3,8 +3,8 @@
 import os
 import common_test_functions as ctf
 import mcs as ms
-from mcs import Mcs
-from aug import Aug
+from mcs import MultiChannelSignal as Mcs
+from aug import AudioAugmentation as Aug
 import numpy as np
 
 

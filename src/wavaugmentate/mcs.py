@@ -60,7 +60,7 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
     return out_list
 
 
-class Mcs:
+class MultiChannelSignal:
     """
     Class provides support of  multichannel sound
     data.
@@ -93,7 +93,7 @@ class Mcs:
         self.sample_rate = samp_rt  # Sampling frequency, Hz.
         self.seed = seed  # Flag for seeding random generator.
 
-    def copy(self) -> "Mcs":
+    def copy(self) -> "MultiChannelSignal":
         """Deep copy of the Mcs object."""
 
         return copy.deepcopy(self)
@@ -170,7 +170,7 @@ class Mcs:
         duration: float = DEF_SIGNAL_LEN,
         samp_rt: int = -1,
         mode="sine",
-    ) -> "Mcs":
+    ) -> "MultiChannelSignal":
         """
         Generate a multichannel sound based on the given frequency list,
         duration, sample rate, and mode. The mode can be 'sine' or 'speech'. In
@@ -231,7 +231,7 @@ class Mcs:
                 self.data = np.array(channels).copy()
         return self
 
-    def write(self, path: str) -> "Mcs":
+    def write(self, path: str) -> "MultiChannelSignal":
         """
         Writes the given multichannel sound data to a WAV file at the specified
         path.
@@ -249,7 +249,7 @@ class Mcs:
         wavfile.write(path, self.sample_rate, buf)
         return self
 
-    def write_by_channel(self, path: str) -> "Mcs":
+    def write_by_channel(self, path: str) -> "MultiChannelSignal":
         """
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
@@ -276,7 +276,7 @@ class Mcs:
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
-    def read(self, path: str) -> "Mcs":
+    def read(self, path: str) -> "MultiChannelSignal":
         """
         Reads a multichannel sound from a WAV file.
 
@@ -327,7 +327,7 @@ class Mcs:
 
     def pause_shrink(
         self, mask: np.ndarray[int], min_pause: List[int]
-    ) -> "Mcs":
+    ) -> "MultiChannelSignal":
         """
         Shrink pauses in multichannel sound.
 
@@ -384,7 +384,7 @@ class Mcs:
                 c_len = len(self.data)
         return c_len
 
-    def split(self, channels_count: int) -> "Mcs":
+    def split(self, channels_count: int) -> "MultiChannelSignal":
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -418,7 +418,7 @@ class Mcs:
         self.data = out_data
         return self
 
-    def merge(self) -> "Mcs":
+    def merge(self) -> "MultiChannelSignal":
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -436,7 +436,7 @@ class Mcs:
         self.data = out_data.copy()
         return self
 
-    def sum(self, mcs_data2: "Mcs") -> "Mcs":
+    def sum(self, mcs_data2: "MultiChannelSignal") -> "MultiChannelSignal":
         """
         Sums two multichannel sound signals.
 
@@ -451,7 +451,7 @@ class Mcs:
         self.data = out_data
         return self
 
-    def side_by_side(self, mcs_data2: "Mcs") -> "Mcs":
+    def side_by_side(self, mcs_data2: "MultiChannelSignal") -> "MultiChannelSignal":
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -472,7 +472,7 @@ class Mcs:
         self.data = out_data.copy()
         return self
 
-    def put(self, mcs: "Mcs") -> "Mcs":
+    def put(self, mcs: "MultiChannelSignal") -> "MultiChannelSignal":
         """
         Updates the multichannel sound data and sample rate of the Mcs
         instance.
