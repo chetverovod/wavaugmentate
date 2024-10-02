@@ -6,6 +6,7 @@ This module defines multichannel audio flies augmentation class Mcs.
 
 import copy
 import sys
+import logging as log
 import numpy as np
 import mcs as ms
 from mcs import MultiChannelSignal
@@ -25,11 +26,11 @@ def delay_syntez(
             if dev > 0:
                 left = delay - dev
                 if left < 0:
-                    print(
-                        f"{ms.ERROR_MARK}"
-                        f"deviation value {dev} can give negative delay."
+                    log.error(
+                        "deviation value %s can give negative delay.", dev
                     )
-                    sys.exit(1)
+                    raise ValueError("deviation value %s can give negative delay." % dev)
+
                 right = delay + dev
                 if seed != -1:
                     local_ng = np.random.default_rng(seed=seed)
@@ -162,22 +163,17 @@ class AudioAugmentation:
 
         obj = self.signal
         if obj.channels_count() != len(amplitude_list):
-            print(
-                ms.ERROR_MARK
-                + "Amplitude list length does not match number of channels."
-            )
-            sys.exit(1)
+            msg = "Amplitude list length does not match number of channels."
+            log.error(msg)
+            raise ValueError(msg)
 
         amp_list = amplitude_list
         if amplitude_deviation_list is not None:
             if obj.channels_count() != len(amplitude_deviation_list):
-                print(
-                    ms.ERROR_MARK
-                    + "Amplitude deviation list length does not match number"
-                    + " of channels."
-                )
-                sys.exit(1)
-
+                msq = "Amplitude deviation list length does not match number" \
+                      " of channels."
+                log.error(msg)
+                raise ValueError(msq)      
             amp_list = []
             for amplitude, dev in zip(
                 amplitude_list, amplitude_deviation_list
@@ -222,20 +218,16 @@ class AudioAugmentation:
 
         obj = self.signal
         if obj.channels_count() != len(delay_us_list):
-            print(
-                ms.ERROR_MARK
-                + "Delay list length does not match number of channels."
-            )
-            sys.exit(1)
+            msg = "Delay list length does not match number of channels."
+            log.error(msg)
+            raise ValueError(msg)
 
         if delay_deviation_list is not None:
             if obj.channels_count() != len(delay_deviation_list):
-                print(
-                    ms.ERROR_MARK
-                    + "Delay deviation list length does not match number"
-                    + " of channels."
-                )
-                sys.exit(1)
+                msg = "Delay deviation list length does not match number" \
+                      " of channels."
+                log.error(msg)
+                raise ValueError(msg)
 
         d_list = delay_syntez(delay_us_list, delay_deviation_list, obj.seed)
         channels = []

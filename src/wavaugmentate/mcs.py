@@ -7,7 +7,6 @@ This module defines multichannel audio flies augmentation class Mcs.
 from __future__ import annotations
 import copy
 import random
-import sys
 import logging as log
 import numpy as np
 from scipy.io import wavfile
