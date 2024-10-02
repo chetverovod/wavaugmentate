@@ -546,7 +546,7 @@ class AudioAugmentation:
         """
 
         res = []
-        _ = self #.copy()
+        _ = self
         print("_sample_rate:", _.get().sample_rate)
         cmd_prefix = "_."
         for chain in self.chains:
