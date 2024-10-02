@@ -1,5 +1,5 @@
 """wavaugmentate package"""
 
-from . import MultiChannelSignal as mcs
-from . import AudioAugmentation as aug
+from . import  mcs
+from . import  aug
 from . import wavaug
