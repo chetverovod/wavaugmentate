@@ -269,7 +269,7 @@ class MultiChannelSignal:
 
         trimmed_path = path.split(".wav")
         for i in range(self.channels_count()):
-            buf = self.data[i, :].T #.copy()
+            buf = self.data[i, :].T
             file_name = trimmed_path[0] + f"_{i + 1}.wav"
             print(f"Writing {file_name}...")
             wavfile.write(file_name, self.sample_rate, buf)
@@ -291,7 +291,7 @@ class MultiChannelSignal:
         if len(buf.shape) != 2:
             buf = np.expand_dims(buf, axis=1)
         self.path = path
-        self.data = buf.T.copy()
+        self.data = buf.T
         return self
 
     # Audio augmentation functions
@@ -355,7 +355,7 @@ class MultiChannelSignal:
                     zero_count = 0
                     out_data[i][k] = self.data[i][j]
                     k += 1
-        self.data = out_data.copy()
+        self.data = out_data
         return self
 
     def channels_count(self) -> int:
@@ -413,7 +413,7 @@ class MultiChannelSignal:
             )
 
         for i in range(0, channels_count):
-            out_data[i] = self.data.copy()
+            out_data[i] = self.data
         self.data = out_data
         return self
 
@@ -432,7 +432,7 @@ class MultiChannelSignal:
         channels_count = self.data.shape[0]
         for i in range(0, channels_count):
             out_data += self.data[i]
-        self.data = out_data.copy()
+        self.data = out_data
         return self
 
     def sum(self, mcs_data2: "MultiChannelSignal") -> "MultiChannelSignal":
