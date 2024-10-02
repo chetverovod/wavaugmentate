@@ -329,7 +329,7 @@ class AudioAugmentation:
             noise = n_noise
             res = signal + level * noise
             channels.append(res)
-        self.signal.data = np.array(channels) #.copy()
+        self.signal.data = np.array(channels)
         return self
 
     def pause_detect(self, relative_level: list[float]) -> np.ndarray[int]:
@@ -347,7 +347,7 @@ class AudioAugmentation:
             zeros and ones 0 - pause, 1 - not a pause.
         """
 
-        obj = self.signal.copy()
+        obj = self.signal
         mask = obj.pause_detect(relative_level)
         return mask
 
@@ -370,7 +370,7 @@ class AudioAugmentation:
         if mask.shape != self.signal.data.shape:
             raise ValueError("Mask and signal data must have the same shape.")
 
-        obj = self.signal.copy()
+        obj = self.signal
         print('obj.shape =', obj.data.shape)
         chans = obj.channels_count()
         out_data = np.zeros_like(obj.data, dtype=np.float32)
@@ -389,7 +389,7 @@ class AudioAugmentation:
                     zero_count = 0
                     out_data[i][k] = obj.data[i][j]
                     k += 1
-        self.signal.data = out_data.copy()
+        self.signal.data = out_data
         return self
 
     def _max_len(self, a_list) -> int:
@@ -441,7 +441,7 @@ class AudioAugmentation:
 
             a_list = []
             for elem in out_list:
-                a_list.append(np.concatenate(elem).copy())
+                a_list.append(np.concatenate(elem))
 
             max_len = self._max_len(a_list)
 
