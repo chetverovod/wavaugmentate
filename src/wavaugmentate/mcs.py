@@ -244,7 +244,7 @@ class MultiChannelSignal:
         self (Mcs):  representing saved multichannel sound.
         """
 
-        buf = self.data.T #.copy()
+        buf = self.data.T
         wavfile.write(path, self.sample_rate, buf)
         return self
 
@@ -269,7 +269,7 @@ class MultiChannelSignal:
 
         trimmed_path = path.split(".wav")
         for i in range(self.channels_count()):
-            buf = self.data[i, :].T.copy()
+            buf = self.data[i, :].T #.copy()
             file_name = trimmed_path[0] + f"_{i + 1}.wav"
             print(f"Writing {file_name}...")
             wavfile.write(file_name, self.sample_rate, buf)
