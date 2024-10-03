@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-This module defines multichannel audio flies augmentation class MultiChannelSignal.
+This module defines multichannel audio flies augmentation class
+MultiChannelSignal.
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ DEF_SIGNAL_LEN = 5
 random_noise_gen = np.random.default_rng()
 
 
-def pause_measure(mask: np.ndarray[int]) -> dict:
+def pause_measure(mask: np.ndarray[int]) -> list:
     """
     Measures pauses in multichannel sound.
 
@@ -77,7 +78,8 @@ class MultiChannelSignal:
             Defaults to None.
             sampling_rate (int, optional): The sample rate of the sound data.
             Defaults to -1.
-            seed (int): Value for seeding random generator. Defaults to -1.
+            seed (int, optional): Value for seeding random generator.
+             Defaults to -1.
 
         Returns:
             None
@@ -94,13 +96,13 @@ class MultiChannelSignal:
         self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> MultiChannelSignal:
-        """Deep copy of the MultiChannelSignal object."""
+        """Make deep copy of the MultiChannelSignal object."""
 
         return copy.deepcopy(self)
 
     def _channel_rms(
-        self, chan_index: int, last_index_of_sample: int, decimals: int
-    ) -> float:
+                     self, chan_index: int, last_index_of_sample: int = -1,
+                     decimals: int = -1) -> float:
         """
         Calculate the root mean square (RMS) of a single channel signal.
 
@@ -237,22 +239,20 @@ class MultiChannelSignal:
                 self.data = np.array(channels)
         return self
 
-    def write(self, path: str) -> MultiChannelSignal:
+    def write(self, dest_path: str) -> MultiChannelSignal:
         """
         Writes the given multichannel sound data to a WAV file at the specified
         path.
 
         Args:
-            path (str): The path to the WAV file.
-            mcs_data (np.ndarray): The multichannel sound data to write. The
-            shape of the array should be (num_channels, num_samples).
+            dest_path (str): The path to the WAV file.
 
         Returns:
         self (MultiChannelSignal):  representing saved multichannel sound.
         """
 
         buf = self.data.T
-        wavfile.write(path, self.sample_rate, buf)
+        wavfile.write(dest_path, self.sample_rate, buf)
         return self
 
     def write_by_channel(self, dest_path: str) -> MultiChannelSignal:
@@ -464,12 +464,12 @@ class MultiChannelSignal:
         return self
 
     def side_by_side(self,
-                     mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
+                     signal2: MultiChannelSignal) -> MultiChannelSignal:
         """
         Concatenates two multichannel sound signals side by side.
 
         Args:
-            mcs_data2 (MultiChannelSignal): The second multichannel sound
+            signal2 (MultiChannelSignal): The second multichannel sound
               signal.
 
         Returns:
@@ -478,30 +478,29 @@ class MultiChannelSignal:
         """
 
         out_data = np.zeros(
-            (self.data.shape[0] + mcs_data2.data.shape[0], self.data.shape[1]),
+            (self.data.shape[0] + signal2.data.shape[0], self.data.shape[1]),
             dtype=np.float32,
         )
         out_data[0 : self.data.shape[0], :] = self.data
-        out_data[self.data.shape[0] :, :] = mcs_data2.data
+        out_data[self.data.shape[0] :, :] = signal2.data
         self.data = out_data
         return self
 
-    def put(self, mcs: MultiChannelSignal) -> MultiChannelSignal:
+    def put(self, signal: MultiChannelSignal) -> MultiChannelSignal:
         """
         Updates the multichannel sound data and sample rate of the
         MultiChannelSignal instance.
 
         Args:
-            mcs_data (MultiChannelSignal): source of multichannel sound data.
-            fs (int, optional): The new sample rate. Defaults to -1.
+            signal (MultiChannelSignal): source of multichannel sound data.
 
         Returns:
             self (MultiChannelSignal): The updated MultiChannelSignal instance.
         """
 
-        self.data = mcs.data
-        self.sample_rate = mcs.sample_rate
-        self.path = mcs.path
+        self.data = signal.data
+        self.sample_rate = signal.sample_rate
+        self.path = signal.path
         return self
 
     def get(self) -> np.ndarray:

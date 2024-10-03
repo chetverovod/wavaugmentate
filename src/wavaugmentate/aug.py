@@ -153,7 +153,7 @@ class AudioAugmentation:
 
         Args:
             amplitude_list (list[float]): The list of amplitude coefficients to
-             apply to each channel. 
+             apply to each channel.
             amplitude_deviation_list (list[float]): If exists, sets amplitude
              values random with uniform distribution in range
              [amplitude - deviation, amplitude + deviation)].
@@ -515,8 +515,8 @@ class AudioAugmentation:
             list_of_chains (list[str]): A list of chains to add.
 
         Returns:
-            self (AudioAugmentation): The updated AudioAugmentation instance with
-              added chains. Result, allowing for method chaining.
+            self (AudioAugmentation): The updated AudioAugmentation instance
+              with added chains. Result, allowing for method chaining.
         """
 
         for chain in list_of_chains:
@@ -536,8 +536,8 @@ class AudioAugmentation:
             none
 
         Returns:
-            self (AudioAugmentation): The updated AudioAugmentation instance with added chains.
-            result, allowing for method chaining.
+            self (AudioAugmentation): The updated AudioAugmentation instance
+            with added chains. Result, allowing for method chaining.
         """
 
         res = []
