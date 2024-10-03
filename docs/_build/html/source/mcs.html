@@ -36,42 +36,41 @@
             
   <section id="module-mcs">
 <span id="mcs-module"></span><h1>mcs module<a class="headerlink" href="#module-mcs" title="Permalink to this heading">¶</a></h1>
-<p>This module defines multichannel audio flies augmentation class Mcs.</p>
+<p>This module defines multichannel audio flies augmentation class
+MultiChannelSignal.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="mcs.Mcs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mcs.</span></span><span class="sig-name descname"><span class="pre">Mcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_rt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.Mcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class provides support of  multichannel sound
-data.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mcs.</span></span><span class="sig-name descname"><span class="pre">MultiChannelSignal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.MultiChannelSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class provides support of multichannel sound
+data sintesized or loaded from WAV file.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.channels_count">
-<span class="sig-name descname"><span class="pre">channels_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#mcs.Mcs.channels_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of channels in the multichannel signal.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.channels_count">
+<span class="sig-name descname"><span class="pre">channels_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.channels_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of channels in the MultiChannelSignal object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.channels_len">
-<span class="sig-name descname"><span class="pre">channels_len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#mcs.Mcs.channels_len" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Returns the number of samples in one channel of multichannel</dt><dd><p>signal.</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.channels_len">
+<span class="sig-name descname"><span class="pre">channels_len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.channels_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of samples in one channel of MultiChannelSignal
+object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deep copy of the Mcs object.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make deep copy of the MultiChannelSignal object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.cpy">
-<span class="sig-name descname"><span class="pre">cpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.cpy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deep copy of the Mcs object.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.cpy">
+<span class="sig-name descname"><span class="pre">cpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.cpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make deep copy of the MultiChannelSignal object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.gen">
-<span class="sig-name descname"><span class="pre">gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_rt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.gen" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.gen">
+<span class="sig-name descname"><span class="pre">gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.gen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a multichannel sound based on the given frequency list,
 duration, sample rate, and mode. The mode can be ‘sine’ or ‘speech’. In
 ‘sine’ mode, output multichannel sound will be a list of sine waves. In
@@ -81,16 +80,19 @@ corresponding channel, it should be in interval 600..300.</p>
 <p>Args:
 frequency_list (list): A list of frequencies to generate sound for.
 duration (float): The duration of the sound in seconds.
-fs (int): The sample rate of the sound. Defaults to -1.
+samoling_rate (int): The sample rate of the sound. Defaults to -1.
 mode (str): The mode of sound generation. Can be ‘sine’ or ‘speech’.
-Defaults to ‘sine’.</p>
+Defaults to ‘sine’. Mode ‘spech’ generates speech like signals.</p>
 <p>Returns:
-self (Mcs):  representing the generated multichannel sound.</p>
+self (MultiChannelSignal): representing the generated multichannel</p>
+<blockquote>
+<div><p>sound.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.generate">
-<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_rt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.generate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a multichannel sound based on the given frequency list,
 duration, sample rate, and mode. The mode can be ‘sine’ or ‘speech’. In
 ‘sine’ mode, output multichannel sound will be a list of sine waves. In
@@ -100,17 +102,21 @@ corresponding channel, it should be in interval 600..300.</p>
 <p>Args:
 frequency_list (list): A list of frequencies to generate sound for.
 duration (float): The duration of the sound in seconds.
-fs (int): The sample rate of the sound. Defaults to -1.
+samoling_rate (int): The sample rate of the sound. Defaults to -1.
 mode (str): The mode of sound generation. Can be ‘sine’ or ‘speech’.
-Defaults to ‘sine’.</p>
+Defaults to ‘sine’. Mode ‘spech’ generates speech like signals.</p>
 <p>Returns:
-self (Mcs):  representing the generated multichannel sound.</p>
+self (MultiChannelSignal): representing the generated multichannel</p>
+<blockquote>
+<div><p>sound.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#mcs.Mcs.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the multichannel sound data stored in the Mcs instance.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the multichannel sound data stored in the MultiChannelSignal
+instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The multichannel sound data.</p>
@@ -122,8 +128,8 @@ self (Mcs):  representing the generated multichannel sound.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mcs.Mcs.info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary containing metadata about the audio data.</p>
 <blockquote>
 <div><p>The dictionary contains the following information:</p>
@@ -143,51 +149,58 @@ dict: A dictionary containing metadata about the audio data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.merge">
-<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.merge" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.merge" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
-<div><p>Mixes channels of a multichannel sound into a single channel.</p>
+<div><p>Merges channels of MultiChannelSignal object into a single channel.</p>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>none</strong> – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The merged sound data, containing a single channel.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The MultiChannelSignal object containing</dt><dd><p>a single channel of merging result.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.mrg">
-<span class="sig-name descname"><span class="pre">mrg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.mrg" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.mrg">
+<span class="sig-name descname"><span class="pre">mrg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.mrg" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
-<div><p>Mixes channels of a multichannel sound into a single channel.</p>
+<div><p>Merges channels of MultiChannelSignal object into a single channel.</p>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>none</strong> – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The merged sound data, containing a single channel.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The MultiChannelSignal object containing</dt><dd><p>a single channel of merging result.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.pause_detect">
-<span class="sig-name descname"><span class="pre">pause_detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mcs.Mcs.pause_detect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.pause_detect">
+<span class="sig-name descname"><span class="pre">pause_detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.pause_detect" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Detects pauses in a multichannel sound.</p>
 <p>Args:
-mcs_data (np.ndarray): The multichannel sound data.
-relative_level (List[float]): The list of relative levels for each
+relative_level (list[float]): The list of relative levels for each
 channel, signal below this level will be marked as pause.</p>
 </div></blockquote>
 <dl class="field-list simple">
@@ -197,41 +210,44 @@ sound.  The mask has the same shape as the input sound. It contains
 zeros and ones 0 - pause, 1 - not a pause.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>np.ndarray</p>
+<dd class="field-even"><p>np.ndarray[int]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.pause_shrink">
-<span class="sig-name descname"><span class="pre">pause_shrink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.pause_shrink" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.pause_shrink">
+<span class="sig-name descname"><span class="pre">pause_shrink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.pause_shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shrink pauses in multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mask</strong> (<em>np.ndarray</em>) – The mask indicating the pauses in the</p></li>
+<li><p><strong>mask</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – The mask indicating the pauses in the</p></li>
 <li><p><strong>sound.</strong> (<em>multichannel</em>) – </p></li>
-<li><p><strong>min_pause</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The list of minimum pause lengths for</p></li>
-<li><p><strong>samples.</strong> (<em>each channel in</em>) – </p></li>
+<li><p><strong>min_pause</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – The list of minimum pause lengths for</p></li>
+<li><p><strong>object.</strong> (<em>each channel in</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The multichannel sound with pauses shrunk.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The MultiChannelSignal object with</dt><dd><p>pauses shrunk.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.pdt">
-<span class="sig-name descname"><span class="pre">pdt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mcs.Mcs.pdt" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.pdt">
+<span class="sig-name descname"><span class="pre">pdt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.pdt" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Detects pauses in a multichannel sound.</p>
 <p>Args:
-mcs_data (np.ndarray): The multichannel sound data.
-relative_level (List[float]): The list of relative levels for each
+relative_level (list[float]): The list of relative levels for each
 channel, signal below this level will be marked as pause.</p>
 </div></blockquote>
 <dl class="field-list simple">
@@ -241,81 +257,83 @@ sound.  The mask has the same shape as the input sound. It contains
 zeros and ones 0 - pause, 1 - not a pause.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>np.ndarray</p>
+<dd class="field-even"><p>np.ndarray[int]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.put">
-<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.put" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the multichannel sound data and sample rate of the Mcs
-instance.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the multichannel sound data and sample rate of the
+MultiChannelSignal instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mcs_data</strong> (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><em>Mcs</em></a>) – source of multichannel sound data.</p></li>
-<li><p><strong>fs</strong> (<em>int</em><em>, </em><em>optional</em>) – The new sample rate. Defaults to -1.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>signal</strong> (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><em>MultiChannelSignal</em></a>) – source of multichannel sound data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated Mcs instance.</p>
+<dd class="field-even"><p>The updated MultiChannelSignal instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a></p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.rd">
-<span class="sig-name descname"><span class="pre">rd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.rd" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.rd">
+<span class="sig-name descname"><span class="pre">rd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.rd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a multichannel sound from a WAV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the WAV file.</p>
+<dd class="field-odd"><p><strong>source_path</strong> (<em>str</em>) – The path to the WAV file.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing the sample rate and the
-multichannel sound data.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object MultiChannelSignal containing</dt><dd><p>the sample rate and the multichannel sound data.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[int, np.ndarray]</p>
+<dd class="field-odd"><p>self(<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.read">
-<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.read" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a multichannel sound from a WAV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the WAV file.</p>
+<dd class="field-odd"><p><strong>source_path</strong> (<em>str</em>) – The path to the WAV file.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing the sample rate and the
-multichannel sound data.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>An object MultiChannelSignal containing</dt><dd><p>the sample rate and the multichannel sound data.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[int, np.ndarray]</p>
+<dd class="field-odd"><p>self(<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.rms">
-<span class="sig-name descname"><span class="pre">rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">last_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.Mcs.rms" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.rms">
+<span class="sig-name descname"><span class="pre">rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">last_index_of_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.MultiChannelSignal.rms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the root mean square (RMS) of a multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>last_index</strong> (<em>int</em>) – The last index to consider when calculating the</p></li>
-<li><p><strong>-1</strong> (<em>If</em>) – </p></li>
-<li><p><strong>decimals</strong> (<em>consider the entire array. Defaults to -1.</em>) – </p></li>
-<li><p><strong>(</strong><strong>int</strong><strong>)</strong> – Number of decimal places to round the RMS value.</p></li>
-<li><p><strong>-1</strong> – </p></li>
-<li><p><strong>-1.</strong> (<em>do not round. Defaults to</em>) – </p></li>
+<li><p><strong>last_index_of_sample</strong> (<em>int</em>) – The last index to consider when
+calculating the RMS.  If -1, consider the entire array.
+Defaults to -1.</p></li>
+<li><p><strong>decimals</strong> (<em>int</em>) – Number of decimal places to round the RMS value.
+If -1, do not round. Defaults to -1.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -329,64 +347,72 @@ sound.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.sbs">
-<span class="sig-name descname"><span class="pre">sbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcs_data2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.sbs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.sbs">
+<span class="sig-name descname"><span class="pre">sbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.sbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates two multichannel sound signals side by side.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mcs_data2</strong> (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><em>Mcs</em></a>) – The second multichannel sound signal.</p>
+<dd class="field-odd"><p><strong>signal2</strong> (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><em>MultiChannelSignal</em></a>) – The second multichannel sound
+signal.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The concatenated sound signal containing channels of
-both MCS.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The concatenated sound signal</dt><dd><p>containing channels of both MultiChannelSignal objects.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.set_seed">
-<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.Mcs.set_seed" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.set_seed">
+<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mcs.MultiChannelSignal.set_seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set seeding value.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.shape">
-<span class="sig-name descname"><span class="pre">shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span></span></span><a class="headerlink" href="#mcs.Mcs.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the shape of the multichannel sound data.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.shape">
+<span class="sig-name descname"><span class="pre">shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the shape of the multichannel sound object ‘data’ field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A tuple containing the shape of the multichannel sound data.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tuple</p>
+<dd class="field-even"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.side_by_side">
-<span class="sig-name descname"><span class="pre">side_by_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcs_data2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.side_by_side" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.side_by_side">
+<span class="sig-name descname"><span class="pre">side_by_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.side_by_side" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates two multichannel sound signals side by side.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mcs_data2</strong> (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><em>Mcs</em></a>) – The second multichannel sound signal.</p>
+<dd class="field-odd"><p><strong>signal2</strong> (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><em>MultiChannelSignal</em></a>) – The second multichannel sound
+signal.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The concatenated sound signal containing channels of
-both MCS.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The concatenated sound signal</dt><dd><p>containing channels of both MultiChannelSignal objects.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.split">
-<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.split" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.split" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a multichannel signal (containing single channel) into multiple
 identical channels.</p>
 <dl class="field-list simple">
@@ -397,18 +423,21 @@ identical channels.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The split multichannel signal, with each channel
-identical.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The split multichannel signal, with</dt><dd><p>each channel identical.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.splt">
-<span class="sig-name descname"><span class="pre">splt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.splt" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.splt">
+<span class="sig-name descname"><span class="pre">splt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.splt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a multichannel signal (containing single channel) into multiple
 identical channels.</p>
 <dl class="field-list simple">
@@ -419,53 +448,57 @@ identical channels.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The split multichannel signal, with each channel
-identical.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The split multichannel signal, with</dt><dd><p>each channel identical.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.sum">
-<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcs_data2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.sum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sums two multichannel sound signals.</p>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums two multichannel signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mcs_data2</strong> (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><em>Mcs</em></a>) – The second multichannel sound signal.</p>
+<dd class="field-odd"><p><strong>signal2</strong> (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><em>MultiChannelSignal</em></a>) – The second multichannel sound
+signal.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The sum of self._data and mcs_data2 signals as Mcs.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The sum of self.data and signal2.data</dt><dd><p>signals as MultiChannelSignal.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.wr">
-<span class="sig-name descname"><span class="pre">wr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.wr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.wr">
+<span class="sig-name descname"><span class="pre">wr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.wr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the given multichannel sound data to a WAV file at the specified
 path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – The path to the WAV file.</p></li>
-<li><p><strong>mcs_data</strong> (<em>np.ndarray</em>) – The multichannel sound data to write. The</p></li>
-<li><p><strong>be</strong> (<em>shape of the array should</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>dest_path</strong> (<em>str</em>) – The path to the WAV file.</p>
 </dd>
 </dl>
 <p>Returns:
-self (Mcs):  representing saved multichannel sound.</p>
+self (MultiChannelSignal):  representing saved multichannel sound.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.wrbc">
-<span class="sig-name descname"><span class="pre">wrbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.wrbc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.wrbc">
+<span class="sig-name descname"><span class="pre">wrbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.wrbc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes each channel of the multichannel sound data to a separate WAV
 files, 1 for each channel.</p>
 <p>File name will be modified to include the channel number. If path
@@ -476,40 +509,37 @@ contains
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – The path to the WAV file. The filename will be modified</p></li>
-<li><p><strong>number.</strong> (<em>to include the channel</em>) – </p></li>
+<li><p><strong>dest_path</strong> (<em>str</em>) – The path to the WAV file. The filename will be</p></li>
+<li><p><strong>number.</strong> (<em>modified to include the channel</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Mcs instance itself, allowing for method chaining.</p>
+<dd class="field-even"><p>The instance itself, allowing for
+method chaining.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.write" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the given multichannel sound data to a WAV file at the specified
 path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – The path to the WAV file.</p></li>
-<li><p><strong>mcs_data</strong> (<em>np.ndarray</em>) – The multichannel sound data to write. The</p></li>
-<li><p><strong>be</strong> (<em>shape of the array should</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>dest_path</strong> (<em>str</em>) – The path to the WAV file.</p>
 </dd>
 </dl>
 <p>Returns:
-self (Mcs):  representing saved multichannel sound.</p>
+self (MultiChannelSignal):  representing saved multichannel sound.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mcs.Mcs.write_by_channel">
-<span class="sig-name descname"><span class="pre">write_by_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs"><span class="pre">Mcs</span></a></span></span><a class="headerlink" href="#mcs.Mcs.write_by_channel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mcs.MultiChannelSignal.write_by_channel">
+<span class="sig-name descname"><span class="pre">write_by_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dest_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#mcs.MultiChannelSignal.write_by_channel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes each channel of the multichannel sound data to a separate WAV
 files, 1 for each channel.</p>
 <p>File name will be modified to include the channel number. If path
@@ -520,15 +550,16 @@ contains
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – The path to the WAV file. The filename will be modified</p></li>
-<li><p><strong>number.</strong> (<em>to include the channel</em>) – </p></li>
+<li><p><strong>dest_path</strong> (<em>str</em>) – The path to the WAV file. The filename will be</p></li>
+<li><p><strong>number.</strong> (<em>modified to include the channel</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Mcs instance itself, allowing for method chaining.</p>
+<dd class="field-even"><p>The instance itself, allowing for
+method chaining.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.Mcs" title="mcs.Mcs">Mcs</a>)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -537,7 +568,7 @@ contains
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mcs.pause_measure">
-<span class="sig-prename descclassname"><span class="pre">mcs.</span></span><span class="sig-name descname"><span class="pre">pause_measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mcs.pause_measure" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mcs.</span></span><span class="sig-name descname"><span class="pre">pause_measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mcs.pause_measure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Measures pauses in multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

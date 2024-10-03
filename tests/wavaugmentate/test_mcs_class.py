@@ -25,7 +25,7 @@ def test_mcs_put():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
 
     mcs = Mcs()
@@ -93,11 +93,11 @@ def test_mcs_write_by_channel():
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
-    samp_rt = 44100  # Select sampling frequency, Hz.
+    sampling_rate = 44100  # Select sampling frequency, Hz.
     time_len = 3  # Length of signal in seconds.
 
     # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = Mcs().generate(freq_list, time_len, samp_rt)
+    mcs1 = Mcs().generate(freq_list, time_len, sampling_rate)
     mcs1.write(file_name)
 
     # Create Mcs-object.
@@ -179,9 +179,9 @@ def test_sum():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = Mcs(samp_rt=ctf.FS)
+    test_sound_2 = Mcs(sampling_rate=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.sum(test_sound_2)
@@ -212,7 +212,7 @@ def test_merge():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
@@ -243,7 +243,7 @@ def test_split():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)

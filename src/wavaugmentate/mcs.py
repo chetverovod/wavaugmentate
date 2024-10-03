@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-This module defines multichannel audio flies augmentation class Mcs.
+This module defines multichannel audio flies augmentation class
+MultiChannelSignal.
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ DEF_SIGNAL_LEN = 5
 random_noise_gen = np.random.default_rng()
 
 
-def pause_measure(mask: np.ndarray[int]) -> dict:
+def pause_measure(mask: np.ndarray[int]) -> list:
     """
     Measures pauses in multichannel sound.
 
@@ -61,22 +62,24 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
 
 class MultiChannelSignal:
     """
-    Class provides support of  multichannel sound
-    data.
+    Class provides support of multichannel sound
+    data sintesized or loaded from WAV file.
     """
 
     def __init__(
-        self, np_data: np.ndarray = None, samp_rt: int = -1, seed: int = -1
+        self, np_data: np.ndarray = None, sampling_rate: int = -1,
+        seed: int = -1
     ):
         """
-        Initializes a new instance of the Mcs class.
+        Initializes a new instance of the MultiChannelSignal class.
 
         Args:
-            mcs_data (np.ndarray, optional): The multichannel sound data.
+            np_data (np.ndarray, optional): The multichannel sound data.
             Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults
-            to -1.
-            seed (int): Value for seeding random generator. Defaults to -1.
+            sampling_rate (int, optional): The sample rate of the sound data.
+            Defaults to -1.
+            seed (int, optional): Value for seeding random generator.
+             Defaults to -1.
 
         Returns:
             None
@@ -89,33 +92,37 @@ class MultiChannelSignal:
                 np_data  # .copy()
             )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
-        self.sample_rate = samp_rt  # Sampling frequency, Hz.
+        self.sample_rate = sampling_rate  # Sampling frequency, Hz.
         self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> MultiChannelSignal:
-        """Deep copy of the Mcs object."""
+        """Make deep copy of the MultiChannelSignal object."""
 
         return copy.deepcopy(self)
 
     def _channel_rms(
-        self, chan_index: int, last_index: int, decimals: int
-    ) -> float:
+                     self, chan_index: int, last_index_of_sample: int = -1,
+                     decimals: int = -1) -> float:
         """
         Calculate the root mean square (RMS) of a single channel signal.
 
         Args
-            signal_of_channel (array): Input signal of a single channel.
+            chan_index (int): Index of the channel to calculate the RMS of.
+            last_index_of_sample (int): The last index to consider when
+              calculating RNS.  If -1, consider the entire array.
             decimals (int): Number of decimal places to round the RMS value.
 
         Returns:
             float: The RMS value of the input signal.
         """
+
         # Calculate the mean of the squares of the signal values
         mean_square = 0
         if chan_index > -1:
-            mean_square = np.mean(self.data[chan_index, 0:last_index] ** 2)
+            mean_square = np.mean(self.data[chan_index,
+                                            0:last_index_of_sample] ** 2)
         else:
-            mean_square = np.mean(self.data[0:last_index] ** 2)
+            mean_square = np.mean(self.data[0:last_index_of_sample] ** 2)
 
         # Calculate the square root of the mean of the squares
         single_chan_rms = np.sqrt(mean_square)
@@ -127,36 +134,36 @@ class MultiChannelSignal:
         # Return the result
         return single_chan_rms
 
-    def rms(self, last_index: int = -1, decimals: int = -1):
+    def rms(self, last_index_of_sample: int = -1, decimals: int = -1):
         """
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-            last_index (int): The last index to consider when calculating the
-            RMS.  If -1, consider the entire array. Defaults to -1.  decimals
-            (int): Number of decimal places to round the RMS value.
-            If -1, do not round. Defaults to -1.
+            last_index_of_sample (int): The last index to consider when
+             calculating the RMS.  If -1, consider the entire array.
+             Defaults to -1.
+            decimals (int): Number of decimal places to round the RMS value.
+             If -1, do not round. Defaults to -1.
 
         Returns:
             list: A list of RMS values for each channel in the multichannel
             sound.
-
         """
 
         res = []
         shape_len = len(self.data.shape)
         if shape_len > 1:
             for i in range(0, self.data.shape[0]):
-                chan_rms = self._channel_rms(i, last_index, decimals)
+                chan_rms = self._channel_rms(i, last_index_of_sample, decimals)
                 res.append(chan_rms)
         else:
-            chan_rms = self._channel_rms(-1, last_index, decimals)
+            chan_rms = self._channel_rms(-1, last_index_of_sample, decimals)
             res.append(chan_rms)
         return res
 
     def shape(self) -> tuple:
         """
-        Returns the shape of the multichannel sound data.
+        Returns the shape of the multichannel sound object 'data' field.
 
         Returns:
             tuple: A tuple containing the shape of the multichannel sound data.
@@ -167,7 +174,7 @@ class MultiChannelSignal:
         self,
         frequency_list: list[int],
         duration: float = DEF_SIGNAL_LEN,
-        samp_rt: int = -1,
+        sampling_rate: int = -1,
         mode="sine",
     ) -> MultiChannelSignal:
         """
@@ -181,16 +188,17 @@ class MultiChannelSignal:
         Args:
         frequency_list (list): A list of frequencies to generate sound for.
         duration (float): The duration of the sound in seconds.
-        fs (int): The sample rate of the sound. Defaults to -1.
+        samoling_rate (int): The sample rate of the sound. Defaults to -1.
         mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
-        Defaults to 'sine'.
+        Defaults to 'sine'. Mode 'spech' generates speech like signals.
 
         Returns:
-        self (Mcs):  representing the generated multichannel sound.
+        self (MultiChannelSignal): representing the generated multichannel
+          sound.
         """
 
-        if samp_rt > 0:
-            self.sample_rate = samp_rt
+        if sampling_rate > 0:
+            self.sample_rate = sampling_rate
         self.data = None
         samples = np.arange(duration * self.sample_rate) / self.sample_rate
         channels = []
@@ -231,25 +239,23 @@ class MultiChannelSignal:
                 self.data = np.array(channels)
         return self
 
-    def write(self, path: str) -> MultiChannelSignal:
+    def write(self, dest_path: str) -> MultiChannelSignal:
         """
         Writes the given multichannel sound data to a WAV file at the specified
         path.
 
         Args:
-            path (str): The path to the WAV file.
-            mcs_data (np.ndarray): The multichannel sound data to write. The
-            shape of the array should be (num_channels, num_samples).
+            dest_path (str): The path to the WAV file.
 
         Returns:
-        self (Mcs):  representing saved multichannel sound.
+        self (MultiChannelSignal):  representing saved multichannel sound.
         """
 
         buf = self.data.T
-        wavfile.write(path, self.sample_rate, buf)
+        wavfile.write(dest_path, self.sample_rate, buf)
         return self
 
-    def write_by_channel(self, path: str) -> MultiChannelSignal:
+    def write_by_channel(self, dest_path: str) -> MultiChannelSignal:
         """
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
@@ -261,14 +267,15 @@ class MultiChannelSignal:
         ./outputwav/sound_augmented_2.wav and so on.
 
         Args:
-            path (str): The path to the WAV file. The filename will be modified
-            to include the channel number.
+            dest_path (str): The path to the WAV file. The filename will be
+            modified to include the channel number.
 
         Returns:
-            self (Mcs): The Mcs instance itself, allowing for method chaining.
+            self (MultiChannelSignal): The instance itself, allowing for
+            method chaining.
         """
 
-        trimmed_path = path.split(".wav")
+        trimmed_path = dest_path.split(".wav")
         for i in range(self.channels_count()):
             buf = self.data[i, :].T
             file_name = f"{trimmed_path[0]}_{i + 1}.wav"
@@ -276,22 +283,22 @@ class MultiChannelSignal:
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
-    def read(self, path: str) -> MultiChannelSignal:
+    def read(self, source_path: str) -> MultiChannelSignal:
         """
         Reads a multichannel sound from a WAV file.
 
         Args:
-            path (str): The path to the WAV file.
+            source_path (str): The path to the WAV file.
 
         Returns:
-            tuple[int, np.ndarray]: A tuple containing the sample rate and the
-            multichannel sound data.
+            self(MultiChannelSignal): An object MultiChannelSignal containing
+             the sample rate and the multichannel sound data.
         """
 
-        self.sample_rate, buf = wavfile.read(path)
+        self.sample_rate, buf = wavfile.read(source_path)
         if len(buf.shape) != 2:
             buf = np.expand_dims(buf, axis=1)
-        self.path = path
+        self.path = source_path
         self.data = buf.T
         return self
 
@@ -302,12 +309,11 @@ class MultiChannelSignal:
             Detects pauses in a multichannel sound.
 
             Args:
-            mcs_data (np.ndarray): The multichannel sound data.
             relative_level (list[float]): The list of relative levels for each
             channel, signal below this level will be marked as pause.
 
         Returns:
-            np.ndarray: The mask indicating the pauses in the multichannel
+            np.ndarray[int]: The mask indicating the pauses in the multichannel
             sound.  The mask has the same shape as the input sound. It contains
             zeros and ones 0 - pause, 1 - not a pause.
         """
@@ -325,20 +331,20 @@ class MultiChannelSignal:
             mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
         return mask
 
-    def pause_shrink(
-        self, mask: np.ndarray[int], min_pause: list[int]
-    ) -> MultiChannelSignal:
+    def pause_shrink(self, mask: np.ndarray[int],
+                     min_pause: list[int]) -> MultiChannelSignal:
         """
         Shrink pauses in multichannel sound.
 
         Args:
-            mask (np.ndarray): The mask indicating the pauses in the
+            mask (np.ndarray[int]): The mask indicating the pauses in the
             multichannel sound.
             min_pause (list[int]): The list of minimum pause lengths for
-            each channel in samples.
+            each channel in object.
 
         Returns:
-            self (Mcs): The multichannel sound with pauses shrunk.
+            self (MultiChannelSignal): The MultiChannelSignal object with
+             pauses shrunk.
         """
 
         chans = self.data.shape[0]
@@ -360,7 +366,7 @@ class MultiChannelSignal:
         return self
 
     def channels_count(self) -> int:
-        """Returns the number of channels in the multichannel signal."""
+        """Returns the number of channels in the MultiChannelSignal object."""
 
         if self.data is None:
             return 0
@@ -372,8 +378,8 @@ class MultiChannelSignal:
 
     def channels_len(self) -> int:
         """
-        Returns the number of samples in one channel of multichannel
-         signal.
+        Returns the number of samples in one channel of MultiChannelSignal
+        object.
         """
 
         if self.data is None:
@@ -394,8 +400,8 @@ class MultiChannelSignal:
             into.
 
         Returns:
-            self (Mcs): The split multichannel signal, with each channel
-            identical.
+            self (MultiChannelSignal): The split multichannel signal, with
+              each channel identical.
         """
 
         if self.channels_count() > 1:
@@ -421,13 +427,14 @@ class MultiChannelSignal:
 
     def merge(self) -> MultiChannelSignal:
         """
-            Mixes channels of a multichannel sound into a single channel.
+            Merges channels of MultiChannelSignal object into a single channel.
 
         Args:
             none
 
         Returns:
-            self (Mcs): The merged sound data, containing a single channel.
+            self (MultiChannelSignal): The MultiChannelSignal object containing
+              a single channel of merging result.
         """
 
         out_data = np.zeros(self.data.shape[1], dtype=np.float32)
@@ -437,64 +444,67 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def sum(self, mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
+    def sum(self, signal2: MultiChannelSignal) -> MultiChannelSignal:
         """
-        Sums two multichannel sound signals.
+        Sums two multichannel signals.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            signal2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Mcs): The sum of self._data and mcs_data2 signals as Mcs.
+            self (MultiChannelSignal): The sum of self.data and signal2.data
+              signals as MultiChannelSignal.
         """
 
-        out_data = self.data + mcs_data2.data
+        out_data = self.data + signal2.data
         self.data = out_data
         return self
 
     def side_by_side(self,
-                     mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
+                     signal2: MultiChannelSignal) -> MultiChannelSignal:
         """
         Concatenates two multichannel sound signals side by side.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            signal2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Mcs): The concatenated sound signal containing channels of
-            both MCS.
+            self (MultiChannelSignal): The concatenated sound signal
+              containing channels of both MultiChannelSignal objects.
         """
 
         out_data = np.zeros(
-            (self.data.shape[0] + mcs_data2.data.shape[0], self.data.shape[1]),
+            (self.data.shape[0] + signal2.data.shape[0], self.data.shape[1]),
             dtype=np.float32,
         )
         out_data[0 : self.data.shape[0], :] = self.data
-        out_data[self.data.shape[0] :, :] = mcs_data2.data
+        out_data[self.data.shape[0] :, :] = signal2.data
         self.data = out_data
         return self
 
-    def put(self, mcs: MultiChannelSignal) -> MultiChannelSignal:
+    def put(self, signal: MultiChannelSignal) -> MultiChannelSignal:
         """
-        Updates the multichannel sound data and sample rate of the Mcs
-        instance.
+        Updates the multichannel sound data and sample rate of the
+        MultiChannelSignal instance.
 
         Args:
-            mcs_data (Mcs): source of multichannel sound data.
-            fs (int, optional): The new sample rate. Defaults to -1.
+            signal (MultiChannelSignal): source of multichannel sound data.
 
         Returns:
-            Mcs: The updated Mcs instance.
+            self (MultiChannelSignal): The updated MultiChannelSignal instance.
         """
 
-        self.data = mcs.data
-        self.sample_rate = mcs.sample_rate
-        self.path = mcs.path
+        self.data = signal.data
+        self.sample_rate = signal.sample_rate
+        self.path = signal.path
         return self
 
     def get(self) -> np.ndarray:
         """
-        Returns the multichannel sound data stored in the Mcs instance.
+        Returns the multichannel sound data stored in the MultiChannelSignal
+        instance.
 
         Returns:
             np.ndarray: The multichannel sound data.

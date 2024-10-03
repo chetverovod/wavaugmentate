@@ -25,7 +25,7 @@ def test_aug_amp_control():
     """
 
     a_list = [0.1, 0.3, 0.4, 1]
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
 
@@ -56,7 +56,7 @@ def test_aug_dly_controls():
     """
 
     d_list = [100, 200, 300, 0]
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
 
@@ -349,7 +349,7 @@ def test_aug_noise_ctrl():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = Aug(test_sound_1).noise_ctrl([1, 0.2, 0.3, 0]).get()
@@ -381,9 +381,9 @@ def test_aug_sum():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([100], ctf.SIGNAL_TIME_LEN)
-    test_sound_2 = Mcs(samp_rt=ctf.FS)
+    test_sound_2 = Mcs(sampling_rate=ctf.FS)
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
 
     res = Aug(test_sound_1)
@@ -415,7 +415,7 @@ def test_aug_merge():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = Aug(test_sound_1.copy())
     res.merge()
@@ -446,7 +446,7 @@ def test_aug_split():
         None
     """
 
-    test_sound_1 = Mcs(samp_rt=ctf.FS)
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
     aug_obj.split(5)
@@ -766,7 +766,7 @@ def test_aug_chain_add_chain():
     Returns:
         None
     """
-    mcs = Mcs(samp_rt=ctf.FS).gen([1000, 300], 5)
+    mcs = Mcs(sampling_rate=ctf.FS).gen([1000, 300], 5)
 
     # Create a Mcs instance
     mcs_1 = Mcs(mcs.data, mcs.sample_rate).gen([700, 100], 5)
