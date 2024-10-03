@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This module defines multichannel audio flies augmentation class Mcs.
+This module defines multichannel audio flies augmentation class MultiChannelSignal.
 """
 
 from __future__ import annotations
@@ -61,21 +61,22 @@ def pause_measure(mask: np.ndarray[int]) -> dict:
 
 class MultiChannelSignal:
     """
-    Class provides support of  multichannel sound
-    data.
+    Class provides support of multichannel sound
+    data sintesized or loaded from WAV file.
     """
 
     def __init__(
-        self, np_data: np.ndarray = None, samp_rt: int = -1, seed: int = -1
+        self, np_data: np.ndarray = None, sampling_rate: int = -1,
+        seed: int = -1
     ):
         """
-        Initializes a new instance of the Mcs class.
+        Initializes a new instance of the MultiChannelSignal class.
 
         Args:
-            mcs_data (np.ndarray, optional): The multichannel sound data.
+            np_data (np.ndarray, optional): The multichannel sound data.
             Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults
-            to -1.
+            sampling_rate (int, optional): The sample rate of the sound data.
+            Defaults to -1.
             seed (int): Value for seeding random generator. Defaults to -1.
 
         Returns:
@@ -89,33 +90,37 @@ class MultiChannelSignal:
                 np_data  # .copy()
             )  # np.ndarray: Multichannel sound data field.
         self.path = ""  # Path to the sound file, from which the data was read.
-        self.sample_rate = samp_rt  # Sampling frequency, Hz.
+        self.sample_rate = sampling_rate  # Sampling frequency, Hz.
         self.seed = seed  # Flag for seeding random generator.
 
     def copy(self) -> MultiChannelSignal:
-        """Deep copy of the Mcs object."""
+        """Deep copy of the MultiChannelSignal object."""
 
         return copy.deepcopy(self)
 
     def _channel_rms(
-        self, chan_index: int, last_index: int, decimals: int
+        self, chan_index: int, last_index_of_sample: int, decimals: int
     ) -> float:
         """
         Calculate the root mean square (RMS) of a single channel signal.
 
         Args
-            signal_of_channel (array): Input signal of a single channel.
+            chan_index (int): Index of the channel to calculate the RMS of.
+            last_index_of_sample (int): The last index to consider when
+              calculating RNS.  If -1, consider the entire array.
             decimals (int): Number of decimal places to round the RMS value.
 
         Returns:
             float: The RMS value of the input signal.
         """
+
         # Calculate the mean of the squares of the signal values
         mean_square = 0
         if chan_index > -1:
-            mean_square = np.mean(self.data[chan_index, 0:last_index] ** 2)
+            mean_square = np.mean(self.data[chan_index,
+                                            0:last_index_of_sample] ** 2)
         else:
-            mean_square = np.mean(self.data[0:last_index] ** 2)
+            mean_square = np.mean(self.data[0:last_index_of_sample] ** 2)
 
         # Calculate the square root of the mean of the squares
         single_chan_rms = np.sqrt(mean_square)
@@ -127,12 +132,12 @@ class MultiChannelSignal:
         # Return the result
         return single_chan_rms
 
-    def rms(self, last_index: int = -1, decimals: int = -1):
+    def rms(self, last_index_of_sample: int = -1, decimals: int = -1):
         """
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-            last_index (int): The last index to consider when calculating the
+            last_index_of_sample (int): The last index to consider when calculating the
             RMS.  If -1, consider the entire array. Defaults to -1.  decimals
             (int): Number of decimal places to round the RMS value.
             If -1, do not round. Defaults to -1.
@@ -140,23 +145,22 @@ class MultiChannelSignal:
         Returns:
             list: A list of RMS values for each channel in the multichannel
             sound.
-
         """
 
         res = []
         shape_len = len(self.data.shape)
         if shape_len > 1:
             for i in range(0, self.data.shape[0]):
-                chan_rms = self._channel_rms(i, last_index, decimals)
+                chan_rms = self._channel_rms(i, last_index_of_sample, decimals)
                 res.append(chan_rms)
         else:
-            chan_rms = self._channel_rms(-1, last_index, decimals)
+            chan_rms = self._channel_rms(-1, last_index_of_sample, decimals)
             res.append(chan_rms)
         return res
 
     def shape(self) -> tuple:
         """
-        Returns the shape of the multichannel sound data.
+        Returns the shape of the multichannel sound object 'data' field.
 
         Returns:
             tuple: A tuple containing the shape of the multichannel sound data.
@@ -167,7 +171,7 @@ class MultiChannelSignal:
         self,
         frequency_list: list[int],
         duration: float = DEF_SIGNAL_LEN,
-        samp_rt: int = -1,
+        sampling_rate: int = -1,
         mode="sine",
     ) -> MultiChannelSignal:
         """
@@ -189,8 +193,8 @@ class MultiChannelSignal:
         self (Mcs):  representing the generated multichannel sound.
         """
 
-        if samp_rt > 0:
-            self.sample_rate = samp_rt
+        if sampling_rate > 0:
+            self.sample_rate = sampling_rate
         self.data = None
         samples = np.arange(duration * self.sample_rate) / self.sample_rate
         channels = []
@@ -249,7 +253,7 @@ class MultiChannelSignal:
         wavfile.write(path, self.sample_rate, buf)
         return self
 
-    def write_by_channel(self, path: str) -> MultiChannelSignal:
+    def write_by_channel(self, dest_path: str) -> MultiChannelSignal:
         """
         Writes each channel of the multichannel sound data to a separate WAV
         files, 1 for each channel.
@@ -261,14 +265,14 @@ class MultiChannelSignal:
         ./outputwav/sound_augmented_2.wav and so on.
 
         Args:
-            path (str): The path to the WAV file. The filename will be modified
+            dest_path (str): The path to the WAV file. The filename will be modified
             to include the channel number.
 
         Returns:
             self (Mcs): The Mcs instance itself, allowing for method chaining.
         """
 
-        trimmed_path = path.split(".wav")
+        trimmed_path = dest_path.split(".wav")
         for i in range(self.channels_count()):
             buf = self.data[i, :].T
             file_name = f"{trimmed_path[0]}_{i + 1}.wav"
