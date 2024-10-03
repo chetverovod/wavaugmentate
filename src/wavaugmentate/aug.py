@@ -51,10 +51,8 @@ class AudioAugmentation:
         Initializes a new instance of the MultiChannelSignal class.
 
         Args:
-            mcs_data (np.ndarray, optional): The multichannel sound data.
+            signal (MultiChannelSignal, optional): The multichannel sound data.
             Defaults to None.
-            fs (int, optional): The sample rate of the sound data. Defaults
-            to -1.
             seed (int): Value for seeding random generator. Defaults to -1.
 
         Returns:
@@ -69,7 +67,8 @@ class AudioAugmentation:
 
     def info(self) -> dict:
         """
-        Returns a dictionary containing information about the object.
+        Returns a dictionary containing information about the AudioAugmentation
+        object.
 
         The dictionary includes the information returned by the `info()` method
         of the `signal` attribute of the object, as well as a key-value pair
@@ -94,8 +93,8 @@ class AudioAugmentation:
         MultiChannelSignal instance.
 
         Args:
-            mcs_data (MultiChannelSignal): source of multichannel sound data.
-            
+            signal (MultiChannelSignal): source of multichannel sound data.
+
         Returns:
             self (AudioAugmentation): The updated AudioAugmentation instance.
         """
@@ -106,20 +105,18 @@ class AudioAugmentation:
     def get(self) -> MultiChannelSignal:
         """
         Returns the multichannel sound data stored in the MultiChannelSignal
-          instance.
+        instance.
 
         Returns:
-            np.ndarray: The multichannel sound data.
+            signal (MultiChannelSignal): The multichannel sound data.
         """
         return self.signal
 
-    def generate(
-        self,
-        frequency_list: list[int],
-        duration: float = ms.DEF_SIGNAL_LEN,
-        samp_rt: int = -1,
-        mode="sine",
-    ) -> "AudioAugmentation":
+    def generate(self, frequency_list: list[int],
+                 duration: float = ms.DEF_SIGNAL_LEN,
+                 sampling_rate: int = -1,
+                 mode="sine"
+                 ) -> AudioAugmentation:
         """
         Generates a multichannel sound based on the given frequency list,
         duration, sample rate, and mode.
@@ -127,16 +124,18 @@ class AudioAugmentation:
         Args:
             frequency_list (list[int]): A list of frequencies to generate sound
             for.  duration (float): The duration of the sound in seconds.
-            Defaults to ms.DEF_SIGNAL_LEN.  samp_rt (int): The sample rate of
-            the sound. Defaults to -1.  mode (str): The mode of sound
-            generation. Can be 'sine' or 'speech'. Defaults to 'sine'.
+            Defaults to ms.DEF_SIGNAL_LEN.
+            sampling_rate (int): The sample rate of the sound. Defaults to -1.
+            mode (str): The mode of sound generation. Can be 'sine' or
+            'speech'. Defaults to 'sine'. See details in the
+            MultiChannelSignal.
 
         Returns:
-            Aug: The generated multichannel sound.
+            self (AudioAugmentation): Object with generated multichannel sound.
         """
 
         self.signal = self.signal.generate(
-            frequency_list, duration, samp_rt, mode
+            frequency_list, duration, sampling_rate, mode
         )
         return self
 
@@ -159,8 +158,8 @@ class AudioAugmentation:
              [amplitude - deviation, amplitude + deviation)].
 
         Returns:
-            self (AudioAugmentation): The amplitude-controlled multichannel
-             sound.
+            self (AudioAugmentation): Object with amplitude-controlled
+              multichannel sound.
         """
 
         obj = self.signal
@@ -201,10 +200,10 @@ class AudioAugmentation:
         self,
         delay_us_list: list[int],
         delay_deviation_list: list[int] = None,
-    ) -> "AudioAugmentation":
+    ) -> AudioAugmentation:
         """
             Add delays of channels of multichannel sound. Output data become
-            longer.  Values of delay will be converted to count of samples.
+            longer. Values of delay will be converted to count of samples.
 
         Args:
             delay_us_list (list[int]): The list of delay values in microseconds
@@ -214,7 +213,7 @@ class AudioAugmentation:
             deviations makes delays uniformly distributed.
 
         Returns:
-            self (Aug): The delayed multichannel sound.
+            self (AudioAugmentation): Object with delayed multichannel sound.
 
         """
 
@@ -256,7 +255,7 @@ class AudioAugmentation:
         amplitude_list: list[float],
         delay_deviation_list: list[int] = None,
         amplitude_deviation_list: list[float] = None,
-    ) -> "AudioAugmentation":
+    ) -> AudioAugmentation:
         """
         Add echo to multichannel sound. The output data become longer. To each
         channel will be added it's copy with corresponding delay delay and
@@ -265,17 +264,17 @@ class AudioAugmentation:
 
         Args:
             delay_us_list (list[int]): The list of delay values in microseconds
-            to apply to each channel. Each value should be a positive integer.
+             to apply to each channel. Each value should be a positive integer.
             amplitude_list (list[float]): The list of amplitude coefficients to
-                apply to each channel.
+             apply to each channel.
             delay_deviation_list (list[int]): If exists gives random deviation
-            of reflection delay.  amplitude_deviation_list (list[float]): If
-            exists gives random
-            deviation of reflection amplitude.
-            seed (int): If exists seeds random generator.
+             of reflection delay.
+            amplitude_deviation_list (list[float]): If exists gives random
+             deviation of reflection amplitude.
 
         Returns:
-            self (Aug): The echoed multichannel sound.
+            self (AudioAugmentation): The object with echoed multichannel
+             sound.
         """
 
         amplitude_change = self.copy()
@@ -296,17 +295,17 @@ class AudioAugmentation:
     def noise_ctrl(
         self,
         noise_level_list: list[float],
-    ) -> "AudioAugmentation":
+    ) -> AudioAugmentation:
         """
         Apply noise to a multichannel sound.
 
         Args:
-            noise_level_list (list[float]): The list of noise levels to apply
+          noise_level_list (list[float]): The list of noise levels to apply
             to each channel.
-            seed (int): The seed for random number generation. Defaults to -1.
 
         Returns:
-            self (Aug): The noise-controlled multichannel sound.
+            self (AudioAugmentation): The object noise-controlled multichannel
+             sound.
         """
 
         obj = self.signal
@@ -331,14 +330,13 @@ class AudioAugmentation:
             Detects pauses in a multichannel sound.
 
             Args:
-            mcs_data (np.ndarray): The multichannel sound data.
             relative_level (list[float]): The list of relative levels for each
             channel, signal below this level will be marked as pause.
 
         Returns:
             np.ndarray: The mask indicating the pauses in the multichannel
-            sound.  The mask has the same shape as the input sound. It contains
-            zeros and ones 0 - pause, 1 - not a pause.
+             sound. The mask has the same shape as the input sound. It contains
+             zeros and ones 0 - pause, 1 - not a pause.
         """
 
         obj = self.signal
@@ -347,18 +345,19 @@ class AudioAugmentation:
 
     def pause_shrink(
         self, mask: np.ndarray[int], min_pause: list[int]
-    ) -> "AudioAugmentation":
+    ) -> AudioAugmentation:
         """
         Shrink pauses in multichannel sound.
 
         Args:
             mask (np.ndarray): The mask indicating the pauses in the
-            multichannel sound.
+             multichannel sound.
             min_pause (list[int]): The list of minimum pause lengths for
-            each channel in samples.
+             each channel in samples.
 
         Returns:
-            self (Aug): The multichannel sound with pauses shrunk.
+            self (AudioAugmentation): The object with multichannel sound with
+             pauses shrunk.
         """
 
         if mask.shape != self.signal.data.shape:
@@ -406,12 +405,13 @@ class AudioAugmentation:
 
         Args:
             pause_map (list): A list of dictionaries containing pairs of
-            (index, length) of pauses for each channel.
+             (index, length) of pauses for each channel.
             pause_sz (list[int]): A list of pause sizes (in samples) for
-            each channel.
+             each channel.
 
         Returns:
-            self (Aug): The multichannel sound with pauses shrunk.
+            self (AudioAugmentation): The object with multichannel sound
+             with pauses shrunk.
         """
 
         out_list = []
@@ -446,23 +446,24 @@ class AudioAugmentation:
         self.signal.data = np.stack(channels_list, axis=0)
         return self
 
-    def split(self, channels_count: int) -> "AudioAugmentation":
+    def split(self, channels_count: int) -> AudioAugmentation:
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
 
         Args:
-            channels_count (int): The number of channels to split the signal
+          channels_count (int): The number of channels to split the signal
             into.
 
         Returns:
-            self (Aug): The split multichannel signal, with each channel
-            identical.  """
+           self (AudioAugmentation): The split multichannel signal, with each
+            channel identical.
+        """
 
         self.signal = self.signal.split(channels_count)
         return self
 
-    def merge(self) -> "AudioAugmentation":
+    def merge(self) -> AudioAugmentation:
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -470,41 +471,40 @@ class AudioAugmentation:
             none
 
         Returns:
-            self (Aug): The merged sound data, containing a single channel.
+            self (AudioAugmentation): The object with merged sound data,
+             containing a single channel.
         """
         self.signal = self.signal.merge()
         return self
 
-    def sum(self, mcs_data2: MultiChannelSignal) -> AudioAugmentation:
+    def sum(self, signal2: MultiChannelSignal) -> AudioAugmentation:
         """
         Sums two multichannel sound signals.
 
         Args:
-            mcs_data2 (MultiChannelSignal): The second multichannel sound
-              signal.
+            signal2 (MultiChannelSignal): The second multichannel signal.
 
         Returns:
-            self (AudioAugmentation): The sum of self._data and mcs_data2
+            self (AudioAugmentation): The sum of self._data and signal2
               signals as AudioAugmentation object.
         """
 
-        self.signal.sum(mcs_data2)
+        self.signal.sum(signal2)
         return self
 
-    def side_by_side(self, mcs_data2: MultiChannelSignal) -> AudioAugmentation:
+    def side_by_side(self, signal2: MultiChannelSignal) -> AudioAugmentation:
         """
         Concatenates two multichannel sound signals side by side.
 
         Args:
-            mcs_data2 (MultiChannelSignal): The second multichannel sound
-              signal.
+            signal2 (MultiChannelSignal): The second multichannel signal.
 
         Returns:
-            self (AudioAugmentation): The concatenated sound signal containing
-             channels of both objects.
+            self (AudioAugmentation): The object with concatenated signal
+             containing channels of both objects.
         """
 
-        self.signal.side_by_side(mcs_data2)
+        self.signal.side_by_side(signal2)
         return self
 
     def add_chain(self, list_of_chains: list[str]) -> MultiChannelSignal:
@@ -524,7 +524,7 @@ class AudioAugmentation:
         return self
 
     def copy(self) -> AudioAugmentation:
-        """Deep Copy of the AudioAugmentation object."""
+        """Deep copy of the AudioAugmentation object."""
 
         return copy.deepcopy(self)
 
@@ -548,19 +548,20 @@ class AudioAugmentation:
             res.append(eval(cmd_line))  # It is need for chain commands.
         return res
 
-    def read_file_apply_chains(self, path: str) -> list[MultiChannelSignal]:
+    def read_file_apply_chains(self,
+                               source_path: str) -> list[MultiChannelSignal]:
         """
         Reads data from a file at the specified path and updates the sample
         rate and data attributes and applies chains if they exist in object.
 
         Args:
-            path (str): Path to the file containing the data.
+            source_path (str): Path to the file containing the data.
 
         Returns:
             list[MultiChannelSignal]: The updated AudioAugmentation data field.
         """
 
-        self.signal.read(path)
+        self.signal.read(source_path)
         res = self.eval()
         return res
 
