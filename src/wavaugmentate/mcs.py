@@ -137,10 +137,11 @@ class MultiChannelSignal:
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-            last_index_of_sample (int): The last index to consider when calculating the
-            RMS.  If -1, consider the entire array. Defaults to -1.  decimals
-            (int): Number of decimal places to round the RMS value.
-            If -1, do not round. Defaults to -1.
+            last_index_of_sample (int): The last index to consider when 
+             calculating the RMS.  If -1, consider the entire array.
+             Defaults to -1.
+            decimals (int): Number of decimal places to round the RMS value.
+             If -1, do not round. Defaults to -1.
 
         Returns:
             list: A list of RMS values for each channel in the multichannel
@@ -185,12 +186,13 @@ class MultiChannelSignal:
         Args:
         frequency_list (list): A list of frequencies to generate sound for.
         duration (float): The duration of the sound in seconds.
-        fs (int): The sample rate of the sound. Defaults to -1.
+        samoling_rate (int): The sample rate of the sound. Defaults to -1.
         mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
-        Defaults to 'sine'.
+        Defaults to 'sine'. Mode 'spech' generates speech like signals.
 
         Returns:
-        self (Mcs):  representing the generated multichannel sound.
+        self (MultiChannelSignal): representing the generated multichannel
+          sound.
         """
 
         if sampling_rate > 0:
@@ -246,7 +248,7 @@ class MultiChannelSignal:
             shape of the array should be (num_channels, num_samples).
 
         Returns:
-        self (Mcs):  representing saved multichannel sound.
+        self (MultiChannelSignal):  representing saved multichannel sound.
         """
 
         buf = self.data.T
@@ -265,11 +267,12 @@ class MultiChannelSignal:
         ./outputwav/sound_augmented_2.wav and so on.
 
         Args:
-            dest_path (str): The path to the WAV file. The filename will be modified
-            to include the channel number.
+            dest_path (str): The path to the WAV file. The filename will be
+            modified to include the channel number.
 
         Returns:
-            self (Mcs): The Mcs instance itself, allowing for method chaining.
+            self (MultiChannelSignal): The instance itself, allowing for
+            method chaining.
         """
 
         trimmed_path = dest_path.split(".wav")
@@ -342,7 +345,8 @@ class MultiChannelSignal:
             each channel in samples.
 
         Returns:
-            self (Mcs): The multichannel sound with pauses shrunk.
+            self (MultiChannelSignal): The multichannel sound with pauses
+             shrunk.
         """
 
         chans = self.data.shape[0]
@@ -398,8 +402,8 @@ class MultiChannelSignal:
             into.
 
         Returns:
-            self (Mcs): The split multichannel signal, with each channel
-            identical.
+            self (MultiChannelSignal): The split multichannel signal, with
+              each channel identical.
         """
 
         if self.channels_count() > 1:
@@ -431,7 +435,8 @@ class MultiChannelSignal:
             none
 
         Returns:
-            self (Mcs): The merged sound data, containing a single channel.
+            self (MultiChannelSignal): The merged sound data, containing
+              a single channel.
         """
 
         out_data = np.zeros(self.data.shape[1], dtype=np.float32)
@@ -446,10 +451,12 @@ class MultiChannelSignal:
         Sums two multichannel sound signals.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            mcs_data2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Mcs): The sum of self._data and mcs_data2 signals as Mcs.
+            self (MultiChannelSignal): The sum of self._data and mcs_data2
+              signals as MultiChannelSignal.
         """
 
         out_data = self.data + mcs_data2.data
@@ -462,11 +469,12 @@ class MultiChannelSignal:
         Concatenates two multichannel sound signals side by side.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            mcs_data2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Mcs): The concatenated sound signal containing channels of
-            both MCS.
+            self (MultiChannelSignal): The concatenated sound signal
+              containing channels of both MultiChannelSignal objects.
         """
 
         out_data = np.zeros(
@@ -480,15 +488,15 @@ class MultiChannelSignal:
 
     def put(self, mcs: MultiChannelSignal) -> MultiChannelSignal:
         """
-        Updates the multichannel sound data and sample rate of the Mcs
-        instance.
+        Updates the multichannel sound data and sample rate of the
+        MultiChannelSignal instance.
 
         Args:
-            mcs_data (Mcs): source of multichannel sound data.
+            mcs_data (MultiChannelSignal): source of multichannel sound data.
             fs (int, optional): The new sample rate. Defaults to -1.
 
         Returns:
-            Mcs: The updated Mcs instance.
+            self (MultiChannelSignal): The updated MultiChannelSignal instance.
         """
 
         self.data = mcs.data
@@ -498,7 +506,8 @@ class MultiChannelSignal:
 
     def get(self) -> np.ndarray:
         """
-        Returns the multichannel sound data stored in the Mcs instance.
+        Returns the multichannel sound data stored in the MultiChannelSignal
+        instance.
 
         Returns:
             np.ndarray: The multichannel sound data.

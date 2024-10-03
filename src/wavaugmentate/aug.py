@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 """
-This module defines multichannel audio flies augmentation class Mcs.
+This module defines class for augmentation of MultiChannelSignal objects and
+WAV audio flies.
 """
 
+from __future__ import annotations
 import copy
 import logging as log
 import numpy as np
@@ -25,7 +27,7 @@ def delay_syntez(
             if dev > 0:
                 left = delay - dev
                 if left < 0:
-                    msg  = f"Deviation value {dev} can give negative delay."
+                    msg = f"Deviation value {dev} can give negative delay."
                     log.error(msg)
                     raise ValueError(msg)
 
@@ -41,12 +43,12 @@ def delay_syntez(
 class AudioAugmentation:
     """
     Class provides augmentation of multichannel sound
-    data (Mcs class objects).
+    data (MultiChannelSignal object) and audio files.
     """
 
     def __init__(self, signal: MultiChannelSignal = None, seed=-1) -> None:
         """
-        Initializes a new instance of the Mcs class.
+        Initializes a new instance of the MultiChannelSignal class.
 
         Args:
             mcs_data (np.ndarray, optional): The multichannel sound data.
@@ -86,25 +88,25 @@ class AudioAugmentation:
 
         self.signal.set_seed(seed)
 
-    def put(self, signal: MultiChannelSignal) -> "AudioAugmentation":
+    def put(self, signal: MultiChannelSignal) -> AudioAugmentation:
         """
-        Updates the multichannel sound data and sample rate of the Mcs
-        instance.
+        Updates the multichannel sound data and sample rate of the
+        MultiChannelSignal instance.
 
         Args:
-            mcs_data (Mcs): source of multichannel sound data.
-            fs (int, optional): The new sample rate. Defaults to -1.
-
+            mcs_data (MultiChannelSignal): source of multichannel sound data.
+            
         Returns:
-            Mcs: The updated Mcs instance.
+            self (AudioAugmentation): The updated AudioAugmentation instance.
         """
 
-        self.signal = signal #.copy()
+        self.signal = signal
         return self
 
     def get(self) -> MultiChannelSignal:
         """
-        Returns the multichannel sound data stored in the Mcs instance.
+        Returns the multichannel sound data stored in the MultiChannelSignal
+          instance.
 
         Returns:
             np.ndarray: The multichannel sound data.
@@ -143,20 +145,22 @@ class AudioAugmentation:
         self,
         amplitude_list: list[float],
         amplitude_deviation_list: list[float] = None,
-    ) -> "AudioAugmentation":
+    ) -> AudioAugmentation:
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
-        versions of tha same mcs data.
+        versions of tha same MultiChannelSignal data.
 
         Args:
             amplitude_list (list[float]): The list of amplitude coefficients to
-            apply to each channel.  amplitude_deviation_list (list[float]): If
-            exists, sets amplitude values random with uniform distribution in
-            range [amplitude - deviation, amplitude + deviation)].
+             apply to each channel. 
+            amplitude_deviation_list (list[float]): If exists, sets amplitude
+             values random with uniform distribution in range
+             [amplitude - deviation, amplitude + deviation)].
 
         Returns:
-            self (Aug): The amplitude-controlled multichannel sound.
+            self (AudioAugmentation): The amplitude-controlled multichannel
+             sound.
         """
 
         obj = self.signal
@@ -395,7 +399,8 @@ class AudioAugmentation:
             max_len = max(max_len, len(elem))
         return max_len
 
-    def pause_set(self, pause_map: list, pause_sz: list[int]) -> "AudioAugmentation":
+    def pause_set(self, pause_map: list,
+                  pause_sz: list[int]) -> AudioAugmentation:
         """
         Set pauses lengths in multichannel sound to selected values.
 
@@ -470,30 +475,33 @@ class AudioAugmentation:
         self.signal = self.signal.merge()
         return self
 
-    def sum(self, mcs_data2: MultiChannelSignal) -> "AudioAugmentation":
+    def sum(self, mcs_data2: MultiChannelSignal) -> AudioAugmentation:
         """
         Sums two multichannel sound signals.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            mcs_data2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Aug): The sum of self._data and mcs_data2 signals as Mcs.
+            self (AudioAugmentation): The sum of self._data and mcs_data2
+              signals as AudioAugmentation object.
         """
 
         self.signal.sum(mcs_data2)
         return self
 
-    def side_by_side(self, mcs_data2: MultiChannelSignal) -> "AudioAugmentation":
+    def side_by_side(self, mcs_data2: MultiChannelSignal) -> AudioAugmentation:
         """
         Concatenates two multichannel sound signals side by side.
 
         Args:
-            mcs_data2 (Mcs): The second multichannel sound signal.
+            mcs_data2 (MultiChannelSignal): The second multichannel sound
+              signal.
 
         Returns:
-            self (Aug): The concatenated sound signal containing channels of
-            both MCS.
+            self (AudioAugmentation): The concatenated sound signal containing
+             channels of both objects.
         """
 
         self.signal.side_by_side(mcs_data2)
@@ -507,16 +515,16 @@ class AudioAugmentation:
             list_of_chains (list[str]): A list of chains to add.
 
         Returns:
-            self (Aug): The updated Mcs instance with added chains.
-            result, allowing for method chaining.
+            self (AudioAugmentation): The updated AudioAugmentation instance with
+              added chains. Result, allowing for method chaining.
         """
 
         for chain in list_of_chains:
             self.chains.append(chain.strip())
         return self
 
-    def copy(self) -> "AudioAugmentation":
-        """Deep Copy of the Mcs object."""
+    def copy(self) -> AudioAugmentation:
+        """Deep Copy of the AudioAugmentation object."""
 
         return copy.deepcopy(self)
 
@@ -528,7 +536,7 @@ class AudioAugmentation:
             none
 
         Returns:
-            self (Aug): The updated Mcs instance with added chains.
+            self (AudioAugmentation): The updated AudioAugmentation instance with added chains.
             result, allowing for method chaining.
         """
 
@@ -549,8 +557,7 @@ class AudioAugmentation:
             path (str): Path to the file containing the data.
 
         Returns:
-            self (Aug): The updated Mcs instance itself, allowing for method
-            chaining.
+            list[MultiChannelSignal]: The updated AudioAugmentation data field.
         """
 
         self.signal.read(path)
