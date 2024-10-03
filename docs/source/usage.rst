@@ -126,9 +126,7 @@ Example 3 (single file augmentation):
         name = file_name_head + f"_{i + 1}.wav"
         signal.get().write(name)        
 
-As Console Application
-----------------------
-use for help:
+Chain operations can be used in console, use for help:
 
 .. code-block:: console
    

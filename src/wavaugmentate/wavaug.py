@@ -55,7 +55,7 @@ def validate_amp_list(amplitude_list: List[str]) -> None:
     Checks if all elements in the given amplitudes list are valid numbers.
 
     Args:
-        ls (list): The list of elements to check.
+        amplitude_list (list[str]): The list of elements to check.
 
     Returns:
         None
@@ -81,7 +81,7 @@ def validate_delay_list(delays_list: List[str]) -> None:
     Checks if all elements in the given delays list are valid integers.
 
     Args:
-        ls (list): The list of elements to check.
+        delays_list (list[str]): The list of elements to check.
 
     Returns:
         None
