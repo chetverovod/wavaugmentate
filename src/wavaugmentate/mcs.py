@@ -139,7 +139,7 @@ class MultiChannelSignal:
         Calculate the root mean square (RMS) of a multichannel sound.
 
         Args:
-            last_index_of_sample (int): The last index to consider when 
+            last_index_of_sample (int): The last index to consider when
              calculating the RMS.  If -1, consider the entire array.
              Defaults to -1.
             decimals (int): Number of decimal places to round the RMS value.
@@ -283,22 +283,22 @@ class MultiChannelSignal:
             wavfile.write(file_name, self.sample_rate, buf)
         return self
 
-    def read(self, path: str) -> MultiChannelSignal:
+    def read(self, source_path: str) -> MultiChannelSignal:
         """
         Reads a multichannel sound from a WAV file.
 
         Args:
-            path (str): The path to the WAV file.
+            source_path (str): The path to the WAV file.
 
         Returns:
-            tuple[int, np.ndarray]: A tuple containing the sample rate and the
-            multichannel sound data.
+            self(MultiChannelSignal): An object MultiChannelSignal containing
+             the sample rate and the multichannel sound data.
         """
 
-        self.sample_rate, buf = wavfile.read(path)
+        self.sample_rate, buf = wavfile.read(source_path)
         if len(buf.shape) != 2:
             buf = np.expand_dims(buf, axis=1)
-        self.path = path
+        self.path = source_path
         self.data = buf.T
         return self
 
@@ -309,12 +309,11 @@ class MultiChannelSignal:
             Detects pauses in a multichannel sound.
 
             Args:
-            mcs_data (np.ndarray): The multichannel sound data.
             relative_level (list[float]): The list of relative levels for each
             channel, signal below this level will be marked as pause.
 
         Returns:
-            np.ndarray: The mask indicating the pauses in the multichannel
+            np.ndarray[int]: The mask indicating the pauses in the multichannel
             sound.  The mask has the same shape as the input sound. It contains
             zeros and ones 0 - pause, 1 - not a pause.
         """
@@ -332,21 +331,20 @@ class MultiChannelSignal:
             mask[i] = np.clip(mask[i], a_min=0, a_max=1).astype(int)
         return mask
 
-    def pause_shrink(
-        self, mask: np.ndarray[int], min_pause: list[int]
-    ) -> MultiChannelSignal:
+    def pause_shrink(self, mask: np.ndarray[int],
+                     min_pause: list[int]) -> MultiChannelSignal:
         """
         Shrink pauses in multichannel sound.
 
         Args:
-            mask (np.ndarray): The mask indicating the pauses in the
+            mask (np.ndarray[int]): The mask indicating the pauses in the
             multichannel sound.
             min_pause (list[int]): The list of minimum pause lengths for
-            each channel in samples.
+            each channel in object.
 
         Returns:
-            self (MultiChannelSignal): The multichannel sound with pauses
-             shrunk.
+            self (MultiChannelSignal): The MultiChannelSignal object with
+             pauses shrunk.
         """
 
         chans = self.data.shape[0]
@@ -368,7 +366,7 @@ class MultiChannelSignal:
         return self
 
     def channels_count(self) -> int:
-        """Returns the number of channels in the multichannel signal."""
+        """Returns the number of channels in the MultiChannelSignal object."""
 
         if self.data is None:
             return 0
@@ -380,8 +378,8 @@ class MultiChannelSignal:
 
     def channels_len(self) -> int:
         """
-        Returns the number of samples in one channel of multichannel
-         signal.
+        Returns the number of samples in one channel of MultiChannelSignal
+        object.
         """
 
         if self.data is None:
@@ -429,14 +427,14 @@ class MultiChannelSignal:
 
     def merge(self) -> MultiChannelSignal:
         """
-            Mixes channels of a multichannel sound into a single channel.
+            Merges channels of MultiChannelSignal object into a single channel.
 
         Args:
             none
 
         Returns:
-            self (MultiChannelSignal): The merged sound data, containing
-              a single channel.
+            self (MultiChannelSignal): The MultiChannelSignal object containing
+              a single channel of merging result.
         """
 
         out_data = np.zeros(self.data.shape[1], dtype=np.float32)
@@ -446,20 +444,20 @@ class MultiChannelSignal:
         self.data = out_data
         return self
 
-    def sum(self, mcs_data2: MultiChannelSignal) -> MultiChannelSignal:
+    def sum(self, signal2: MultiChannelSignal) -> MultiChannelSignal:
         """
-        Sums two multichannel sound signals.
+        Sums two multichannel signals.
 
         Args:
-            mcs_data2 (MultiChannelSignal): The second multichannel sound
+            signal2 (MultiChannelSignal): The second multichannel sound
               signal.
 
         Returns:
-            self (MultiChannelSignal): The sum of self._data and mcs_data2
+            self (MultiChannelSignal): The sum of self.data and signal2.data
               signals as MultiChannelSignal.
         """
 
-        out_data = self.data + mcs_data2.data
+        out_data = self.data + signal2.data
         self.data = out_data
         return self
 
