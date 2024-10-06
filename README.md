@@ -1,4 +1,4 @@
-# **Wavaugmentate** 0.2.1
+# **Wavaugmentate** 0.2.2
 **Multichannel Audio Signal Augmentation Module**
 
 ![alt text](./pictures/title_image.png)
@@ -6,7 +6,7 @@ The module makes audio signal augmentation conversions. It provides the *MultiCh
   - *MultiChannalSignal* provides basic operations with multi-channel signals.
   - *SignalAugmentation* helps to perform augmentation of multi-channel signals for AI models learning purpose. 
 
-PyPi: https://pypi.org/project/wavaugmentate/
+PyPi: https://pypi.org/project/wavaugmentate
 GitHub: https://github.com/chetverovod/wavaugmentate
 
 # Installation

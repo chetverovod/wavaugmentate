@@ -13,4 +13,4 @@ git push
 shell tokens.sh
 
 # Upload to TestPyPi
-python3 -m twine upload --repository testpypi dist/* --username __token__ --password $TEST_PYPI_TOKEN
+python3 -m twine upload --repository testpypi dist/* --username __token__ --password $TEST_PYPI_TOKEN --verbose

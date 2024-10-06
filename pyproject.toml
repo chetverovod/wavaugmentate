@@ -10,7 +10,7 @@ pythonpath = [
 
 [project]
 name = "wavaugmentate"
-version = "0.2.1"
+version = "0.2.2"
 authors = [
   {name="Igor Plastov", email="chetverovod@gmail.com"},
 ]
