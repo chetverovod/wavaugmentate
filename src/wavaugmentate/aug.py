@@ -40,7 +40,7 @@ def delay_syntez(
     return d_list
 
 
-class AudioAugmentation:
+class SignalAugmentation:
     """
     Class provides augmentation of multichannel sound
     data (MultiChannelSignal object) and audio files.
@@ -87,7 +87,7 @@ class AudioAugmentation:
 
         self.signal.set_seed(seed)
 
-    def put(self, signal: MultiChannelSignal) -> AudioAugmentation:
+    def put(self, signal: MultiChannelSignal) -> SignalAugmentation:
         """
         Updates the multichannel sound data and sample rate of the
         MultiChannelSignal instance.
@@ -116,7 +116,7 @@ class AudioAugmentation:
                  duration: float = ms.DEF_SIGNAL_LEN,
                  sampling_rate: int = -1,
                  mode="sine"
-                 ) -> AudioAugmentation:
+                 ) -> SignalAugmentation:
         """
         Generates a multichannel sound based on the given frequency list,
         duration, sample rate, and mode.
@@ -144,7 +144,7 @@ class AudioAugmentation:
         self,
         amplitude_list: list[float],
         amplitude_deviation_list: list[float] = None,
-    ) -> AudioAugmentation:
+    ) -> SignalAugmentation:
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
@@ -200,7 +200,7 @@ class AudioAugmentation:
         self,
         delay_us_list: list[int],
         delay_deviation_list: list[int] = None,
-    ) -> AudioAugmentation:
+    ) -> SignalAugmentation:
         """
             Add delays of channels of multichannel sound. Output data become
             longer. Values of delay will be converted to count of samples.
@@ -255,7 +255,7 @@ class AudioAugmentation:
         amplitude_list: list[float],
         delay_deviation_list: list[int] = None,
         amplitude_deviation_list: list[float] = None,
-    ) -> AudioAugmentation:
+    ) -> SignalAugmentation:
         """
         Add echo to multichannel sound. The output data become longer. To each
         channel will be added it's copy with corresponding delay delay and
@@ -295,7 +295,7 @@ class AudioAugmentation:
     def noise_ctrl(
         self,
         noise_level_list: list[float],
-    ) -> AudioAugmentation:
+    ) -> SignalAugmentation:
         """
         Apply noise to a multichannel sound.
 
@@ -345,7 +345,7 @@ class AudioAugmentation:
 
     def pause_shrink(
         self, mask: np.ndarray[int], min_pause: list[int]
-    ) -> AudioAugmentation:
+    ) -> SignalAugmentation:
         """
         Shrink pauses in multichannel sound.
 
@@ -399,7 +399,7 @@ class AudioAugmentation:
         return max_len
 
     def pause_set(self, pause_map: list,
-                  pause_sz: list[int]) -> AudioAugmentation:
+                  pause_sz: list[int]) -> SignalAugmentation:
         """
         Set pauses lengths in multichannel sound to selected values.
 
@@ -446,7 +446,7 @@ class AudioAugmentation:
         self.signal.data = np.stack(channels_list, axis=0)
         return self
 
-    def split(self, channels_count: int) -> AudioAugmentation:
+    def split(self, channels_count: int) -> SignalAugmentation:
         """
         Splits a multichannel signal (containing single channel) into multiple
         identical channels.
@@ -463,7 +463,7 @@ class AudioAugmentation:
         self.signal = self.signal.split(channels_count)
         return self
 
-    def merge(self) -> AudioAugmentation:
+    def merge(self) -> SignalAugmentation:
         """
             Mixes channels of a multichannel sound into a single channel.
 
@@ -477,7 +477,7 @@ class AudioAugmentation:
         self.signal = self.signal.merge()
         return self
 
-    def sum(self, signal2: MultiChannelSignal) -> AudioAugmentation:
+    def sum(self, signal2: MultiChannelSignal) -> SignalAugmentation:
         """
         Sums two multichannel sound signals.
 
@@ -492,7 +492,7 @@ class AudioAugmentation:
         self.signal.sum(signal2)
         return self
 
-    def side_by_side(self, signal2: MultiChannelSignal) -> AudioAugmentation:
+    def side_by_side(self, signal2: MultiChannelSignal) -> SignalAugmentation:
         """
         Concatenates two multichannel sound signals side by side.
 
@@ -523,7 +523,7 @@ class AudioAugmentation:
             self.chains.append(chain.strip())
         return self
 
-    def copy(self) -> AudioAugmentation:
+    def copy(self) -> SignalAugmentation:
         """Deep copy of the AudioAugmentation object."""
 
         return copy.deepcopy(self)

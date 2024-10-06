@@ -42,7 +42,7 @@ Augmentation step by step, Example 1:
 .. code-block:: python
   
     from wavaugmentate.mcs import MultiChannelSignal as Mcs
-    from wavaugmentate.aug import AudioAugmentation as Aug
+    from wavaugmentate.aug import SignalAugmentation as Aug
 
     # File name of original sound.
     file_name = "./outputwav/sound.wav"
@@ -83,7 +83,7 @@ The same code as chain of operations, Example 2:
 .. code-block:: python
 
     from wavaugmentate.mcs import MultiChannelSignal as Mcs
-    from wavaugmentate.aug import AudioAugmentation as Aug
+    from wavaugmentate.aug import SignalAugmentation as Aug
 
     # File name of original sound.
     file_name = "./outputwav/sound.wav"
@@ -109,7 +109,7 @@ Example 3 (single file augmentation):
 .. code-block:: python
 
     from wavaugmentate.mcs import MultiChannelSignal as Mcs
-    from wavaugmentate.aug import AudioAugmentation as Aug
+    from wavaugmentate.aug import SignalAugmentation as Aug
 
     file_name = "./outputwav/sound.wav"
     mcs = Mcs()

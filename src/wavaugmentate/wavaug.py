@@ -13,7 +13,7 @@ from typing import List
 from scipy.io import wavfile
 import mcs as ms
 from mcs import MultiChannelSignal
-from aug import AudioAugmentation
+from aug import SignalAugmentation
 
 
 def file_info(path: str) -> dict:
@@ -127,7 +127,7 @@ def chain_hdr(args):
         return
     chain = args.chain_code.strip()
     print("chain:", chain)
-    aug_obj = AudioAugmentation()
+    aug_obj = SignalAugmentation()
     cmd_prefix = "aug_obj."
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
@@ -222,7 +222,7 @@ def amplitude_hdr(args):
         raise ValueError(msg)
 
     mcs = MultiChannelSignal().read(args.in_path)
-    aug_obj = AudioAugmentation(mcs)
+    aug_obj = SignalAugmentation(mcs)
     aug_obj.amplitude_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
@@ -251,7 +251,7 @@ def noise_hdr(args):
 
     mcs = ms.MultiChannelSignal().read(args.in_path)
     mcs.read(args.in_path)
-    aug_obj = AudioAugmentation(mcs)
+    aug_obj = SignalAugmentation(mcs)
     aug_obj.noise_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
@@ -299,7 +299,7 @@ def echo_hdr(args):
     print(f"amplitudes: {float_list}")
 
     mcs = ms.MultiChannelSignal().read(args.in_path)
-    aug_obj = AudioAugmentation(mcs)
+    aug_obj = SignalAugmentation(mcs)
     aug_obj.echo_ctrl(int_list, float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
@@ -327,7 +327,7 @@ def delay_hdr(args):
         raise ValueError(msg)
 
     mcs = ms.MultiChannelSignal().read(args.in_path)
-    aug_obj = AudioAugmentation(mcs)
+    aug_obj = SignalAugmentation(mcs)
     aug_obj.delay_ctrl(int_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)

@@ -8,11 +8,11 @@ Wavaugmentate Package Documentation
 .. image:: _images/title_image.png
 
 The package **wavaugmentate** makes audio signal augmentation conversions. It
-provides the *Mcs*, *Aug* classes and *wavaug-cli* console utility.
+provides the *MultiChannelSignal*, *SignalAugmentation* classes and *wavaug-cli* console utility.
 
 
-- *Mcs* is an object for  multi-channel audio.
-- *Aug* helps to perform augmentation data inside Mcs objects for AI models learning purpose.
+- *MultiChannelSignal* provides basic operations with multi-channel signals.
+- *SignalAugmentation* helps to perform augmentation of multi-channel signals for AI models learning purpose. 
 
 GitHub: https://github.com/chetverovod/wavaugmentate
 
