@@ -4,7 +4,7 @@ import os
 import sys
 import mcs as ms
 from mcs import MultiChannelSignal as Mcs
-from aug import AudioAugmentation as Aug
+from aug import SignalAugmentation as Aug
 import common_test_functions as ctf
 import numpy as np
 sys.path.insert(0, './tests')

@@ -39,13 +39,13 @@
 <p>This module defines class for augmentation of MultiChannelSignal objects and
 WAV audio flies.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="aug.AudioAugmentation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aug.</span></span><span class="sig-name descname"><span class="pre">AudioAugmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aug.AudioAugmentation" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aug.</span></span><span class="sig-name descname"><span class="pre">SignalAugmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aug.SignalAugmentation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class provides augmentation of multichannel sound
 data (MultiChannelSignal object) and audio files.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.achn">
-<span class="sig-name descname"><span class="pre">achn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_chains</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.achn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.achn">
+<span class="sig-name descname"><span class="pre">achn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_chains</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.achn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add chain to list of chains.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -59,14 +59,14 @@ data (MultiChannelSignal object) and audio files.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.add_chain">
-<span class="sig-name descname"><span class="pre">add_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_chains</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.add_chain" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.add_chain">
+<span class="sig-name descname"><span class="pre">add_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_chains</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.add_chain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add chain to list of chains.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -80,14 +80,14 @@ data (MultiChannelSignal object) and audio files.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.amp">
-<span class="sig-name descname"><span class="pre">amp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.amp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.amp">
+<span class="sig-name descname"><span class="pre">amp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.amp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply amplitude control to a multichannel sound. If
 amplitude_deviation_list is defined, you can get different
 versions of tha same MultiChannelSignal data.</p>
@@ -109,14 +109,14 @@ values random with uniform distribution in range
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.amplitude_ctrl">
-<span class="sig-name descname"><span class="pre">amplitude_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.amplitude_ctrl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.amplitude_ctrl">
+<span class="sig-name descname"><span class="pre">amplitude_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.amplitude_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply amplitude control to a multichannel sound. If
 amplitude_deviation_list is defined, you can get different
 versions of tha same MultiChannelSignal data.</p>
@@ -138,26 +138,26 @@ values random with uniform distribution in range
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.copy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep copy of the AudioAugmentation object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.cpy">
-<span class="sig-name descname"><span class="pre">cpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.cpy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.cpy">
+<span class="sig-name descname"><span class="pre">cpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.cpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep copy of the AudioAugmentation object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.delay_ctrl">
-<span class="sig-name descname"><span class="pre">delay_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.delay_ctrl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.delay_ctrl">
+<span class="sig-name descname"><span class="pre">delay_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.delay_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Add delays of channels of multichannel sound. Output data become
 longer. Values of delay will be converted to count of samples.</p>
@@ -176,14 +176,14 @@ longer. Values of delay will be converted to count of samples.</p>
 <dd class="field-even"><p>Object with delayed multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.dly">
-<span class="sig-name descname"><span class="pre">dly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.dly" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.dly">
+<span class="sig-name descname"><span class="pre">dly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.dly" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Add delays of channels of multichannel sound. Output data become
 longer. Values of delay will be converted to count of samples.</p>
@@ -202,14 +202,14 @@ longer. Values of delay will be converted to count of samples.</p>
 <dd class="field-even"><p>Object with delayed multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.echo">
-<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.echo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.echo">
+<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.echo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add echo to multichannel sound. The output data become longer. To each
 channel will be added it’s copy with corresponding delay delay and
 amplitude. It looks like acoustic wave was reflected from the hard
@@ -235,14 +235,14 @@ deviation of reflection amplitude.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.echo_ctrl">
-<span class="sig-name descname"><span class="pre">echo_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.echo_ctrl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.echo_ctrl">
+<span class="sig-name descname"><span class="pre">echo_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_us_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.echo_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add echo to multichannel sound. The output data become longer. To each
 channel will be added it’s copy with corresponding delay delay and
 amplitude. It looks like acoustic wave was reflected from the hard
@@ -268,14 +268,14 @@ deviation of reflection amplitude.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.AudioAugmentation.eval" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.SignalAugmentation.eval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate list of chains.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -286,14 +286,14 @@ deviation of reflection amplitude.</p></li>
 with added chains. Result, allowing for method chaining.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.gen">
-<span class="sig-name descname"><span class="pre">gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.gen" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.gen">
+<span class="sig-name descname"><span class="pre">gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.gen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a multichannel sound based on the given frequency list,
 duration, sample rate, and mode.</p>
 <dl class="field-list simple">
@@ -312,14 +312,14 @@ duration, sample rate, and mode.</p>
 <dd class="field-even"><p>Object with generated multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.generate">
-<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.generate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sine'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a multichannel sound based on the given frequency list,
 duration, sample rate, and mode.</p>
 <dl class="field-list simple">
@@ -338,14 +338,14 @@ duration, sample rate, and mode.</p>
 <dd class="field-even"><p>Object with generated multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.get" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the multichannel sound data stored in the MultiChannelSignal
 instance.</p>
 <dl class="field-list simple">
@@ -359,8 +359,8 @@ instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#aug.AudioAugmentation.info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#aug.SignalAugmentation.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary containing information about the AudioAugmentation
 object.</p>
 <p>The dictionary includes the information returned by the <cite>info()</cite> method
@@ -378,8 +378,8 @@ the object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.merge">
-<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.merge" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.merge" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Mixes channels of a multichannel sound into a single channel.</p>
 </div></blockquote>
@@ -395,14 +395,14 @@ the object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.mrg">
-<span class="sig-name descname"><span class="pre">mrg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.mrg" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.mrg">
+<span class="sig-name descname"><span class="pre">mrg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.mrg" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Mixes channels of a multichannel sound into a single channel.</p>
 </div></blockquote>
@@ -418,14 +418,14 @@ the object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.noise_ctrl">
-<span class="sig-name descname"><span class="pre">noise_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noise_level_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.noise_ctrl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.noise_ctrl">
+<span class="sig-name descname"><span class="pre">noise_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noise_level_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.noise_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply noise to a multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -440,14 +440,14 @@ to each channel.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.ns">
-<span class="sig-name descname"><span class="pre">ns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noise_level_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.ns" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.ns">
+<span class="sig-name descname"><span class="pre">ns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">noise_level_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.ns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply noise to a multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -462,14 +462,14 @@ to each channel.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.pause_detect">
-<span class="sig-name descname"><span class="pre">pause_detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.AudioAugmentation.pause_detect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.pause_detect">
+<span class="sig-name descname"><span class="pre">pause_detect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.SignalAugmentation.pause_detect" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Detects pauses in a multichannel sound.</p>
 <p>Args:
@@ -492,8 +492,8 @@ zeros and ones 0 - pause, 1 - not a pause.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.pause_set">
-<span class="sig-name descname"><span class="pre">pause_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pause_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pause_sz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.pause_set" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.pause_set">
+<span class="sig-name descname"><span class="pre">pause_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pause_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pause_sz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.pause_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set pauses lengths in multichannel sound to selected values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -512,14 +512,14 @@ each channel.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.pause_shrink">
-<span class="sig-name descname"><span class="pre">pause_shrink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.pause_shrink" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.pause_shrink">
+<span class="sig-name descname"><span class="pre">pause_shrink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.pause_shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shrink pauses in multichannel sound.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -538,14 +538,14 @@ each channel in samples.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.pdt">
-<span class="sig-name descname"><span class="pre">pdt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.AudioAugmentation.pdt" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.pdt">
+<span class="sig-name descname"><span class="pre">pdt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.SignalAugmentation.pdt" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Detects pauses in a multichannel sound.</p>
 <p>Args:
@@ -568,8 +568,8 @@ zeros and ones 0 - pause, 1 - not a pause.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.put">
-<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.put" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the multichannel sound data and sample rate of the
 MultiChannelSignal instance.</p>
 <dl class="field-list simple">
@@ -580,14 +580,14 @@ MultiChannelSignal instance.</p>
 <dd class="field-even"><p>The updated AudioAugmentation instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.rdac">
-<span class="sig-name descname"><span class="pre">rdac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.AudioAugmentation.rdac" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.rdac">
+<span class="sig-name descname"><span class="pre">rdac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.SignalAugmentation.rdac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads data from a file at the specified path and updates the sample
 rate and data attributes and applies chains if they exist in object.</p>
 <dl class="field-list simple">
@@ -604,8 +604,8 @@ rate and data attributes and applies chains if they exist in object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.read_file_apply_chains">
-<span class="sig-name descname"><span class="pre">read_file_apply_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.AudioAugmentation.read_file_apply_chains" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.read_file_apply_chains">
+<span class="sig-name descname"><span class="pre">read_file_apply_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">mcs.MultiChannelSignal</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#aug.SignalAugmentation.read_file_apply_chains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads data from a file at the specified path and updates the sample
 rate and data attributes and applies chains if they exist in object.</p>
 <dl class="field-list simple">
@@ -622,8 +622,8 @@ rate and data attributes and applies chains if they exist in object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.sbs">
-<span class="sig-name descname"><span class="pre">sbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.sbs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.sbs">
+<span class="sig-name descname"><span class="pre">sbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.sbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates two multichannel sound signals side by side.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -637,20 +637,20 @@ rate and data attributes and applies chains if they exist in object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.set_seed">
-<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aug.AudioAugmentation.set_seed" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.set_seed">
+<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aug.SignalAugmentation.set_seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set seeding value.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.side_by_side">
-<span class="sig-name descname"><span class="pre">side_by_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.side_by_side" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.side_by_side">
+<span class="sig-name descname"><span class="pre">side_by_side</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.side_by_side" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates two multichannel sound signals side by side.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -664,14 +664,14 @@ rate and data attributes and applies chains if they exist in object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.split">
-<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.split" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.split" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a multichannel signal (containing single channel) into multiple
 identical channels.</p>
 <dl class="field-list simple">
@@ -687,14 +687,14 @@ into.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.splt">
-<span class="sig-name descname"><span class="pre">splt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.splt" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.splt">
+<span class="sig-name descname"><span class="pre">splt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.splt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits a multichannel signal (containing single channel) into multiple
 identical channels.</p>
 <dl class="field-list simple">
@@ -710,14 +710,14 @@ into.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aug.AudioAugmentation.sum">
-<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation"><span class="pre">AudioAugmentation</span></a></span></span><a class="headerlink" href="#aug.AudioAugmentation.sum" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="aug.SignalAugmentation.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><span class="pre">MultiChannelSignal</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sums two multichannel sound signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -731,7 +731,7 @@ into.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.AudioAugmentation" title="aug.AudioAugmentation">AudioAugmentation</a>)</p>
+<dd class="field-odd"><p>self (AudioAugmentation)</p>
 </dd>
 </dl>
 </dd></dl>
