@@ -1,13 +1,22 @@
 #!/bin/sh
-#
+
+# Update local docs
 cd docs
 make clean
 make html
 cd ..
 git commit -am "Build docs." 
+
+# Update package
+cd dist
+rm *.whl
+rm *.gz
+cd ..
 python3 -m build
 git commit -am "Build package." 
 git push
+
+
 
 # Private file with tokens
 shell tokens.sh
