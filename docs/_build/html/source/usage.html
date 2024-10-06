@@ -62,7 +62,7 @@
 <h2>In Python Code<a class="headerlink" href="#in-python-code" title="Permalink to this heading">¶</a></h2>
 <p>Augmentation step by step, Example 1:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">MultiChannelSignal</span> <span class="k">as</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">AudioAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">SignalAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
 
 <span class="c1"># File name of original sound.</span>
 <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
@@ -100,7 +100,7 @@
 </div>
 <p>The same code as chain of operations, Example 2:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">MultiChannelSignal</span> <span class="k">as</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">AudioAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">SignalAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
 
 <span class="c1"># File name of original sound.</span>
 <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
@@ -121,7 +121,7 @@
 <p>How to get several augmented amplitudes and delays from single file.</p>
 <p>Example 3 (single file augmentation):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wavaugmentate.mcs</span> <span class="kn">import</span> <span class="n">MultiChannelSignal</span> <span class="k">as</span> <span class="n">Mcs</span>
-<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">AudioAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
+<span class="kn">from</span> <span class="nn">wavaugmentate.aug</span> <span class="kn">import</span> <span class="n">SignalAugmentation</span> <span class="k">as</span> <span class="n">Aug</span>
 
 <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;./outputwav/sound.wav&quot;</span>
 <span class="n">mcs</span> <span class="o">=</span> <span class="n">Mcs</span><span class="p">()</span>
