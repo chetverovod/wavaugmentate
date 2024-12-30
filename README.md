@@ -94,7 +94,7 @@ Output signal with augmented data (channel 1 contains original signal without ch
 ![Augmented signal](./pictures/example_1_augmented_signal.png)
 
 
-The same code as chain of operations, Example 2:
+The same code as a chain of operations, Example 2:
 
 ```Python
 
@@ -119,7 +119,7 @@ ao_obj.get().wrbc("sound_augmented_by_chain.wav")
 ```
 ## CLI
 
-use for help:
+Use for help:
 ```
 wavaug-cli -h
 ```
