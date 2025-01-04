@@ -19,7 +19,6 @@ frm_list = [60, 140, 230, 300]  # Speech formants list.
 # Output files names.
 TESTS_DIR = "./tests/wavaugmentate/"
 OUTPUT_WAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
-OUTPUT_FILE = os.path.join(OUTPUT_WAV_DIR, "out.wav")
 
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = os.path.join(SRC_DIR, f"{wau.prog_name}.py")
