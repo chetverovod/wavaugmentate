@@ -9,6 +9,23 @@ from mcs import MultiChannelSignal as Mcs
 import wavaug as wau
 
 
+def temp_ref_signal() -> tuple[str, str]:
+    """Function creates temporary file of reference signal and
+    random file name for other file."""
+
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(temp_test_file_name)
+
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    return temp_test_file_name, temp_out_file_name
+
+
 def test_echo_ctrl_option():
     """
     Test function to verify the functionality of the `echo_ctrl` option in the
@@ -33,16 +50,17 @@ def test_echo_ctrl_option():
     Returns:
         None
     """
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
+    """
     file_descriptor, temp_test_file_name = tempfile.mkstemp()
     os.close(file_descriptor)
 
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(temp_test_file_name)
-
     file_descriptor, temp_out_file_name = tempfile.mkstemp()
     os.close(file_descriptor)
+    """
 
     cmd = [
         ctf.PROG_NAME,
@@ -106,26 +124,24 @@ def test_wavaugmentate_noise_option():
 
     file_descriptor, temp_test_file_name = tempfile.mkstemp()
     os.close(file_descriptor)
-    
+
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    #test_sound_1.write(ctf.TEST_SOUND_1_FILE)
     test_sound_1.write(temp_test_file_name)
-    
+
     file_descriptor, temp_out_file_name = tempfile.mkstemp()
     os.close(file_descriptor)
 
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        temp_test_file_name, # ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        temp_out_file_name,  #ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-n",
         "0.5, 0.6, 0.7, 0.1",
     ]
     print("\n", " ".join(cmd))
-    #if os.path.exists(ctf.OUTPUT_FILE):
     os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_value = str(res.stdout)
@@ -216,14 +232,13 @@ def test_wavaugmentate_amplitude_option():
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        temp_test_file_name,  # ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        temp_out_file_name, # ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-a",
         "0.5, 0.6, 0.7, 0.1",
     ]
     print("\n", " ".join(cmd))
-    #if os.path.exists(ctf.OUTPUT_FILE):
     os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
@@ -262,12 +277,22 @@ def test_wavaugmentate_amplitude_option_fail_case1():
         None
     """
 
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(temp_test_file_name)
+
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-a",
         "0.1, abc, 0.3, 0.4",
     ]
@@ -298,13 +323,22 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     Returns:
         None
     """
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(temp_test_file_name)
+
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
 
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-a",
         "0.1, 0.3, 0.4",
     ]
