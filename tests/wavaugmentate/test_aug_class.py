@@ -154,14 +154,13 @@ def test_aug_rn_rd():
     """Test augmentation on the fly."""
 
     mcs = Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
-            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+            ctf.FS).wr(temp_test_file_name)
     aug_obj = Aug(mcs)
 
     mcs_for_chain = Mcs()
-    mcs_for_chain.rd(ctf.TEST_SOUND_1_FILE)
+    mcs_for_chain.rd(temp_test_file_name)
     aug_obj_1 = Aug(mcs_for_chain)
 
     assert np.array_equal(aug_obj.get().data, aug_obj_1.get().data)
@@ -675,7 +674,8 @@ def test_aug_pause_shrink_sine():
     res.side_by_side(mask)
     print(res)
     aug_obj.pause_shrink(mask, [20, 4])
-    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj.get().write(temp_test_file_name)
     rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for rms_value, ref_rms_value in zip(rms_list, ref_rms_list):
@@ -711,7 +711,8 @@ def test_aug_pause_shrink_speech():
     mask = aug_obj.pause_detect([0.5, 0.3])
     aug_obj_1 = aug_obj.copy()
     aug_obj_1.side_by_side(mask)
-    aug_obj_1.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj_1.get().write(temp_test_file_name)
     aug_obj.pause_shrink(mask, [20, 4])
     _rms_list = aug_obj.get().rms(decimals=3)
     _ref_rms_list = [0.331, 0.324]
@@ -750,7 +751,8 @@ def test_aug_pause_set():
     aug_obj.pause_set(pause_list, [10, 150])
     res = aug_obj.get().copy()
     assert res.shape() == (2, 1618)
-    res.write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    res.write(temp_test_file_name)
     rms_list = res.rms(decimals=3)
     ref_rms_list = [0.105, 0.113]
     for r_value, ref_value in zip(rms_list, ref_rms_list):
