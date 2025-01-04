@@ -54,8 +54,6 @@ def test_mcs_wr_rd():
     """
 
     mcs = Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
     temp_test_file_name = ctf.temp_ref_file_name()
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
             ctf.FS).wr(temp_test_file_name)
