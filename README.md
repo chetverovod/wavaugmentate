@@ -1,5 +1,5 @@
 ![](https://img.shields.io/badge/os-Linux-green) ![](https://readthedocs.org/projects/wavaugmentate/badge/?version=latest) ![](https://img.shields.io/badge/python-3.11.4-blue)
-# **Wavaugmentate** 0.2.2
+# **Wavaugmentate** 0.2.3
 
 
 **Multichannel Audio Signal Augmentation Module**
