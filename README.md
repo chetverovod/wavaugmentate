@@ -177,8 +177,13 @@ Just run:
 export  PYTHONPATH='./src/wavaugmentate'
 python3 -m pytest
 ```
+# Tests Coverage
 
-Test coverage:
+```
+pytest --cov-report term-missing --cov
+```
+
+Example of result:
 ```
 ---------- coverage: platform linux, python 3.11.4-final-0 -----------
 Name                       Stmts   Miss  Cover
