@@ -26,7 +26,7 @@ def test_aug_amp_control():
 
     a_list = [0.1, 0.3, 0.4, 1]
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
 
     aug_obj.amp(a_list)
@@ -57,7 +57,7 @@ def test_aug_dly_controls():
 
     d_list = [100, 200, 300, 0]
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
 
     aug_obj.dly(d_list)
@@ -96,7 +96,7 @@ def test_aug_echo():
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     mcs = Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
     aug_obj = Aug(mcs)
     aug_obj.echo(d_list, a_list)
     rms_list = aug_obj.get().rms(decimals=3)
@@ -107,7 +107,7 @@ def test_aug_echo():
     d_list = [1e6, 2e6, 3e6, 0]
     a_list = [-0.3, -0.4, -0.5, 0]
     mcs = Mcs()
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
     aug_obj = Aug(mcs)
     aug_obj.echo(d_list, a_list)
     rms_list = aug_obj.get().rms(decimals=3)
@@ -139,7 +139,7 @@ def test_aug_noise():
 
     mcs = Mcs()
     mcs.set_seed(42)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS)
     aug_obj = Aug(mcs)
     aug_obj.ns(n_list)
     rms_list = aug_obj.get().rms(decimals=3)
@@ -156,7 +156,7 @@ def test_aug_rn_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
     aug_obj = Aug(mcs)
 
     mcs_for_chain = Mcs()
@@ -176,7 +176,7 @@ def test_aug_rn_aug_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
     aug_obj_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
@@ -217,7 +217,7 @@ def test_aug_chaining():
 
     mcs = Mcs()
     cmd_prefix = "mcs."
-    cmd = "gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
+    cmd = "gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).rms()"
     out = eval(cmd_prefix + cmd.strip())
     ref_rms_list = [0.70710844, 0.7071083, 0.707108, 0.70710754]
 
@@ -350,7 +350,7 @@ def test_aug_noise_ctrl():
     """
 
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = Aug(test_sound_1).noise_ctrl([1, 0.2, 0.3, 0]).get()
     test_nc.write(ctf.TEST_SOUND_1_NOISE_FILE)

@@ -26,7 +26,7 @@ def test_mcs_put():
     """
 
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
 
     mcs = Mcs()
     mcs.put(test_sound_1)
@@ -56,7 +56,7 @@ def test_mcs_wr_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
     ref_mcs = Mcs()
     ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
@@ -148,7 +148,7 @@ def test_mcs_info():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.f_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
     print(mcs.info())
 
     ref = {

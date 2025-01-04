@@ -13,7 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(
 
 FS = ms.DEF_FS
 SIGNAL_TIME_LEN = 5
-f_list = [400, 1000, 2333, 3700]  # Frequencies list.
+freq_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
 
 # Output files names.

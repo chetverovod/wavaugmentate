@@ -37,7 +37,7 @@ def test_echo_ctrl_option():
         os.remove(ctf.TEST_SOUND_1_FILE)
 
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
     cmd = [
@@ -103,7 +103,7 @@ def test_wavaugmentate_noise_option():
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.f_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.write(ctf.TEST_SOUND_1_FILE)
 
     cmd = [
