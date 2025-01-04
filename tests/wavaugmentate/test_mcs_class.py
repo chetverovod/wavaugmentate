@@ -456,7 +456,6 @@ def test_chain_pause_detect():
     rms_list = mcs_1.rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for i, rms_value in enumerate(rms_list):
-        #print(rms_value)
         assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
 
 
@@ -484,9 +483,9 @@ def test_pause_shrink_sine():
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
-    print(res)
     test_sound_1.pause_shrink(mask, [20, 4])
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
+    test_sound_1.write(temp_test_file_name)
     _rms_list = test_sound_1.rms(decimals=3)
     _ref_rms_list = [0.702, 0.706, 0.865, 0.923]
     for _rms_value, ref_rms_value in zip(_rms_list, _ref_rms_list):
@@ -522,7 +521,8 @@ def test_pause_shrink_speech():
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
-    res.write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
+    res.write(temp_test_file_name)
     test_sound_1.pause_shrink(mask, [20, 4])
     rms_list = test_sound_1.rms(decimals=3)
     ref_rms_list = [0.331, 0.324]
