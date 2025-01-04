@@ -174,15 +174,14 @@ def test_aug_rn_rd():
 def test_aug_rn_aug_rd():
     """Test augmentation on the fly."""
 
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs = Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
-            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+            ctf.FS).wr(temp_test_file_name)
 
-    aug_obj_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
+    aug_obj_a = Aug(Mcs().rd(temp_test_file_name))
 
-    aug_obj_b = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
+    aug_obj_b = Aug(Mcs().rd(temp_test_file_name))
 
     assert np.array_equal(mcs.data, aug_obj_a.get().data)
     assert np.array_equal(mcs.data, aug_obj_b.get().data)
@@ -389,6 +388,7 @@ def test_aug_sum():
 
     res = Aug(test_sound_1)
     res.sum(test_sound_2)
+
     res.get().write(ctf.TEST_SOUND_1_FILE)
     ref = [0.707, 0.707, 1.0]
     for _sound, ref_value in zip([test_sound_1, test_sound_2, res.get()], ref):
