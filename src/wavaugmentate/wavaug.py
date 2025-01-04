@@ -340,7 +340,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         prog=prog_name,
         description="WAV audio files augmentation utility.",
-        epilog="Text at the bottom of help",
+        epilog="", # "Text at the bottom of help"
     )
 
     parser.add_argument("-i", dest="in_path", help="Input audio" " file path.")

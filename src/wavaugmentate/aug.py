@@ -67,7 +67,7 @@ class SignalAugmentation:
 
     def info(self) -> dict:
         """
-        Returns a dictionary containing information about the AudioAugmentation
+        Returns a dictionary containing information about the SignalAugmentation
         object.
 
         The dictionary includes the information returned by the `info()` method
@@ -96,7 +96,7 @@ class SignalAugmentation:
             signal (MultiChannelSignal): source of multichannel sound data.
 
         Returns:
-            self (AudioAugmentation): The updated AudioAugmentation instance.
+            self (SignalAugmentation): The updated SignalAugmentation instance.
         """
 
         self.signal = signal
@@ -131,7 +131,7 @@ class SignalAugmentation:
             MultiChannelSignal.
 
         Returns:
-            self (AudioAugmentation): Object with generated multichannel sound.
+            self (SignalAugmentation): Object with generated multichannel sound.
         """
 
         self.signal = self.signal.generate(
@@ -158,7 +158,7 @@ class SignalAugmentation:
              [amplitude - deviation, amplitude + deviation)].
 
         Returns:
-            self (AudioAugmentation): Object with amplitude-controlled
+            self (SignalAugmentation): Object with amplitude-controlled
               multichannel sound.
         """
 
@@ -213,7 +213,7 @@ class SignalAugmentation:
             deviations makes delays uniformly distributed.
 
         Returns:
-            self (AudioAugmentation): Object with delayed multichannel sound.
+            self (SignalAugmentation): Object with delayed multichannel sound.
 
         """
 
@@ -273,7 +273,7 @@ class SignalAugmentation:
              deviation of reflection amplitude.
 
         Returns:
-            self (AudioAugmentation): The object with echoed multichannel
+            self (SignalAugmentation): The object with echoed multichannel
              sound.
         """
 
@@ -304,7 +304,7 @@ class SignalAugmentation:
             to each channel.
 
         Returns:
-            self (AudioAugmentation): The object noise-controlled multichannel
+            self (SignalAugmentation): The object noise-controlled multichannel
              sound.
         """
 
@@ -356,7 +356,7 @@ class SignalAugmentation:
              each channel in samples.
 
         Returns:
-            self (AudioAugmentation): The object with multichannel sound with
+            self (SignalAugmentation): The object with multichannel sound with
              pauses shrunk.
         """
 
@@ -410,7 +410,7 @@ class SignalAugmentation:
              each channel.
 
         Returns:
-            self (AudioAugmentation): The object with multichannel sound
+            self (SignalAugmentation): The object with multichannel sound
              with pauses shrunk.
         """
 
@@ -456,7 +456,7 @@ class SignalAugmentation:
             into.
 
         Returns:
-           self (AudioAugmentation): The split multichannel signal, with each
+           self (SignalAugmentation): The split multichannel signal, with each
             channel identical.
         """
 
@@ -471,7 +471,7 @@ class SignalAugmentation:
             none
 
         Returns:
-            self (AudioAugmentation): The object with merged sound data,
+            self (SignalAugmentation): The object with merged sound data,
              containing a single channel.
         """
         self.signal = self.signal.merge()
@@ -485,8 +485,8 @@ class SignalAugmentation:
             signal2 (MultiChannelSignal): The second multichannel signal.
 
         Returns:
-            self (AudioAugmentation): The sum of self._data and signal2
-              signals as AudioAugmentation object.
+            self (SignalAugmentation): The sum of self._data and signal2
+              signals as SignalAugmentation object.
         """
 
         self.signal.sum(signal2)
@@ -500,7 +500,7 @@ class SignalAugmentation:
             signal2 (MultiChannelSignal): The second multichannel signal.
 
         Returns:
-            self (AudioAugmentation): The object with concatenated signal
+            self (SignalAugmentation): The object with concatenated signal
              containing channels of both objects.
         """
 
@@ -515,7 +515,7 @@ class SignalAugmentation:
             list_of_chains (list[str]): A list of chains to add.
 
         Returns:
-            self (AudioAugmentation): The updated AudioAugmentation instance
+            self (SignalAugmentation): The updated SignalAugmentation instance
               with added chains. Result, allowing for method chaining.
         """
 
@@ -524,7 +524,7 @@ class SignalAugmentation:
         return self
 
     def copy(self) -> SignalAugmentation:
-        """Deep copy of the AudioAugmentation object."""
+        """Deep copy of the SignalAugmentation object."""
 
         return copy.deepcopy(self)
 
@@ -536,7 +536,7 @@ class SignalAugmentation:
             none
 
         Returns:
-            self (AudioAugmentation): The updated AudioAugmentation instance
+            self (SignalAugmentation): The updated SignalAugmentation instance
             with added chains. Result, allowing for method chaining.
         """
 
@@ -558,7 +558,7 @@ class SignalAugmentation:
             source_path (str): Path to the file containing the data.
 
         Returns:
-            list[MultiChannelSignal]: The updated AudioAugmentation data field.
+            list[MultiChannelSignal]: The updated SignalAugmentation data field.
         """
 
         self.signal.read(source_path)
