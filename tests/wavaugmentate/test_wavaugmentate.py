@@ -50,18 +50,8 @@ def test_echo_ctrl_option():
     Returns:
         None
     """
+
     temp_test_file_name, temp_out_file_name = temp_ref_signal()
-    """
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-    """
-
     cmd = [
         ctf.PROG_NAME,
         "-i",
@@ -122,16 +112,7 @@ def test_wavaugmentate_noise_option():
         None
     """
 
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
@@ -219,16 +200,7 @@ def test_wavaugmentate_amplitude_option():
         None
     """
 
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
@@ -277,16 +249,7 @@ def test_wavaugmentate_amplitude_option_fail_case1():
         None
     """
 
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
@@ -323,16 +286,8 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     Returns:
         None
     """
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
 
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
@@ -371,16 +326,7 @@ def test_wavaugmentate_delay_option():
         None
     """
 
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    test_sound_1 = Mcs(sampling_rate=ctf.FS)
-    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(temp_test_file_name)
-
-    file_descriptor, temp_out_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
