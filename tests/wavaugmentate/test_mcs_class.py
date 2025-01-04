@@ -100,9 +100,6 @@ def test_mcs_write_by_channel():
     """
 
     # Preparations
-    #file_name = ctf.OUTPUT_WAV_DIR + "sound.wav"
-    #if os.path.exists(file_name):
-    #    os.remove(file_name)
     file_name = temp_ref_file_name()
 
     # Frequencies list, corresponds to channels quantity.
@@ -159,11 +156,10 @@ def test_mcs_info():
         None
     """
 
+    temp_test_file_name = temp_ref_file_name()
     mcs = Mcs()
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
-            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+            ctf.FS).wr(temp_test_file_name)
     print(mcs.info())
 
     ref = {
@@ -200,7 +196,9 @@ def test_sum():
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.sum(test_sound_2)
-    res.write(ctf.TEST_SOUND_1_FILE)
+
+    temp_test_file_name = temp_ref_file_name()
+    res.write(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([test_sound_1, test_sound_2, res], ref):
         rms_value = sound.rms(decimals=3)
