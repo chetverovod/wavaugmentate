@@ -489,7 +489,8 @@ def test_aug_chain_sum():
     res = Aug(mcs.copy())
     test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res.sum(test_sound_2).get().wr(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    res.sum(test_sound_2).get().wr(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([mcs, test_sound_2, res.get()], ref):
         rms_list = sound.rms(decimals=3)
@@ -514,13 +515,13 @@ def test_aug_chain_merge():
         None
     """
 
+    temp_test_file_name = ctf.temp_ref_file_name()
     aug_obj = Aug()
     rms_list = (
         aug_obj.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-        .mrg().get().wr(ctf.TEST_SOUND_1_FILE)
+        .mrg().get().wr(temp_test_file_name)
         .rms(decimals=3)
     )
-    print(rms_list)
     ref_value = 1.0
     assert abs(rms_list[0] - ref_value) < ctf.ABS_ERR
 
@@ -543,7 +544,8 @@ def test_aug_chain_split():
     """
 
     aug_obj = Aug().gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    aug_obj.splt(5).get().wr(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj.splt(5).get().wr(temp_test_file_name)
     channels = aug_obj.get().channels_count()
     assert channels == 5
     ref_value = 0.707
