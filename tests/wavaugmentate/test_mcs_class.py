@@ -1,10 +1,9 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
+from tempfile import TemporaryDirectory
 import common_test_functions as ctf
 import mcs as ms
-from tempfile import TemporaryDirectory
-
 from mcs import MultiChannelSignal as Mcs
 from aug import SignalAugmentation as Aug
 import numpy as np
@@ -222,7 +221,7 @@ def test_merge():
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
-    
+
     temp_test_file_name = ctf.temp_ref_file_name()
     res.write(temp_test_file_name)
     print("res.shape =", res.shape())
