@@ -53,8 +53,8 @@ def test_echo_ctrl_option():
     if os.path.exists(ctf.OUTPUT_FILE):
         os.remove(ctf.OUTPUT_FILE)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = (
         "\ndelays: [100, 300, 400, 500]\n"
@@ -119,8 +119,8 @@ def test_wavaugmentate_noise_option():
     if os.path.exists(ctf.OUTPUT_FILE):
         os.remove(ctf.OUTPUT_FILE)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_value = str(res.stdout)
-    out = ctf.shrink(responce_value)
+    response_value = str(res.stdout)
+    out = ctf.shrink(response_value)
     print("out:", out)
     full_ref = f"\nnoise levels: [0.5, 0.6, 0.7, 0.1]\n{ms.SUCCESS_MARK}\n"
     ref = ctf.shrink(full_ref)
@@ -207,8 +207,8 @@ def test_wavaugmentate_amplitude_option():
     if os.path.exists(ctf.OUTPUT_FILE):
         os.remove(ctf.OUTPUT_FILE)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\namplitudes: [0.5, 0.6, 0.7, 0.1]\n{ms.SUCCESS_MARK}\n"
     ref = ctf.shrink(full_ref)
@@ -254,8 +254,8 @@ def test_wavaugmentate_amplitude_option_fail_case1():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     full_ref = f"{ms.ERROR_MARK}Amplitude list contains non number element:"
     full_ref += " < abc>."
     ref = ctf.shrink(full_ref)
@@ -291,8 +291,8 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\namplitudes: [0.1, 0.3, 0.4]\n\
     {ms.ERROR_MARK}Amplitude list length <3> does not match number of\n\
@@ -331,8 +331,8 @@ def test_wavaugmentate_delay_option():
     if os.path.exists(ctf.OUTPUT_FILE):
         os.remove(ctf.OUTPUT_FILE)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\ndelays: [100, 200, 300, 0]\n{ms.SUCCESS_MARK}\n"
     assert res.stdout == full_ref
@@ -379,8 +379,8 @@ def test_wavaugmentate_delay_option_fail_case1():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"{ms.ERROR_MARK}Delays list contains non integer element:"
     full_ref += " <389.1>.\n"
@@ -416,8 +416,8 @@ def test_wavaugmentate_delay_option_fail_case2():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\ndelays: [100, 200, 300]\n\
 {ms.ERROR_MARK}Delays list length <3> does not match number of\
@@ -462,9 +462,9 @@ def test_chain_option():
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
-    responce_string = str(res.stdout)
-    print('responce_string:', responce_string)
-    out = ctf.shrink(responce_string)
+    response_string = str(res.stdout)
+    print('response_string:', response_string)
+    out = ctf.shrink(response_string)
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).get().wr("'
         + ctf.TEST_SOUND_1_FILE
