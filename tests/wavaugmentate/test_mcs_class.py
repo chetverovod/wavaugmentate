@@ -229,7 +229,9 @@ def test_merge():
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = test_sound_1.copy()
     res.merge()
-    res.write(ctf.TEST_SOUND_1_FILE)
+    
+    temp_test_file_name = temp_ref_file_name()
+    res.write(temp_test_file_name)
     print("res.shape =", res.shape())
     ref_value = 1.0
     rms_list = res.rms(decimals=3)
@@ -259,7 +261,9 @@ def test_split():
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    
+    temp_test_file_name = temp_ref_file_name()
+    test_sound_1.write(temp_test_file_name)
     ref_value = 0.707
     rms_list = test_sound_1.rms(decimals=3)
     print(rms_list)
