@@ -18,16 +18,6 @@ frm_list = [60, 140, 230, 300]  # Speech formants list.
 
 # Output files names.
 TESTS_DIR = "./tests/wavaugmentate/"
-# TEST_SOUND_1_FILE = os.path.join(TESTS_DIR, "test_sounds/test_sound_1.wav")
-TEST_SOUND_1_AC_FILE = os.path.join(TESTS_DIR,
-                                    "test_sounds/test_sound_1_ac.wav")
-TEST_SOUND_1_DELAY_FILE = os.path.join(TESTS_DIR,
-                                       "test_sounds/test_sound_1_delay.wav")
-TEST_SOUND_1_ECHO_FILE = os.path.join(TESTS_DIR,
-                                      "test_sounds/test_sound_1_echo.wav")
-TEST_SOUND_1_NOISE_FILE = os.path.join(TESTS_DIR,
-                                       "test_sounds/test_sound_1_noise.wav")
-
 OUTPUT_WAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
 OUTPUT_FILE = os.path.join(OUTPUT_WAV_DIR, "out.wav")
 

@@ -352,7 +352,8 @@ def test_aug_noise_ctrl():
     test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
     test_sound_1.set_seed(42)
     test_nc = Aug(test_sound_1).noise_ctrl([1, 0.2, 0.3, 0]).get()
-    test_nc.write(ctf.TEST_SOUND_1_NOISE_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    test_nc.write(temp_test_file_name)
     rms_list = test_nc.rms(decimals=3)
     reference_list = [1.224, 0.735, 0.769, 0.707]
 
