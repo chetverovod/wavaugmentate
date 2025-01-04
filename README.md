@@ -1,7 +1,7 @@
 ![](https://img.shields.io/badge/os-Linux-green) ![](https://readthedocs.org/projects/wavaugmentate/badge/?version=latest) ![](https://img.shields.io/badge/python-3.9-blue)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
-![](https://coveralls.io/repos/github/chetverovod/wavaugmentate/badge.svg?branch=master)
-![](https://github.com/github/chetverovod/workflows/python-app.yml/badge.svg)
+[![Python application](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml/badge.svg?branch=dev)](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml)
+
 
 # **Wavaugmentate** 0.2.4
 
@@ -177,8 +177,13 @@ Just run:
 export  PYTHONPATH='./src/wavaugmentate'
 python3 -m pytest
 ```
+# Tests Coverage
 
-Test coverage:
+```
+pytest --cov-report term-missing --cov
+```
+
+Example of result:
 ```
 ---------- coverage: platform linux, python 3.11.4-final-0 -----------
 Name                       Stmts   Miss  Cover
