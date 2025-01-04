@@ -294,11 +294,11 @@ def test_chain_sum():
 
     mcs = Mcs()
     res = Mcs()
-    temp_test_file_name = temp_ref_file_name()
-    mcs.gen([100], temp_test_file_name, ctf.FS)
+    mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
     res = mcs.copy()
     test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    temp_test_file_name = temp_ref_file_name()
     res.sum(test_sound_2).wr(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([mcs, test_sound_2, res], ref):
@@ -394,7 +394,8 @@ def test_side_by_side():
     test_sound_1 = aug_obj.amplitude_ctrl([0.3]).get()
     test_sound_2 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_1.side_by_side(test_sound_2)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
+    test_sound_1.write(temp_test_file_name)
     ref_rms_list = [0.212, 0.707]
     rms_list = test_sound_1.rms(decimals=3)
     for rms_list, ref in zip(rms_list, ref_rms_list):
@@ -423,12 +424,11 @@ def test_pause_detect():
     test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     test_sound_1.side_by_side(mask)
-    print(test_sound_1)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
+    test_sound_1.write(temp_test_file_name)
     rms_list = test_sound_1.rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for rms_value, ref in zip(rms_list, ref_rms_list):
-        print(rms_value)
         assert abs(rms_value - ref) < ctf.ABS_ERR
 
 
@@ -451,11 +451,12 @@ def test_chain_pause_detect():
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mcs_1 = mcs.copy()
     mask = mcs.pdt([0.5, 0.3])
-    mcs_1.sbs(mask).wr(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
+    mcs_1.sbs(mask).wr(temp_test_file_name)
     rms_list = mcs_1.rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for i, rms_value in enumerate(rms_list):
-        print(rms_value)
+        #print(rms_value)
         assert abs(rms_value - ref_rms_list[i]) < ctf.ABS_ERR
 
 
