@@ -578,13 +578,13 @@ def test_aug_chain_side_by_side():
     mcs = Mcs().gen([1000], ctf.SIGNAL_TIME_LEN, ctf.FS)
 
     aug_obj = Aug(mcs)
+    temp_test_file_name = ctf.temp_ref_file_name()
     rms_list = (
         aug_obj.amp([0.3])
         .sbs(test_sound_1)
-        .get().wr(ctf.TEST_SOUND_1_FILE)
+        .get().wr(temp_test_file_name)
         .rms(decimals=3)
     )
-    print(rms_list)
     ref_value = [0.212, 0.707]
     for rms_list, ref in zip(rms_list, ref_value):
         print(rms_list)
@@ -613,8 +613,8 @@ def test_aug_pause_detect():
     aug_obj = Aug(test_sound_1)
     mask = aug_obj.pause_detect([0.5, 0.3])
     aug_obj.side_by_side(mask)
-    print(test_sound_1)
-    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj.get().write(temp_test_file_name)
     _rms_list = aug_obj.get().rms(decimals=3)
     _ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for rms_value, ref in zip(_rms_list, _ref_rms_list):
@@ -640,7 +640,8 @@ def test_aug_chain_pause_detect():
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     aug_obj = Aug(mcs)
     mask = aug_obj.pdt([0.5, 0.3])
-    aug_obj.sbs(mask).get().wr(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj.sbs(mask).get().wr(temp_test_file_name)
     rms_list = aug_obj.get().rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
     for rms_value, ref_rms in zip(rms_list, ref_rms_list):
