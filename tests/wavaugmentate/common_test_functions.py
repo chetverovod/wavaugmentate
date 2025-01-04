@@ -17,10 +17,6 @@ SIGNAL_TIME_LEN = 5
 freq_list = [400, 1000, 2333, 3700]  # Frequencies list.
 frm_list = [60, 140, 230, 300]  # Speech formants list.
 
-# Output files names.
-TESTS_DIR = "./tests/wavaugmentate/"
-OUTPUT_WAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
-
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = os.path.join(SRC_DIR, f"{wau.prog_name}.py")
 
@@ -51,4 +47,3 @@ def temp_ref_file_name() -> str:
     os.close(file_descriptor)
 
     return temp_test_file_name
-
