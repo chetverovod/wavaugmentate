@@ -21,8 +21,8 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install pytest flake8 numpy scipy
         pipenv install
+        pipenv install numpy scipy
         pipenv install pylint
 
     - name: Analysing the code with pylint
