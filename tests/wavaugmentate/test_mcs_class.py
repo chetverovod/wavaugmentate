@@ -100,9 +100,10 @@ def test_mcs_write_by_channel():
     """
 
     # Preparations
-    file_name = ctf.OUTPUT_WAV_DIR + "sound.wav"
-    if os.path.exists(file_name):
-        os.remove(file_name)
+    #file_name = ctf.OUTPUT_WAV_DIR + "sound.wav"
+    #if os.path.exists(file_name):
+    #    os.remove(file_name)
+    file_name = temp_ref_file_name()
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
