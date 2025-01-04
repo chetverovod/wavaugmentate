@@ -3,6 +3,7 @@
 import os
 import sys
 import logging as log
+import tempfile
 import mcs as ms
 import wavaug as wau
 
@@ -54,3 +55,14 @@ def shrink(text_for_shrink: str):
         {" ": None, "\n": None, "\t": None, "\r": None}
     )
     return text_for_shrink.translate(subst_table)
+
+
+def temp_ref_file_name() -> str:
+    """Function creates temporary file name."""
+
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    return temp_test_file_name
+
+

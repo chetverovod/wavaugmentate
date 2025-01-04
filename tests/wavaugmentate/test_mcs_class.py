@@ -1,21 +1,11 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
-import tempfile
 import common_test_functions as ctf
 import mcs as ms
 from mcs import MultiChannelSignal as Mcs
 from aug import SignalAugmentation as Aug
 import numpy as np
-
-def temp_ref_file_name() -> str:
-    """Function creates temporary file name."""
-
-    file_descriptor, temp_test_file_name = tempfile.mkstemp()
-    os.close(file_descriptor)
-
-    return temp_test_file_name
-
 
 
 def test_mcs_put():
@@ -66,7 +56,7 @@ def test_mcs_wr_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
             ctf.FS).wr(temp_test_file_name)
 
@@ -100,7 +90,7 @@ def test_mcs_write_by_channel():
     """
 
     # Preparations
-    file_name = temp_ref_file_name()
+    file_name = ctf.temp_ref_file_name()
 
     # Frequencies list, corresponds to channels quantity.
     freq_list = [400]
@@ -156,7 +146,7 @@ def test_mcs_info():
         None
     """
 
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs = Mcs()
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
             ctf.FS).wr(temp_test_file_name)
@@ -197,7 +187,7 @@ def test_sum():
     res = test_sound_1.copy()
     res.sum(test_sound_2)
 
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     res.write(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([test_sound_1, test_sound_2, res], ref):
@@ -230,7 +220,7 @@ def test_merge():
     res = test_sound_1.copy()
     res.merge()
     
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     res.write(temp_test_file_name)
     print("res.shape =", res.shape())
     ref_value = 1.0
@@ -262,7 +252,7 @@ def test_split():
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
 
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     test_sound_1.write(temp_test_file_name)
     ref_value = 0.707
     rms_list = test_sound_1.rms(decimals=3)
@@ -298,7 +288,7 @@ def test_chain_sum():
     res = mcs.copy()
     test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     res.sum(test_sound_2).wr(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([mcs, test_sound_2, res], ref):
@@ -324,7 +314,7 @@ def test_chain_merge():
         None
     """
 
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs = Mcs()
     rms_list = (
         mcs.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
@@ -357,7 +347,7 @@ def test_chain_split():
         None
     """
 
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs = Mcs()
     mcs.gen([300], ctf.SIGNAL_TIME_LEN,
             ctf.FS).splt(5).wr(temp_test_file_name)
@@ -394,7 +384,7 @@ def test_side_by_side():
     test_sound_1 = aug_obj.amplitude_ctrl([0.3]).get()
     test_sound_2 = Mcs().generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
     test_sound_1.side_by_side(test_sound_2)
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     test_sound_1.write(temp_test_file_name)
     ref_rms_list = [0.212, 0.707]
     rms_list = test_sound_1.rms(decimals=3)
@@ -424,7 +414,7 @@ def test_pause_detect():
     test_sound_1 = Mcs().generate([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mask = test_sound_1.pause_detect([0.5, 0.3])
     test_sound_1.side_by_side(mask)
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     test_sound_1.write(temp_test_file_name)
     rms_list = test_sound_1.rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
@@ -451,7 +441,7 @@ def test_chain_pause_detect():
     mcs.gen([100, 400], ctf.SIGNAL_TIME_LEN, ctf.FS)
     mcs_1 = mcs.copy()
     mask = mcs.pdt([0.5, 0.3])
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     mcs_1.sbs(mask).wr(temp_test_file_name)
     rms_list = mcs_1.rms(decimals=3)
     ref_rms_list = [0.707, 0.707, 0.865, 0.923]
@@ -484,7 +474,7 @@ def test_pause_shrink_sine():
     res = test_sound_1.copy()
     res.side_by_side(mask)
     test_sound_1.pause_shrink(mask, [20, 4])
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     test_sound_1.write(temp_test_file_name)
     _rms_list = test_sound_1.rms(decimals=3)
     _ref_rms_list = [0.702, 0.706, 0.865, 0.923]
@@ -521,7 +511,7 @@ def test_pause_shrink_speech():
     mask = test_sound_1.pause_detect([0.5, 0.3])
     res = test_sound_1.copy()
     res.side_by_side(mask)
-    temp_test_file_name = temp_ref_file_name()
+    temp_test_file_name = ctf.temp_ref_file_name()
     res.write(temp_test_file_name)
     test_sound_1.pause_shrink(mask, [20, 4])
     rms_list = test_sound_1.rms(decimals=3)
