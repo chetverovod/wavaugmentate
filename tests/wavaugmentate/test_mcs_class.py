@@ -1,11 +1,21 @@
 """Module provides test functions for mcs.py  module."""
 
 import os
+import tempfile
 import common_test_functions as ctf
 import mcs as ms
 from mcs import MultiChannelSignal as Mcs
 from aug import SignalAugmentation as Aug
 import numpy as np
+
+def temp_ref_file_name() -> str:
+    """Function creates temporary file name."""
+
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    return temp_test_file_name
+
 
 
 def test_mcs_put():
@@ -56,11 +66,12 @@ def test_mcs_wr_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = temp_ref_file_name()
     mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
-            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+            ctf.FS).wr(temp_test_file_name)
 
     ref_mcs = Mcs()
-    ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
+    ref_mcs.rd(temp_test_file_name)
 
     assert np.array_equal(mcs.data, ref_mcs.data)
 
