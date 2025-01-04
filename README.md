@@ -1,6 +1,6 @@
 ![](https://img.shields.io/badge/os-Linux-green) ![](https://readthedocs.org/projects/wavaugmentate/badge/?version=latest) ![](https://img.shields.io/badge/python-3.9-blue)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
-[![Python application](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml/badge.svg)](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml)
+[![Python application](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml/badge.svg?branch=dev)](https://github.com/chetverovod/wavaugmentate/actions/workflows/python-app.yml)
 
 
 # **Wavaugmentate** 0.2.4
