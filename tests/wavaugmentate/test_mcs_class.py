@@ -3,6 +3,8 @@
 import os
 import common_test_functions as ctf
 import mcs as ms
+from tempfile import TemporaryDirectory
+
 from mcs import MultiChannelSignal as Mcs
 from aug import SignalAugmentation as Aug
 import numpy as np
@@ -119,12 +121,15 @@ def test_mcs_write_by_channel():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     aug_obj.amplitude_ctrl(amplitude_list)
 
-    aug_obj.get().write_by_channel(ctf.OUTPUT_WAV_DIR + "sound_augmented.wav")
+    with TemporaryDirectory() as temp_dir:
+        file_path = os.path.join(temp_dir, "sound_augmented.wav")
+        aug_obj.get().write_by_channel(file_path)
 
-    for i in range(7):
-        mcs.read(f"{ctf.OUTPUT_WAV_DIR}sound_augmented_{i + 1}.wav")
-        rms_value = mcs.rms()
-        assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
+        for i in range(7):
+            file_path = os.path.join(temp_dir, f"sound_augmented_{i + 1}.wav")
+            mcs.read(file_path)
+            rms_value = mcs.rms()
+            assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
 
 
 def test_mcs_info():

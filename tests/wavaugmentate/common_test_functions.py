@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(
     os.path.dirname(__file__))), "/src/wavaugmentate"))
 
 
+ABS_ERR = 0.0001
 FS = ms.DEF_FS
 SIGNAL_TIME_LEN = 5
 freq_list = [400, 1000, 2333, 3700]  # Frequencies list.
@@ -34,9 +35,6 @@ log.basicConfig(
 )
 
 
-ABS_ERR = 0.0001
-
-
 def shrink(text_for_shrink: str):
     """Drops white spaces, newlines, and tabs from a string."""
 
@@ -53,5 +51,4 @@ def temp_ref_file_name() -> str:
     os.close(file_descriptor)
 
     return temp_test_file_name
-
 
