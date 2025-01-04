@@ -261,7 +261,7 @@ def test_split():
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     test_sound_1.split(5)
-    
+
     temp_test_file_name = temp_ref_file_name()
     test_sound_1.write(temp_test_file_name)
     ref_value = 0.707
@@ -294,11 +294,12 @@ def test_chain_sum():
 
     mcs = Mcs()
     res = Mcs()
-    mcs.gen([100], ctf.SIGNAL_TIME_LEN, ctf.FS)
+    temp_test_file_name = temp_ref_file_name()
+    mcs.gen([100], temp_test_file_name, ctf.FS)
     res = mcs.copy()
     test_sound_2 = Mcs()
     test_sound_2.generate([300], ctf.SIGNAL_TIME_LEN, ctf.FS)
-    res.sum(test_sound_2).wr(ctf.TEST_SOUND_1_FILE)
+    res.sum(test_sound_2).wr(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for sound, ref_value in zip([mcs, test_sound_2, res], ref):
         rms_list = sound.rms(decimals=3)
@@ -323,11 +324,12 @@ def test_chain_merge():
         None
     """
 
+    temp_test_file_name = temp_ref_file_name()
     mcs = Mcs()
     rms_list = (
         mcs.gen([100, 300], ctf.SIGNAL_TIME_LEN, ctf.FS)
         .mrg()
-        .wr(ctf.TEST_SOUND_1_FILE)
+        .wr(temp_test_file_name)
         .rms(decimals=3)
     )
     print(rms_list)
@@ -355,9 +357,10 @@ def test_chain_split():
         None
     """
 
+    temp_test_file_name = temp_ref_file_name()
     mcs = Mcs()
     mcs.gen([300], ctf.SIGNAL_TIME_LEN,
-            ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
+            ctf.FS).splt(5).wr(temp_test_file_name)
     channels = mcs.info()['channels_count']
     assert channels == 5
     ref_value = 0.707
