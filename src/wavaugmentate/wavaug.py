@@ -4,6 +4,9 @@
 This module does multichannel audio flies augmentation.
 """
 
+__author__ = "Igor Plastov"
+__version__ = '0.2.2'
+
 import argparse
 import os
 import sys
@@ -339,10 +342,13 @@ def parse_args():
 
     parser = argparse.ArgumentParser(
         prog=prog_name,
-        description="WAV audio files augmentation utility.",
-        epilog="", # "Text at the bottom of help"
+        description=("WAV audio files augmentation utility. Developed by"
+                     f" {__author__}, chetverovod@gmail.com."),
+        epilog="",  # "Text at the bottom of help"
     )
 
+    parser.add_argument("-v", "--version", action="store_true", help="Version "
+                        "information.")
     parser.add_argument("-i", dest="in_path", help="Input audio" " file path.")
     parser.add_argument("-o", dest="out_path", help="Output audio file path.")
     parser.add_argument(
@@ -403,7 +409,7 @@ def parse_args():
 
 def augmentate(args):
     """
-    Augmentates the input audio file based on the provided arguments.
+    Augments the input audio file based on the provided arguments.
 
     Args:
         args (argparse.Namespace): The command line arguments.
@@ -449,6 +455,9 @@ def main():
     """CLI arguments parsing."""
 
     args = parse_args()
+    if args.version is True:
+        print(__version__)
+        return
     augmentate(args)
 
 
