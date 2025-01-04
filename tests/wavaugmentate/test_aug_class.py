@@ -2,6 +2,7 @@
 
 import os
 import sys
+from tempfile import TemporaryDirectory
 import mcs as ms
 from mcs import MultiChannelSignal as Mcs
 from aug import SignalAugmentation as Aug
@@ -242,88 +243,88 @@ def test_readme_examples():
         None
     """
 
-    # Preparations
-    sound_file_path = ctf.OUTPUT_WAV_DIR + "sound.wav"
-    sound_aug_file_path = ctf.OUTPUT_WAV_DIR + "sound_augmented.wav"
+    with TemporaryDirectory() as temp_dir:
 
-    file_name = sound_file_path
-    if os.path.exists(file_name):
-        os.remove(file_name)
+        # Preparations
+        sound_file_path = os.path.join(temp_dir, "sound.wav")
+        sound_aug_file_path = os.path.join(temp_dir, "sound_augmented.wav")
 
-    # Frequencies list, corresponds to channels quantity.
-    freq_list = [400]
-    time_len = 3  # Length of signal in seconds.
+        file_name = sound_file_path
 
-    # Create Mcs-object and generate sine waves in 7 channels.
-    mcs1 = Mcs().generate(freq_list, time_len, ms.DEF_FS)
-    mcs1.write(file_name)
+        # Frequencies list, corresponds to channels quantity.
+        freq_list = [400]
+        time_len = 3  # Length of signal in seconds.
 
-    # Examples code for  README.md
+        # Create Mcs-object and generate sine waves in 7 channels.
+        mcs1 = Mcs().generate(freq_list, time_len, ms.DEF_FS)
+        mcs1.write(file_name)
 
-    # Example 1:
+        # Examples code for  README.md
 
-    # File name of original sound.
-    file_name = sound_file_path
+        # Example 1:
 
-    # Create Mcs-object.
-    mcs = Mcs()
+        # File name of original sound.
+        file_name = sound_file_path
 
-    # Read WAV-file to Mcs-object.
-    mcs.read(file_name)
+        # Create Mcs-object.
+        mcs = Mcs()
 
-    # Change quantity of channels to 7.
-    mcs.split(7)
+        # Read WAV-file to Mcs-object.
+        mcs.read(file_name)
 
-    # Create augmentation object.
-    aug = Aug(mcs)
+        # Change quantity of channels to 7.
+        mcs.split(7)
 
-    # Apply delays.
-    # Corresponds to channels quantity.
-    delay_list = [0, 150, 200, 250, 300, 350, 400]
-    aug.delay_ctrl(delay_list)
+        # Create augmentation object.
+        aug = Aug(mcs)
 
-    # Apply amplitude changes.
-    # Corresponds to channels quantity.
-    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
-    aug.amplitude_ctrl(amplitude_list)
+        # Apply delays.
+        # Corresponds to channels quantity.
+        delay_list = [0, 150, 200, 250, 300, 350, 400]
+        aug.delay_ctrl(delay_list)
 
-    # Augmentation result saving by single file, containing 7 channels.
-    aug.get().write(sound_aug_file_path)
+        # Apply amplitude changes.
+        # Corresponds to channels quantity.
+        amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+        aug.amplitude_ctrl(amplitude_list)
 
-    # Augmentation result saving to 7 files, each 1 by channel.
-    # ./outputwav/sound_augmented_1.wav
-    # ./outputwav/sound_augmented_2.wav and so on.
-    aug.get().write_by_channel(sound_aug_file_path)
+        # Augmentation result saving by single file, containing 7 channels.
+        aug.get().write(sound_aug_file_path)
 
-    # The same code as chain, Example 2:
-    delay_list = [0, 150, 200, 250, 300, 350, 400]
-    amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
+        # Augmentation result saving to 7 files, each 1 by channel.
+        # ./outputwav/sound_augmented_1.wav
+        # ./outputwav/sound_augmented_2.wav and so on.
+        aug.get().write_by_channel(sound_aug_file_path)
 
-    # Apply all transformations of Example 1 in chain.
-    Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get()\
-        .wr(ctf.OUTPUT_WAV_DIR + "sound_augmented_by_chain.wav")
+        # The same code as chain, Example 2:
+        delay_list = [0, 150, 200, 250, 300, 350, 400]
+        amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
-    # Augmentation result saving to 7 files, each 1 by channel.
-    mcs.wrbc(ctf.OUTPUT_WAV_DIR + "sound_augmented_by_chain.wav")
+        # Apply all transformations of Example 1 in chain.
+        Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get()\
+            .wr(os.path.join(temp_dir, "sound_augmented_by_chain.wav"))
 
-    # How to make 15 augmented files (amplitude and delay) from 1 sound file.
+        # Augmentation result saving to 7 files, each 1 by channel.
+        mcs.wrbc(os.path.join(temp_dir, "sound_augmented_by_chain.wav"))
 
-    # Example 5:
+        # How to make 15 augmented files (amplitude and delay) from 1 sound file.
 
-    file_name = sound_file_path
-    mcs = Mcs()
-    mcs.rd(file_name)  # Read original file with single channel.
-    file_name_head = ctf.OUTPUT_WAV_DIR + "sound_augmented"
+        # Example 5:
 
-    # Suppose we need 15 augmented files.
-    aug_count = 15
-    for i in range(aug_count):
-        signal = Aug(mcs.copy())
-        # Apply random amplitude [0.3..1.7) and delay [70..130)
-        # microseconds changes to each copy of original signal.
-        signal.amp([1], [0.7]).dly([100], [30])
-        name = file_name_head + f"_{i + 1}.wav"
-        signal.get().write(name)
+        file_name = sound_file_path
+        mcs = Mcs()
+        mcs.rd(file_name)  # Read original file with single channel.
+        file_name_head = os.path.join(temp_dir, "sound_augmented")
+
+        # Suppose we need 15 augmented files.
+        aug_count = 15
+        for i in range(aug_count):
+            signal = Aug(mcs.copy())
+            # Apply random amplitude [0.3..1.7) and delay [70..130)
+            # microseconds changes to each copy of original signal.
+            signal.amp([1], [0.7]).dly([100], [30])
+            name = file_name_head + f"_{i + 1}.wav"
+            signal.get().write(name)
 
 
 def test_aug_noise_ctrl():
