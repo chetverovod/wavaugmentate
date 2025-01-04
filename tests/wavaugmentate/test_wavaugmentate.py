@@ -461,7 +461,7 @@ def test_chain_option():
         None
     """
 
-    temp_test_file_name, temp_out_file_name = temp_ref_signal()
+    temp_test_file_name, _ = temp_ref_signal()
     os.remove(temp_test_file_name)
     cmd = [
         ctf.PROG_NAME,

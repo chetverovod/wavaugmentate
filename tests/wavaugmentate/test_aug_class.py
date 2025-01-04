@@ -249,28 +249,23 @@ def test_readme_examples():
         sound_file_path = os.path.join(temp_dir, "sound.wav")
         sound_aug_file_path = os.path.join(temp_dir, "sound_augmented.wav")
 
-        file_name = sound_file_path
-
         # Frequencies list, corresponds to channels quantity.
         freq_list = [400]
         time_len = 3  # Length of signal in seconds.
 
         # Create Mcs-object and generate sine waves in 7 channels.
         mcs1 = Mcs().generate(freq_list, time_len, ms.DEF_FS)
-        mcs1.write(file_name)
+        mcs1.write(sound_file_path)
 
         # Examples code for  README.md
 
         # Example 1:
 
-        # File name of original sound.
-        file_name = sound_file_path
-
         # Create Mcs-object.
         mcs = Mcs()
 
         # Read WAV-file to Mcs-object.
-        mcs.read(file_name)
+        mcs.read(sound_file_path)
 
         # Change quantity of channels to 7.
         mcs.split(7)
@@ -301,19 +296,19 @@ def test_readme_examples():
         amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
         # Apply all transformations of Example 1 in chain.
-        Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get()\
+        Aug(Mcs().rd(sound_file_path)).splt(7).dly(delay_list).amp(amplitude_list).get()\
             .wr(os.path.join(temp_dir, "sound_augmented_by_chain.wav"))
 
         # Augmentation result saving to 7 files, each 1 by channel.
         mcs.wrbc(os.path.join(temp_dir, "sound_augmented_by_chain.wav"))
 
-        # How to make 15 augmented files (amplitude and delay) from 1 sound file.
+        # How to make 15 augmented files (amplitude and delay) from 1 sound
+        # file.
 
         # Example 5:
 
-        file_name = sound_file_path
         mcs = Mcs()
-        mcs.rd(file_name)  # Read original file with single channel.
+        mcs.rd(sound_file_path)  # Read original file with single channel.
         file_name_head = os.path.join(temp_dir, "sound_augmented")
 
         # Suppose we need 15 augmented files.
