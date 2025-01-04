@@ -376,12 +376,13 @@ def test_wavaugmentate_delay_option_fail_case1():
         None
     """
 
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-d",
         "100, 389.1, 999, 456",
     ]
@@ -413,12 +414,13 @@ def test_wavaugmentate_delay_option_fail_case2():
         None
     """
 
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-d",
         "100, 200, 300",
     ]
@@ -459,13 +461,13 @@ def test_chain_option():
         None
     """
 
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name, temp_out_file_name = temp_ref_signal()
+    os.remove(temp_test_file_name)
     cmd = [
         ctf.PROG_NAME,
         "-c",
         'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).get().wr("'
-        + ctf.TEST_SOUND_1_FILE
+        + temp_test_file_name
         + '")',
     ]
     print("\n", " ".join(cmd))
@@ -475,7 +477,7 @@ def test_chain_option():
     out = ctf.shrink(response_string)
     full_ref = (
         'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).get().wr("'
-        + ctf.TEST_SOUND_1_FILE
+        + temp_test_file_name
         + '")\n'
         + f"{ms.SUCCESS_MARK}\n"
     )
@@ -483,5 +485,5 @@ def test_chain_option():
     print("out:", out)
     print("ref:", ref)
     assert out == ref
-    exists = os.path.exists(ctf.TEST_SOUND_1_FILE)
+    exists = os.path.exists(temp_test_file_name)
     assert exists is True
