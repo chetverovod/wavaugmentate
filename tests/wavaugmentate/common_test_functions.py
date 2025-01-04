@@ -1,4 +1,5 @@
 """Module providing test functions for wavaugmentate.py  module."""
+
 import os
 import sys
 import logging as log
@@ -7,8 +8,6 @@ import wavaug as wau
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(
     os.path.dirname(__file__))), "/src/wavaugmentate"))
-
-
 
 
 FS = ms.DEF_FS
@@ -28,8 +27,8 @@ TEST_SOUND_1_ECHO_FILE = os.path.join(TESTS_DIR,
 TEST_SOUND_1_NOISE_FILE = os.path.join(TESTS_DIR,
                                        "test_sounds/test_sound_1_noise.wav")
 
-OUTPUTWAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
-OUTPUT_FILE = os.path.join(OUTPUTWAV_DIR, "out.wav")
+OUTPUT_WAV_DIR = os.path.join(TESTS_DIR, "outputwav/")
+OUTPUT_FILE = os.path.join(OUTPUT_WAV_DIR, "out.wav")
 
 SRC_DIR = "./src/wavaugmentate/"
 PROG_NAME = os.path.join(SRC_DIR, f"{wau.prog_name}.py")
@@ -48,10 +47,10 @@ log.basicConfig(
 ABS_ERR = 0.0001
 
 
-def shrink(text_for_shink: str):
+def shrink(text_for_shrink: str):
     """Drops white spaces, newlines, and tabs from a string."""
 
     subst_table = str.maketrans(
         {" ": None, "\n": None, "\t": None, "\r": None}
     )
-    return text_for_shink.translate(subst_table)
+    return text_for_shrink.translate(subst_table)

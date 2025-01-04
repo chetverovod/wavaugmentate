@@ -245,8 +245,8 @@ def test_readme_examples():
     """
 
     # Preparations
-    sound_file_path = ctf.OUTPUTWAV_DIR + "sound.wav"
-    sound_aug_file_path = ctf.OUTPUTWAV_DIR + "sound_augmented.wav"
+    sound_file_path = ctf.OUTPUT_WAV_DIR + "sound.wav"
+    sound_aug_file_path = ctf.OUTPUT_WAV_DIR + "sound_augmented.wav"
 
     file_name = sound_file_path
     if os.path.exists(file_name):
@@ -303,10 +303,10 @@ def test_readme_examples():
 
     # Apply all transformations of Example 1 in chain.
     Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get()\
-        .wr(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+        .wr(ctf.OUTPUT_WAV_DIR + "sound_augmented_by_chain.wav")
 
     # Augmentation result saving to 7 files, each 1 by channel.
-    mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
+    mcs.wrbc(ctf.OUTPUT_WAV_DIR + "sound_augmented_by_chain.wav")
 
     # How to make 15 augmented files (amplitude and delay) from 1 sound file.
 
@@ -315,7 +315,7 @@ def test_readme_examples():
     file_name = sound_file_path
     mcs = Mcs()
     mcs.rd(file_name)  # Read original file with single channel.
-    file_name_head = ctf.OUTPUTWAV_DIR + "sound_augmented"
+    file_name_head = ctf.OUTPUT_WAV_DIR + "sound_augmented"
 
     # Suppose we need 15 augmented files.
     aug_count = 15

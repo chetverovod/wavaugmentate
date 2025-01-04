@@ -12,11 +12,11 @@ def test_mcs_put():
     """
     Test function to verify the functionality of the mcs class's put method.
 
-    This function generates a multichannel sound using the generate function from
-    the wau module with the given frequency list, time duration, and sample rate.
-    It then applies the put method of the mcs class to the generated sound
-    and asserts that the shape and data of the original sound are equal to the
-    shape and data of the sound after applying the put method.
+    This function generates a multichannel sound using the generate function
+    from the wau module with the given frequency list, time duration, and
+    sample rate. It then applies the put method of the mcs class to the
+    generated sound and asserts that the shape and data of the original sound
+    are equal to the shape and data of the sound after applying the put method.
 
     Args:
         None
@@ -56,7 +56,8 @@ def test_mcs_wr_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
+            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
     ref_mcs = Mcs()
     ref_mcs.rd(ctf.TEST_SOUND_1_FILE)
@@ -70,14 +71,15 @@ def test_mcs_write_by_channel():
     write_by_channel method.
 
     This function generates a multichannel sound using the generate method of
-    the mcs class with the given frequency list, time duration, and sample rate.
-    It then writes the generated sound to a file using the write method of the
-    mcs class.  The function reads the written sound back into the mcs object
-    using the read method and changes the quantity of channels to 7 using the
-    split method.  It applies delays and amplitude changes to the sound using
-    the delay_ctrl and amplitude_ctrl methods, respectively.  Finally, it writes
-    the sound to separate WAV files for each channel using the write_by_channel
-    method and verifies the RMS values of the written sounds.
+    the mcs class with the given frequency list, time duration, and sample
+    rate. It then writes the generated sound to a file using the write method
+    of the mcs class.  The function reads the written sound back into the mcs
+    object using the read method and changes the quantity of channels to 7
+    using the split method.  It applies delays and amplitude changes to the
+    sound using the delay_ctrl and amplitude_ctrl methods, respectively. 
+    Finally, it writes the sound to separate WAV files for each channel using
+    the write_by_channel method and verifies the RMS values of the written
+     sounds.
 
     Args:
         None
@@ -87,7 +89,7 @@ def test_mcs_write_by_channel():
     """
 
     # Preparations
-    file_name = ctf.OUTPUTWAV_DIR + "sound.wav"
+    file_name = ctf.OUTPUT_WAV_DIR + "sound.wav"
     if os.path.exists(file_name):
         os.remove(file_name)
 
@@ -120,10 +122,10 @@ def test_mcs_write_by_channel():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
     aug_obj.amplitude_ctrl(amplitude_list)
 
-    aug_obj.get().write_by_channel(ctf.OUTPUTWAV_DIR + "sound_augmented.wav")
+    aug_obj.get().write_by_channel(ctf.OUTPUT_WAV_DIR + "sound_augmented.wav")
 
     for i in range(7):
-        mcs.read(f"{ctf.OUTPUTWAV_DIR}sound_augmented_{i + 1}.wav")
+        mcs.read(f"{ctf.OUTPUT_WAV_DIR}sound_augmented_{i + 1}.wav")
         rms_value = mcs.rms()
         assert abs(rms_value[0] - 0.707 * amplitude_list[i]) < ctf.ABS_ERR
 
@@ -148,7 +150,8 @@ def test_mcs_info():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
+            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
     print(mcs.info())
 
     ref = {
@@ -339,7 +342,8 @@ def test_chain_split():
     """
 
     mcs = Mcs()
-    mcs.gen([300], ctf.SIGNAL_TIME_LEN, ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen([300], ctf.SIGNAL_TIME_LEN,
+            ctf.FS).splt(5).wr(ctf.TEST_SOUND_1_FILE)
     channels = mcs.info()['channels_count']
     assert channels == 5
     ref_value = 0.707
