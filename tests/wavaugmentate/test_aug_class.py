@@ -156,7 +156,8 @@ def test_aug_rn_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
+            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
     aug_obj = Aug(mcs)
 
     mcs_for_chain = Mcs()
@@ -176,7 +177,8 @@ def test_aug_rn_aug_rd():
     mcs = Mcs()
     if os.path.exists(ctf.TEST_SOUND_1_FILE):
         os.remove(ctf.TEST_SOUND_1_FILE)
-    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN, ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
+    mcs.gen(ctf.freq_list, ctf.SIGNAL_TIME_LEN,
+            ctf.FS).wr(ctf.TEST_SOUND_1_FILE)
 
     aug_obj_a = Aug(Mcs().rd(ctf.TEST_SOUND_1_FILE))
 
@@ -300,9 +302,8 @@ def test_readme_examples():
     amplitude_list = [1, 0.17, 0.2, 0.23, 0.3, 0.37, 0.4]
 
     # Apply all transformations of Example 1 in chain.
-    Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get().wr(
-        ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav"
-    )
+    Aug(Mcs().rd(file_name)).splt(7).dly(delay_list).amp(amplitude_list).get()\
+        .wr(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
 
     # Augmentation result saving to 7 files, each 1 by channel.
     mcs.wrbc(ctf.OUTPUTWAV_DIR + "sound_augmented_by_chain.wav")
