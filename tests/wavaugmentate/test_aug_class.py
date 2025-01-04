@@ -389,7 +389,8 @@ def test_aug_sum():
     res = Aug(test_sound_1)
     res.sum(test_sound_2)
 
-    res.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    res.get().write(temp_test_file_name)
     ref = [0.707, 0.707, 1.0]
     for _sound, ref_value in zip([test_sound_1, test_sound_2, res.get()], ref):
         _rms_value = _sound.rms(decimals=4)
@@ -420,7 +421,8 @@ def test_aug_merge():
     test_sound_1.generate([100, 300], ctf.SIGNAL_TIME_LEN)
     res = Aug(test_sound_1.copy())
     res.merge()
-    res.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    res.get().write(temp_test_file_name)
     print("res.get().shape =", res.get().shape())
     ref_value = 1.0
     rms_list = res.get().rms(decimals=3)
@@ -451,7 +453,8 @@ def test_aug_split():
     test_sound_1.generate([300], ctf.SIGNAL_TIME_LEN)
     aug_obj = Aug(test_sound_1)
     aug_obj.split(5)
-    aug_obj.get().write(ctf.TEST_SOUND_1_FILE)
+    temp_test_file_name = ctf.temp_ref_file_name()
+    aug_obj.get().write(temp_test_file_name)
     ref_value = 0.707
     rms_list = aug_obj.get().rms(decimals=3)
     print(rms_list)
