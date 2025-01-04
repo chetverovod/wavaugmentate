@@ -103,24 +103,30 @@ def test_wavaugmentate_noise_option():
     Returns:
         None
     """
-    if os.path.exists(ctf.TEST_SOUND_1_FILE):
-        os.remove(ctf.TEST_SOUND_1_FILE)
+
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+    
     test_sound_1 = Mcs(sampling_rate=ctf.FS)
     test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
-    test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    #test_sound_1.write(ctf.TEST_SOUND_1_FILE)
+    test_sound_1.write(temp_test_file_name)
+    
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
 
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name, # ctf.TEST_SOUND_1_FILE,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,  #ctf.OUTPUT_FILE,
         "-n",
         "0.5, 0.6, 0.7, 0.1",
     ]
     print("\n", " ".join(cmd))
-    if os.path.exists(ctf.OUTPUT_FILE):
-        os.remove(ctf.OUTPUT_FILE)
+    #if os.path.exists(ctf.OUTPUT_FILE):
+    os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_value = str(res.stdout)
     out = ctf.shrink(response_value)
@@ -129,9 +135,9 @@ def test_wavaugmentate_noise_option():
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
-    assert os.path.exists(ctf.OUTPUT_FILE)
+    assert os.path.exists(temp_out_file_name)
     written = Mcs()
-    written.read(ctf.OUTPUT_FILE)
+    written.read(temp_out_file_name)
     for channel in written.data:
         assert channel.shape[0] == 220500
     rms_list = written.rms(decimals=3)
@@ -197,18 +203,28 @@ def test_wavaugmentate_amplitude_option():
         None
     """
 
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(temp_test_file_name)
+
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,  # ctf.TEST_SOUND_1_FILE,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name, # ctf.OUTPUT_FILE,
         "-a",
         "0.5, 0.6, 0.7, 0.1",
     ]
     print("\n", " ".join(cmd))
-    if os.path.exists(ctf.OUTPUT_FILE):
-        os.remove(ctf.OUTPUT_FILE)
+    #if os.path.exists(ctf.OUTPUT_FILE):
+    os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
     out = ctf.shrink(response_string)
@@ -217,9 +233,9 @@ def test_wavaugmentate_amplitude_option():
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
-    assert os.path.exists(ctf.OUTPUT_FILE)
+    assert os.path.exists(temp_out_file_name)
     written = Mcs()
-    written.read(ctf.OUTPUT_FILE)
+    written.read(temp_out_file_name)
     for channel in written.data:
         assert channel.shape[0] == 220500
     rms_list = written.rms(decimals=3)
@@ -321,31 +337,40 @@ def test_wavaugmentate_delay_option():
         None
     """
 
+    file_descriptor, temp_test_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
+    test_sound_1 = Mcs(sampling_rate=ctf.FS)
+    test_sound_1.generate(ctf.freq_list, ctf.SIGNAL_TIME_LEN)
+    test_sound_1.write(temp_test_file_name)
+
+    file_descriptor, temp_out_file_name = tempfile.mkstemp()
+    os.close(file_descriptor)
+
     cmd = [
         ctf.PROG_NAME,
         "-i",
-        ctf.TEST_SOUND_1_FILE,
+        temp_test_file_name,
         "-o",
-        ctf.OUTPUT_FILE,
+        temp_out_file_name,
         "-d",
         "100, 200, 300, 0",
     ]
     print("\n", " ".join(cmd))
-    if os.path.exists(ctf.OUTPUT_FILE):
-        os.remove(ctf.OUTPUT_FILE)
+    os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
     out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\ndelays: [100, 200, 300, 0]\n{ms.SUCCESS_MARK}\n"
     assert res.stdout == full_ref
-    assert os.path.exists(ctf.OUTPUT_FILE)
+    assert os.path.exists(temp_out_file_name)
     ref = ctf.shrink(full_ref)
     print("ref:", ref)
     assert out == ref
-    assert os.path.exists(ctf.OUTPUT_FILE)
+    assert os.path.exists(temp_out_file_name)
     written = Mcs()
-    written.read(ctf.OUTPUT_FILE)
+    written.read(temp_out_file_name)
     for channel in written.data:
         assert channel.shape[0] == 220513
     rms_list = written.rms(decimals=3)
