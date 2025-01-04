@@ -22,6 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         pipenv install
+        pipenv install numpy scipy
         pipenv install pylint
 
     - name: Analysing the code with pylint
