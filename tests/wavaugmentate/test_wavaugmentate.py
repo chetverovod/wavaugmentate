@@ -66,6 +66,7 @@ def test_echo_ctrl_option():
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
     out = ctf.shrink(response_string)
+    print("response_string:", response_string)
     print("out:", out)
     full_ref = (
         "\ndelays: [100, 300, 400, 500]\n"

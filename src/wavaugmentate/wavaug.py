@@ -263,18 +263,21 @@ def noise_hdr(args):
 
 def echo_hdr(args):
     """Function makes CLI echo augmentation."""
-
+    
+    """
     if args.echo_list is None:
         return
-
+    """
     lists = args.echo_list.split("/")
+    # print(lists)
+    """
     if len(lists) != 2:
         msg = "Can't distinguish delay and amplitude" \
              "lists <{args.echo_list}>."
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise ValueError(msg)
-
+    """
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
     if len(amplitude_list) != len(delay_list):
@@ -337,6 +340,45 @@ def delay_hdr(args):
     sys.exit(0)
 
 
+def echo_args_validation(echo_list) -> str:
+    """Function make external check of args for option echo."""
+
+    if echo_list is None:
+        msg = "echo_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(echo_list)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    lists = echo_list.split("/")
+    if len(lists) != 2:
+        msg = "Can't distinguish delay and amplitude" \
+             "lists <{args.echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
+
+    delay_list = lists[0].split(",")
+    amplitude_list = lists[1].split(",")
+    if len(amplitude_list) != len(delay_list):
+        msg = "Can't delay and amplitude lists lengths" \
+              f" differ <{echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+
+        raise ValueError(msg)
+
+    validate_delay_list(delay_list)
+    validate_amp_list(amplitude_list)
+    return echo_list
+
+
 def parse_args():
     """CLI options parsing."""
 
@@ -369,6 +411,7 @@ def parse_args():
         "--echo",
         "-e",
         dest="echo_list",
+        type=echo_args_validation,
         help="Add echo to channels in audio file."
         " of channels in audio file. Provide coefficients"
         "  and delays (in microseconds) of "
@@ -448,7 +491,9 @@ def augmentate(args):
     amplitude_hdr(args)
     noise_hdr(args)
     delay_hdr(args)
-    echo_hdr(args)
+    
+    if args.echo_list is not None:
+        echo_hdr(args)
 
 
 def main():
