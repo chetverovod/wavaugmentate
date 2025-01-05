@@ -264,32 +264,9 @@ def noise_hdr(args):
 def echo_hdr(args):
     """Function makes CLI echo augmentation."""
     
-    """
-    if args.echo_list is None:
-        return
-    """
     lists = args.echo_list.split("/")
-    # print(lists)
-    """
-    if len(lists) != 2:
-        msg = "Can't distinguish delay and amplitude" \
-             "lists <{args.echo_list}>."
-        print(f"{ms.ERROR_MARK}{msg}")
-        log.error(msg)
-        raise ValueError(msg)
-    """
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
-    if len(amplitude_list) != len(delay_list):
-        msg = "Can't delay and amplitude lists lengths" \
-              f" differ <{args.echo_list}>."
-        print(f"{ms.ERROR_MARK}{msg}")
-        log.error(msg)
-        raise ValueError(msg)
-
-    validate_delay_list(delay_list)
-    validate_amp_list(amplitude_list)
-
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
