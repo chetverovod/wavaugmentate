@@ -351,8 +351,8 @@ def echo_args_validation(echo_list) -> str:
         log.error(msg)
         raise ValueError(msg)
 
-    delay_args_validation(lists[0]) 
-    amp_args_validation(lists[1]) 
+    delay_args_validation(lists[0])
+    amp_args_validation(lists[1])
     return echo_list
 
 
