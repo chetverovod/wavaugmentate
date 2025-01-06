@@ -66,6 +66,7 @@ def test_echo_ctrl_option():
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
     out = ctf.shrink(response_string)
+    print("response_string:", response_string)
     print("out:", out)
     full_ref = (
         "\ndelays: [100, 300, 400, 500]\n"
@@ -310,7 +311,7 @@ def test_wavaugmentate_amplitude_option_fail_case2():
     assert out == ref
 
 
-def test_wavaugmentate_delay_option():
+def test_wavaugmentate_delay_option_pass():
     """
     Test function to verify the functionality of the `delay` option in the
     command line interface.
@@ -340,6 +341,7 @@ def test_wavaugmentate_delay_option():
     os.remove(temp_out_file_name)
     res = sp.run(cmd, capture_output=True, text=True, check=False)
     response_string = str(res.stdout)
+    print("response:", response_string)
     out = ctf.shrink(response_string)
     print("out:", out)
     full_ref = f"\ndelays: [100, 200, 300, 0]\n{ms.SUCCESS_MARK}\n"

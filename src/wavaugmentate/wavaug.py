@@ -50,7 +50,7 @@ def file_info(path: str) -> dict:
 prog_name = os.path.basename(__file__).split(".")[0]
 
 APPLICATION_INFO = f"{prog_name.capitalize()} application provides functions \
-Gfor multichannel WAV audio data augmentation."
+for multichannel WAV audio data augmentation."
 
 
 def validate_amp_list(amplitude_list: List[str]) -> None:
@@ -94,6 +94,7 @@ def validate_delay_list(delays_list: List[str]) -> None:
         SystemExit: Exits the program with a status code of 1 if a non-integer
         element is found.
     """
+
     for delay_value in delays_list:
         try:
             int(delay_value)
@@ -264,29 +265,9 @@ def noise_hdr(args):
 def echo_hdr(args):
     """Function makes CLI echo augmentation."""
 
-    if args.echo_list is None:
-        return
-
     lists = args.echo_list.split("/")
-    if len(lists) != 2:
-        msg = "Can't distinguish delay and amplitude" \
-             "lists <{args.echo_list}>."
-        print(f"{ms.ERROR_MARK}{msg}")
-        log.error(msg)
-        raise ValueError(msg)
-
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
-    if len(amplitude_list) != len(delay_list):
-        msg = "Can't delay and amplitude lists lengths" \
-              f" differ <{args.echo_list}>."
-        print(f"{ms.ERROR_MARK}{msg}")
-        log.error(msg)
-        raise ValueError(msg)
-
-    validate_delay_list(delay_list)
-    validate_amp_list(amplitude_list)
-
     int_list = [int(i) for i in delay_list]
     print(f"delays: {int_list}")
     info = file_info(args.in_path)
@@ -337,6 +318,86 @@ def delay_hdr(args):
     sys.exit(0)
 
 
+def echo_args_validation(echo_list) -> str:
+    """Function make external check of args for option echo."""
+
+    if echo_list is None:
+        msg = "echo_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(echo_list)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    lists = echo_list.split("/")
+    if len(lists) != 2:
+        msg = "Can't distinguish delay and amplitude" \
+             "lists <{args.echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
+
+    delay_list = lists[0].split(",")
+    amplitude_list = lists[1].split(",")
+    if len(amplitude_list) != len(delay_list):
+        msg = "Can't delay and amplitude lists lengths" \
+              f" differ <{echo_list}>."
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise ValueError(msg)
+
+    delay_args_validation(lists[0])
+    amp_args_validation(lists[1])
+    return echo_list
+
+
+def delay_args_validation(delay_list_str) -> str:
+    """Function make external check of args for option dly."""
+
+    if delay_list_str is None:
+        msg = "delay_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(delay_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    delay_list = delay_list_str.split(",")
+    validate_delay_list(delay_list)
+    return delay_list_str
+
+
+def amp_args_validation(amplitude_list_str) -> str:
+    """Function make external check of args for option dly."""
+
+    if amplitude_list_str is None:
+        msg = "delay_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(amplitude_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    amplitude_list = amplitude_list_str.split(",")
+    validate_amp_list(amplitude_list)
+    return amplitude_list_str
+
+
 def parse_args():
     """CLI options parsing."""
 
@@ -361,6 +422,7 @@ def parse_args():
         "--amp",
         "-a",
         dest="amplitude_list",
+        type=amp_args_validation,
         help="Change amplitude (volume)"
         " of channels in audio file. Provide coefficients for"
         ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"',
@@ -369,6 +431,7 @@ def parse_args():
         "--echo",
         "-e",
         dest="echo_list",
+        type=echo_args_validation,
         help="Add echo to channels in audio file."
         " of channels in audio file. Provide coefficients"
         "  and delays (in microseconds) of "
@@ -379,7 +442,7 @@ def parse_args():
         "--dly",
         "-d",
         dest="delay_list",
-        type=str,
+        type=delay_args_validation,
         help="Add time delays"
         " to channels in audio file. Provide delay for"
         ' every channel in microseconds, example:\n\t \
@@ -445,10 +508,17 @@ def augmentate(args):
     input_path_hdr(args)
     file_info_hdr(args)
     output_path_hdr(args)
-    amplitude_hdr(args)
+
+    if args.amplitude_list is not None:
+        amplitude_hdr(args)
+
     noise_hdr(args)
-    delay_hdr(args)
-    echo_hdr(args)
+
+    if args.delay_list is not None:
+        delay_hdr(args)
+
+    if args.echo_list is not None:
+        echo_hdr(args)
 
 
 def main():
