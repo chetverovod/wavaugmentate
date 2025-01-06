@@ -139,15 +139,17 @@ def chain_hdr(args):
     sys.exit(0)
 
 
-def input_path_hdr(args):
+def input_path_validation(in_path) -> str:
     """Function checks presence of input file"""
-    if args.in_path is None:
+
+    if in_path is None:
         print_help_and_info()
-    if not os.path.exists(args.in_path) or not os.path.isfile(args.in_path):
-        msg = f"Input file <{args.in_path}> not found."
+    if not os.path.exists(in_path) or not os.path.isfile(in_path):
+        msg = f"Input file <{in_path}> not found."
         log.error(msg)
         print(msg)
         raise ValueError(msg)
+    return in_path
 
 
 def is_file_creatable(fullpath: str) -> bool:
@@ -185,31 +187,28 @@ def is_file_creatable(fullpath: str) -> bool:
     return True
 
 
-def output_path_hdr(args):
+def output_path_validation(out_path):
     """Function checks of output file name and path."""
 
-    if not is_file_creatable(args.out_path):
-        msg = f"Can't create file <{args.out_path}>."
+    if not is_file_creatable(out_path):
+        msg = f"Can't create file <{out_path}>."
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise ValueError(msg)
+    return out_path
 
 
 def file_info_hdr(args):
     """Function prints info about input audio file."""
 
     print()
-    if args.info:
-        for key, value in file_info(args.path).items():
-            print(f"{key}: {value}")
-        sys.exit(0)
+    print(args.info_path)
+    for key, value in file_info(args.info_path).items():
+        print(f"{key}: {value}")
 
 
 def amplitude_hdr(args):
     """Function makes CLI amplitude augmentation."""
-
-    if args.amplitude_list is None:
-        return
 
     amplitude_list = args.amplitude_list.split(",")
     validate_amp_list(amplitude_list)
@@ -235,9 +234,6 @@ def amplitude_hdr(args):
 
 def noise_hdr(args):
     """Function makes CLI noise augmentation."""
-
-    if args.noise_list is None:
-        return
 
     noise_list = args.noise_list.split(",")
     validate_amp_list(noise_list)
@@ -293,14 +289,11 @@ def echo_hdr(args):
 def delay_hdr(args):
     """Function makes CLI delay augmentation."""
 
-    if args.delay_list is None:
-        return
-
     delay_list = args.delay_list.split(",")
     validate_delay_list(delay_list)
 
     int_list = [int(i) for i in delay_list]
-    print(f"delays: {int_list}")
+    print(f"\ndelays: {int_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
         msg = f"Delays list length <{len(int_list)}>" \
@@ -381,7 +374,7 @@ def amp_args_validation(amplitude_list_str) -> str:
     """Function make external check of args for option dly."""
 
     if amplitude_list_str is None:
-        msg = "delay_list is None"
+        msg = "amplitudes_list is None"
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise argparse.ArgumentTypeError(msg)
@@ -398,6 +391,27 @@ def amp_args_validation(amplitude_list_str) -> str:
     return amplitude_list_str
 
 
+def noise_args_validation(noise_list_str) -> str:
+    """Function make external check of args for option noise."""
+
+    if noise_list_str is None:
+        msg = "noise_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(noise_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    noise_list = noise_list_str.split(",")
+    validate_amp_list(noise_list)
+    return noise_list_str
+
+
 def parse_args():
     """CLI options parsing."""
 
@@ -407,15 +421,23 @@ def parse_args():
                      f" {__author__}, chetverovod@gmail.com."),
         epilog="",  # "Text at the bottom of help"
     )
-
     parser.add_argument("-v", "--version", action="store_true", help="Version "
                         "information.")
-    parser.add_argument("-i", dest="in_path", help="Input audio" " file path.")
-    parser.add_argument("-o", dest="out_path", help="Output audio file path.")
+    parser.add_argument(
+        "-i",
+        type=input_path_validation,
+        dest="in_path",
+        help="Input audio file path."
+        )
+    parser.add_argument(
+        "-o",
+        type=output_path_validation,
+        dest="out_path", help="Output audio file path."
+        )
     parser.add_argument(
         "--info",
-        dest="info",
-        action="store_true",
+        type=input_path_validation,
+        dest="info_path",
         help="Print info about input audio file.",
     )
     parser.add_argument(
@@ -452,6 +474,7 @@ def parse_args():
         "--ns",
         "-n",
         dest="noise_list",
+        type=noise_args_validation,
         help="Add normal noise"
         " to channels in audio file. Provide coefficients for"
         ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"',
@@ -466,6 +489,17 @@ def parse_args():
         '-c \'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
         '.wr("./sines.wav")"\'',
     )
+
+    # Check presence of known args.
+    known_args, unknown_args = parser.parse_known_args()
+    if not known_args.__dict__:
+        print_help_and_info()
+        sys.exit(0)
+
+    # Check presence of unknown args.
+    if unknown_args:
+        print('Unknown arguments:', unknown_args)
+        sys.exit(0)
 
     return parser.parse_args()
 
@@ -505,14 +539,20 @@ def augmentate(args):
     """
 
     chain_hdr(args)
-    input_path_hdr(args)
-    file_info_hdr(args)
-    output_path_hdr(args)
+
+    if args.info_path is not None:
+        file_info_hdr(args)
+        return
+
+    if args.in_path is None:
+        print_help_and_info()
+        return
 
     if args.amplitude_list is not None:
         amplitude_hdr(args)
 
-    noise_hdr(args)
+    if args.noise_list is not None:
+        noise_hdr(args)
 
     if args.delay_list is not None:
         delay_hdr(args)
