@@ -50,7 +50,7 @@ def file_info(path: str) -> dict:
 prog_name = os.path.basename(__file__).split(".")[0]
 
 APPLICATION_INFO = f"{prog_name.capitalize()} application provides functions \
-Gfor multichannel WAV audio data augmentation."
+for multichannel WAV audio data augmentation."
 
 
 def validate_amp_list(amplitude_list: List[str]) -> None:
@@ -263,7 +263,7 @@ def noise_hdr(args):
 
 def echo_hdr(args):
     """Function makes CLI echo augmentation."""
-    
+
     lists = args.echo_list.split("/")
     delay_list = lists[0].split(",")
     amplitude_list = lists[1].split(",")
@@ -468,7 +468,7 @@ def augmentate(args):
     amplitude_hdr(args)
     noise_hdr(args)
     delay_hdr(args)
-    
+
     if args.echo_list is not None:
         echo_hdr(args)
 
