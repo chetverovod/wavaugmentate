@@ -187,24 +187,25 @@ def is_file_creatable(fullpath: str) -> bool:
     return True
 
 
-def output_path_hdr(args):
+def output_path_validation(out_path):
     """Function checks of output file name and path."""
 
-    if not is_file_creatable(args.out_path):
-        msg = f"Can't create file <{args.out_path}>."
+    if not is_file_creatable(out_path):
+        msg = f"Can't create file <{out_path}>."
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise ValueError(msg)
+    else:
+        return out_path
 
 
 def file_info_hdr(args):
     """Function prints info about input audio file."""
 
     print()
-    if args.info:
-        for key, value in file_info(args.path).items():
-            print(f"{key}: {value}")
-        sys.exit(0)
+    print(args.info_path)
+    for key, value in file_info(args.info_path).items():
+        print(f"{key}: {value}")
 
 
 def amplitude_hdr(args):
@@ -293,7 +294,7 @@ def delay_hdr(args):
     validate_delay_list(delay_list)
 
     int_list = [int(i) for i in delay_list]
-    print(f"delays: {int_list}")
+    print(f"\ndelays: {int_list}")
     info = file_info(args.in_path)
     if info["channels_count"] != len(int_list):
         msg = f"Delays list length <{len(int_list)}>" \
@@ -421,7 +422,6 @@ def parse_args():
                      f" {__author__}, chetverovod@gmail.com."),
         epilog="",  # "Text at the bottom of help"
     )
-
     parser.add_argument("-v", "--version", action="store_true", help="Version "
                         "information.")
     parser.add_argument(
@@ -430,11 +430,15 @@ def parse_args():
         dest="in_path",
         help="Input audio file path."
         )
-    parser.add_argument("-o", dest="out_path", help="Output audio file path.")
+    parser.add_argument(
+        "-o",
+        type=output_path_validation,
+        dest="out_path", help="Output audio file path."
+        )
     parser.add_argument(
         "--info",
-        dest="info",
-        action="store_true",
+        type=input_path_validation,
+        dest="info_path",
         help="Print info about input audio file.",
     )
     parser.add_argument(
@@ -537,12 +541,13 @@ def augmentate(args):
 
     chain_hdr(args)
 
+    if args.info_path is not None:
+        file_info_hdr(args)
+        return
+
     if args.in_path is None:
         print_help_and_info()
         return
-
-    file_info_hdr(args)
-    output_path_hdr(args)
 
     if args.amplitude_list is not None:
         amplitude_hdr(args)
