@@ -109,7 +109,6 @@ def print_help_and_info():
     """Function prints info about application"""
 
     print(APPLICATION_INFO)
-    sys.exit(0)
 
 
 def chain_hdr(args):
@@ -227,7 +226,6 @@ def amplitude_hdr(args):
     aug_obj.amplitude_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    #sys.exit(0)
 
 
 def noise_hdr(args):
@@ -253,7 +251,6 @@ def noise_hdr(args):
     aug_obj.noise_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def echo_hdr(args):
@@ -281,7 +278,6 @@ def echo_hdr(args):
     aug_obj.echo_ctrl(int_list, float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def delay_hdr(args):
@@ -306,7 +302,6 @@ def delay_hdr(args):
     aug_obj.delay_ctrl(int_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def echo_args_validation(echo_list) -> str:
@@ -492,14 +487,16 @@ def parse_args():
     known_args, unknown_args = parser.parse_known_args()
     if not known_args.__dict__:
         print_help_and_info()
-        sys.exit(0)
+        return None
 
     # Check presence of unknown args.
     if unknown_args:
-        print('Unknown arguments:', unknown_args)
-        sys.exit(0)
+        msg = f'Unknown arguments: {unknown_args}'
+        print(msg)
+        return None
 
-    return parser.parse_args()
+    #return parser.parse_args()
+    return known_args
 
 
 def augmentate(args):
@@ -569,6 +566,8 @@ def main():
     """CLI arguments parsing."""
 
     args = parse_args()
+    if args is None:
+        return
     if args.version is True:
         print(__version__)
         return
