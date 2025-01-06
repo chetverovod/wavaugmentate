@@ -195,8 +195,7 @@ def output_path_validation(out_path):
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise ValueError(msg)
-    else:
-        return out_path
+    return out_path
 
 
 def file_info_hdr(args):
