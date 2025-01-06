@@ -94,6 +94,7 @@ def validate_delay_list(delays_list: List[str]) -> None:
         SystemExit: Exits the program with a status code of 1 if a non-integer
         element is found.
     """
+
     for delay_value in delays_list:
         try:
             int(delay_value)
@@ -356,6 +357,27 @@ def echo_args_validation(echo_list) -> str:
     return echo_list
 
 
+def delay_args_validation(delay_list_str) -> str:
+    """Function make external check of args for option echo."""
+
+    if delay_list_str is None:
+        msg = "delay_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(delay_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    delay_list = delay_list_str.split(",")
+    validate_delay_list(delay_list)
+    return delay_list_str
+
+
 def parse_args():
     """CLI options parsing."""
 
@@ -399,7 +421,7 @@ def parse_args():
         "--dly",
         "-d",
         dest="delay_list",
-        type=str,
+        type=delay_args_validation,
         help="Add time delays"
         " to channels in audio file. Provide delay for"
         ' every channel in microseconds, example:\n\t \
@@ -467,7 +489,9 @@ def augmentate(args):
     output_path_hdr(args)
     amplitude_hdr(args)
     noise_hdr(args)
-    delay_hdr(args)
+
+    if args.delay_list is not None:
+        delay_hdr(args)
 
     if args.echo_list is not None:
         echo_hdr(args)
