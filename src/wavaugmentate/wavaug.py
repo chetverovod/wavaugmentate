@@ -131,7 +131,9 @@ def chain_hdr(args):
     print("chain:", chain)
     aug_obj = SignalAugmentation()
     cmd_prefix = "aug_obj."
-    str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
+    str(eval(cmd_prefix + chain))  # It is need for chain commands.
+    # getattr(aug_obj, chain)()
+    
     print(ms.SUCCESS_MARK)
     aug_obj.info()
 
