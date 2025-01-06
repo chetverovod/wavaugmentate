@@ -208,9 +208,6 @@ def file_info_hdr(args):
 def amplitude_hdr(args):
     """Function makes CLI amplitude augmentation."""
 
-    if args.amplitude_list is None:
-        return
-
     amplitude_list = args.amplitude_list.split(",")
     validate_amp_list(amplitude_list)
 
@@ -235,9 +232,6 @@ def amplitude_hdr(args):
 
 def noise_hdr(args):
     """Function makes CLI noise augmentation."""
-
-    if args.noise_list is None:
-        return
 
     noise_list = args.noise_list.split(",")
     validate_amp_list(noise_list)
@@ -292,9 +286,6 @@ def echo_hdr(args):
 
 def delay_hdr(args):
     """Function makes CLI delay augmentation."""
-
-    if args.delay_list is None:
-        return
 
     delay_list = args.delay_list.split(",")
     validate_delay_list(delay_list)
@@ -381,7 +372,7 @@ def amp_args_validation(amplitude_list_str) -> str:
     """Function make external check of args for option dly."""
 
     if amplitude_list_str is None:
-        msg = "delay_list is None"
+        msg = "amplitudes_list is None"
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
         raise argparse.ArgumentTypeError(msg)
@@ -396,6 +387,27 @@ def amp_args_validation(amplitude_list_str) -> str:
     amplitude_list = amplitude_list_str.split(",")
     validate_amp_list(amplitude_list)
     return amplitude_list_str
+
+
+def noise_args_validation(noise_list_str) -> str:
+    """Function make external check of args for option noise."""
+
+    if noise_list_str is None:
+        msg = "noise_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(noise_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    noise_list = noise_list_str.split(",")
+    validate_amp_list(noise_list)
+    return noise_list_str
 
 
 def parse_args():
@@ -452,6 +464,7 @@ def parse_args():
         "--ns",
         "-n",
         dest="noise_list",
+        type=noise_args_validation,
         help="Add normal noise"
         " to channels in audio file. Provide coefficients for"
         ' every channel, example:\n\t -n "0.1, 0.2, 0.3, -1"',
@@ -512,7 +525,8 @@ def augmentate(args):
     if args.amplitude_list is not None:
         amplitude_hdr(args)
 
-    noise_hdr(args)
+    if args.noise_list is not None:
+        noise_hdr(args)
 
     if args.delay_list is not None:
         delay_hdr(args)
