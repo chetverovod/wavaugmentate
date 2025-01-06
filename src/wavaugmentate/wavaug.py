@@ -358,7 +358,7 @@ def echo_args_validation(echo_list) -> str:
 
 
 def delay_args_validation(delay_list_str) -> str:
-    """Function make external check of args for option echo."""
+    """Function make external check of args for option dly."""
 
     if delay_list_str is None:
         msg = "delay_list is None"
@@ -376,6 +376,27 @@ def delay_args_validation(delay_list_str) -> str:
     delay_list = delay_list_str.split(",")
     validate_delay_list(delay_list)
     return delay_list_str
+
+
+def amp_args_validation(amplitude_list_str) -> str:
+    """Function make external check of args for option dly."""
+
+    if amplitude_list_str is None:
+        msg = "delay_list is None"
+        print(f"{ms.ERROR_MARK}{msg}")
+        log.error(msg)
+        raise argparse.ArgumentTypeError(msg)
+
+    try:
+        s = str(amplitude_list_str)
+        if len(s) == 0:
+            raise ValueError(f"{s} must be a not empty string")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(str(e))
+
+    amplitude_list = amplitude_list_str.split(",")
+    validate_amp_list(amplitude_list)
+    return amplitude_list_str
 
 
 def parse_args():
@@ -402,6 +423,7 @@ def parse_args():
         "--amp",
         "-a",
         dest="amplitude_list",
+        type=amp_args_validation,
         help="Change amplitude (volume)"
         " of channels in audio file. Provide coefficients for"
         ' every channel, example:\n\t -a "0.1, 0.2, 0.3, -1"',
@@ -487,7 +509,10 @@ def augmentate(args):
     input_path_hdr(args)
     file_info_hdr(args)
     output_path_hdr(args)
-    amplitude_hdr(args)
+
+    if args.amplitude_list is not None:
+        amplitude_hdr(args)
+
     noise_hdr(args)
 
     if args.delay_list is not None:
