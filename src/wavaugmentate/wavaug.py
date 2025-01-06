@@ -127,8 +127,7 @@ def chain_hdr(args):
         SystemExit: Exits the program with a status code of 0 after
         successful execution.
     """
-    if args.chain_code is None:
-        return
+
     chain = args.chain_code.strip()
     print("chain:", chain)
     aug_obj = SignalAugmentation()
@@ -136,7 +135,7 @@ def chain_hdr(args):
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
     aug_obj.info()
-    sys.exit(0)
+    #sys.exit(0)
 
 
 def input_path_validation(in_path) -> str:
@@ -538,7 +537,9 @@ def augmentate(args):
     from the main function of the program.
     """
 
-    chain_hdr(args)
+    if args.chain_code is not None:
+        chain_hdr(args)
+        return
 
     if args.info_path is not None:
         file_info_hdr(args)
@@ -550,15 +551,19 @@ def augmentate(args):
 
     if args.amplitude_list is not None:
         amplitude_hdr(args)
+        return
 
     if args.noise_list is not None:
         noise_hdr(args)
+        return
 
     if args.delay_list is not None:
         delay_hdr(args)
+        return
 
     if args.echo_list is not None:
         echo_hdr(args)
+        return
 
 
 def main():
