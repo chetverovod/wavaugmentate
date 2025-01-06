@@ -135,7 +135,6 @@ def chain_hdr(args):
     str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
     print(ms.SUCCESS_MARK)
     aug_obj.info()
-    #sys.exit(0)
 
 
 def input_path_validation(in_path) -> str:
@@ -228,7 +227,7 @@ def amplitude_hdr(args):
     aug_obj.amplitude_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
+    #sys.exit(0)
 
 
 def noise_hdr(args):
