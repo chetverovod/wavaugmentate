@@ -139,15 +139,17 @@ def chain_hdr(args):
     sys.exit(0)
 
 
-def input_path_hdr(args):
+def input_path_validation(in_path) -> str:
     """Function checks presence of input file"""
-    if args.in_path is None:
+
+    if in_path is None:
         print_help_and_info()
-    if not os.path.exists(args.in_path) or not os.path.isfile(args.in_path):
-        msg = f"Input file <{args.in_path}> not found."
+    if not os.path.exists(in_path) or not os.path.isfile(in_path):
+        msg = f"Input file <{in_path}> not found."
         log.error(msg)
         print(msg)
         raise ValueError(msg)
+    return in_path
 
 
 def is_file_creatable(fullpath: str) -> bool:
@@ -422,7 +424,12 @@ def parse_args():
 
     parser.add_argument("-v", "--version", action="store_true", help="Version "
                         "information.")
-    parser.add_argument("-i", dest="in_path", help="Input audio" " file path.")
+    parser.add_argument(
+        "-i",
+        type=input_path_validation,
+        dest="in_path",
+        help="Input audio file path."
+        )
     parser.add_argument("-o", dest="out_path", help="Output audio file path.")
     parser.add_argument(
         "--info",
@@ -480,6 +487,17 @@ def parse_args():
         '.wr("./sines.wav")"\'',
     )
 
+    # Check presence of known args.
+    known_args, unknown_args = parser.parse_known_args()
+    if not known_args.__dict__:
+        print_help_and_info()
+        sys.exit(0)
+
+    # Check presence of unknown args.
+    if unknown_args:
+        print('Unknown arguments:', unknown_args)
+        sys.exit(0)
+
     return parser.parse_args()
 
 
@@ -518,7 +536,11 @@ def augmentate(args):
     """
 
     chain_hdr(args)
-    input_path_hdr(args)
+
+    if args.in_path is None:
+        print_help_and_info()
+        return
+
     file_info_hdr(args)
     output_path_hdr(args)
 
