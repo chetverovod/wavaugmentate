@@ -349,11 +349,10 @@ def echo_args_validation(echo_list) -> str:
               f" differ <{echo_list}>."
         print(f"{ms.ERROR_MARK}{msg}")
         log.error(msg)
-
         raise ValueError(msg)
 
-    validate_delay_list(delay_list)
-    validate_amp_list(amplitude_list)
+    delay_args_validation(lists[0]) 
+    amp_args_validation(lists[1]) 
     return echo_list
 
 
