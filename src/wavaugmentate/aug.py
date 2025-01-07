@@ -131,7 +131,8 @@ class SignalAugmentation:
             MultiChannelSignal.
 
         Returns:
-            self (SignalAugmentation): Object with generated multichannel sound.
+            self (SignalAugmentation): Object with generated multichannel
+            sound.
         """
 
         self.signal = self.signal.generate(

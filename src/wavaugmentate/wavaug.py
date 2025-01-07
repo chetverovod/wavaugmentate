@@ -9,7 +9,7 @@ __version__ = '0.2.4'
 
 import argparse
 import os
-import sys
+import ast
 import logging as log
 from pathlib import Path
 from typing import List
@@ -126,14 +126,57 @@ def chain_hdr(args):
         SystemExit: Exits the program with a status code of 0 after
         successful execution.
     """
+    if args.chain_code is None:
+        return
+    chain = args.chain_code.strip()
+    print("chain:", chain)
+    aug_obj = SignalAugmentation()
+    cmd_prefix = "aug_obj."
+    str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
+    print(ms.SUCCESS_MARK)
+    aug_obj.info()
+
+
+def chain_hdr2(args):
+    """
+    Processes the chain code from the given arguments and executes the
+    corresponding WaChain commands.
+
+    Args:
+        args: The arguments containing the chain code to be executed.
+
+    Returns:
+        None
+
+    Raises:
+        SystemExit: Exits the program with a status code of 0 after
+        successful execution.
+    """
 
     chain = args.chain_code.strip()
     print("chain:", chain)
-    exit(0)
+    s = chain.split(").")
+    s = [f'{e})' for e in s]
+    #print(s)
+    prog = []
+    for e in s:
+        cmd, brekets = e.split('(')
+        brekets = brekets.strip(')')
+        prog.append([cmd, brekets])
+    #print(prog)
     aug_obj = SignalAugmentation()
-    cmd_prefix = "aug_obj."
-    str(eval(cmd_prefix + chain))  # It is need for chain commands.
-    # getattr(aug_obj, chain)()
+    #cmd_prefix = "aug_obj."
+    #str(eval(cmd_prefix + chain))  # It is need for chain commands.
+    for step in prog:
+        input_string = step[1]
+        #parts = input_string.strip().strip("[]").split(",")
+        #arguments = [ast.literal_eval(part) for part in parts]
+        arguments = ast.literal_eval(input_string)
+
+        #print(f'{step[0]}({step[1]})')
+        print(f'{step[0]}({arguments})')
+        getattr(aug_obj, step[0])(*arguments)
+    # exit(0)
     
     print(ms.SUCCESS_MARK)
     aug_obj.info()
