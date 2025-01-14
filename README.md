@@ -3,7 +3,7 @@
 [![Pylint](https://github.com/chetverovod/wavaugmentate/actions/workflows/pylint.yml/badge.svg)](https://github.com/chetverovod/wavaugmentate/actions/workflows/pylint.yml)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
-# **Wavaugmentate** 0.2.4
+# **Wavaugmentate** 0.2.5
 
 
 **Multichannel Audio Signal Augmentation Module**
