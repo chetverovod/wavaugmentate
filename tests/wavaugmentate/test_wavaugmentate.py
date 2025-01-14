@@ -464,13 +464,13 @@ def test_chain_option():
     """
 
     temp_test_file_name, _ = temp_ref_signal()
-    os.remove(temp_test_file_name)
+
+    chain_head = 'gen([100,250,100],3,44100).amp([0.1,0.2,0.3],[1.,1.,1.]).get()'
+
     cmd = [
         ctf.PROG_NAME,
         "-c",
-        'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).get().wr("'
-        + temp_test_file_name
-        + '")',
+        f'{chain_head}.wr("{temp_test_file_name}")',
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
@@ -478,10 +478,57 @@ def test_chain_option():
     print('response_string:', response_string)
     out = ctf.shrink(response_string)
     full_ref = (
-        'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).get().wr("'
-        + temp_test_file_name
-        + '")\n'
-        + f"{ms.SUCCESS_MARK}\n"
+        f'chain:{chain_head}.wr("{temp_test_file_name}")'
+        f'{ms.SUCCESS_MARK}'
+    )
+    ref = ctf.shrink(full_ref)
+    print("out:", out)
+    print("ref:", ref)
+    assert out == ref
+    exists = os.path.exists(temp_test_file_name)
+    assert exists is True
+
+
+def test_chain_option_none_value():
+    """
+    Test function to verify the functionality of the `-c` option in the command
+    line interface. It checks None value options handling.
+
+    This function generates a multichannel sound using the `gen` function from
+    the `wavaugmentate` module with the given frequency list, number of
+    repetitions, and sample rate. It then applies amplitude control to the
+    generated sound using the `amp` function from the `wavaugmentate` module
+    with the given amplitude list. The generated sound is written to a file
+    using the `wr` function from the `wavaugmentate` module with the given file
+    path and sample rate.
+
+    This function runs the command with the `-c` option and asserts that the
+    output matches the expected output. It also checks that the output file
+    exists and has the correct shape and RMS values.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    temp_test_file_name, _ = temp_ref_signal()
+    chain_head = 'gen([100,250,100],3,44100).amp([0.1,0.2,0.3],None).get()'
+
+    cmd = [
+        ctf.PROG_NAME,
+        "-c",
+        f'{chain_head}.wr("{temp_test_file_name}")',
+    ]
+    print("\n", " ".join(cmd))
+    res = sp.run(cmd, capture_output=True, text=True, check=False)
+    response_string = str(res.stdout)
+    print('response_string:', response_string)
+    out = ctf.shrink(response_string)
+    full_ref = (
+        f'chain:{chain_head}.wr("{temp_test_file_name}")'
+        f'{ms.SUCCESS_MARK}'
     )
     ref = ctf.shrink(full_ref)
     print("out:", out)

@@ -5,11 +5,11 @@ This module does multichannel audio flies augmentation.
 """
 
 __author__ = "Igor Plastov"
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 
 import argparse
 import os
-import sys
+import ast
 import logging as log
 from pathlib import Path
 from typing import List
@@ -109,7 +109,6 @@ def print_help_and_info():
     """Function prints info about application"""
 
     print(APPLICATION_INFO)
-    sys.exit(0)
 
 
 def chain_hdr(args):
@@ -127,16 +126,44 @@ def chain_hdr(args):
         SystemExit: Exits the program with a status code of 0 after
         successful execution.
     """
-    if args.chain_code is None:
-        return
+
     chain = args.chain_code.strip()
-    print("chain:", chain)
+    print(f'chain:\n{chain}')
+    chunks = chain.split(").")
+    chunks = [f'{e})' for e in chunks]
+    prog = []
+    for element in chunks:
+        cmd, brackets = element.split('(')
+        brackets = brackets.strip(')')
+        prog.append([cmd, brackets])
     aug_obj = SignalAugmentation()
-    cmd_prefix = "aug_obj."
-    str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
+    i = 1
+    # print(f'steps:{len(prog)}')
+    for step in prog:
+        input_string = step[1]
+        # print(f'input string {i}: {input_string}')
+        i += 1
+        if len(input_string) > 0:
+            arguments = ast.literal_eval(input_string)
+        else:
+            arguments = ()
+
+        if isinstance(arguments, tuple):
+            unpacked = list(arguments)
+        else:
+            unpacked = arguments
+
+        # print(f'arg type: ({type(unpacked)})')
+        # print(f'cmd {step[0]}({unpacked})')
+
+        if isinstance(unpacked, (tuple, list)):
+            aug_obj = getattr(aug_obj, step[0])(*unpacked)
+        elif isinstance(unpacked, str):
+            aug_obj = getattr(aug_obj, step[0])(unpacked)
+        else:
+            raise ValueError(f"Unsupported object type: {type(unpacked)}")
     print(ms.SUCCESS_MARK)
     aug_obj.info()
-    sys.exit(0)
 
 
 def input_path_validation(in_path) -> str:
@@ -229,7 +256,6 @@ def amplitude_hdr(args):
     aug_obj.amplitude_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def noise_hdr(args):
@@ -255,7 +281,6 @@ def noise_hdr(args):
     aug_obj.noise_ctrl(float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def echo_hdr(args):
@@ -283,7 +308,6 @@ def echo_hdr(args):
     aug_obj.echo_ctrl(int_list, float_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def delay_hdr(args):
@@ -308,7 +332,6 @@ def delay_hdr(args):
     aug_obj.delay_ctrl(int_list)
     aug_obj.get().write(args.out_path)
     print(ms.SUCCESS_MARK)
-    sys.exit(0)
 
 
 def echo_args_validation(echo_list) -> str:
@@ -321,11 +344,11 @@ def echo_args_validation(echo_list) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(echo_list)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(echo_list)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     lists = echo_list.split("/")
     if len(lists) != 2:
@@ -359,11 +382,11 @@ def delay_args_validation(delay_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(delay_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(delay_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     delay_list = delay_list_str.split(",")
     validate_delay_list(delay_list)
@@ -380,11 +403,11 @@ def amp_args_validation(amplitude_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(amplitude_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(amplitude_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     amplitude_list = amplitude_list_str.split(",")
     validate_amp_list(amplitude_list)
@@ -401,11 +424,11 @@ def noise_args_validation(noise_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(noise_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(noise_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     noise_list = noise_list_str.split(",")
     validate_amp_list(noise_list)
@@ -486,7 +509,7 @@ def parse_args():
         type=str,
         help="Execute chain of transformations."
         " example:\n\t"
-        '-c \'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
+        '-c \'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3], None)'
         '.wr("./sines.wav")"\'',
     )
 
@@ -494,14 +517,16 @@ def parse_args():
     known_args, unknown_args = parser.parse_known_args()
     if not known_args.__dict__:
         print_help_and_info()
-        sys.exit(0)
+        return None
 
     # Check presence of unknown args.
     if unknown_args:
-        print('Unknown arguments:', unknown_args)
-        sys.exit(0)
+        msg = f'Unknown arguments: {unknown_args}'
+        print(msg)
+        return None
 
-    return parser.parse_args()
+    #return parser.parse_args()
+    return known_args
 
 
 def augmentate(args):
@@ -538,26 +563,19 @@ def augmentate(args):
     from the main function of the program.
     """
 
-    chain_hdr(args)
-
-    if args.info_path is not None:
+    if args.chain_code is not None:
+        chain_hdr(args)
+    elif args.info_path is not None:
         file_info_hdr(args)
-        return
-
-    if args.in_path is None:
+    elif args.in_path is None:
         print_help_and_info()
-        return
-
-    if args.amplitude_list is not None:
+    elif args.amplitude_list is not None:
         amplitude_hdr(args)
-
-    if args.noise_list is not None:
+    elif args.noise_list is not None:
         noise_hdr(args)
-
-    if args.delay_list is not None:
+    elif args.delay_list is not None:
         delay_hdr(args)
-
-    if args.echo_list is not None:
+    elif args.echo_list is not None:
         echo_hdr(args)
 
 
@@ -565,6 +583,8 @@ def main():
     """CLI arguments parsing."""
 
     args = parse_args()
+    if args is None:
+        return
     if args.version is True:
         print(__version__)
         return

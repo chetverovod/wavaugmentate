@@ -131,7 +131,8 @@ class SignalAugmentation:
             MultiChannelSignal.
 
         Returns:
-            self (SignalAugmentation): Object with generated multichannel sound.
+            self (SignalAugmentation): Object with generated multichannel
+            sound.
         """
 
         self.signal = self.signal.generate(
@@ -143,12 +144,12 @@ class SignalAugmentation:
     def amplitude_ctrl(
         self,
         amplitude_list: list[float],
-        amplitude_deviation_list: list[float] = None,
+        amplitude_deviation_list: list[float] = None
     ) -> SignalAugmentation:
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
-        versions of tha same MultiChannelSignal data.
+        versions of the same MultiChannelSignal data.
 
         Args:
             amplitude_list (list[float]): The list of amplitude coefficients to
@@ -558,7 +559,8 @@ class SignalAugmentation:
             source_path (str): Path to the file containing the data.
 
         Returns:
-            list[MultiChannelSignal]: The updated SignalAugmentation data field.
+            list[MultiChannelSignal]: The updated SignalAugmentation data
+            field.
         """
 
         self.signal.read(source_path)

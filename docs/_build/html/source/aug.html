@@ -53,13 +53,13 @@ data (MultiChannelSignal object) and audio files.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>The updated AudioAugmentation instance</dt><dd><p>with added chains. Result, allowing for method chaining.</p>
+<dt>The updated SignalAugmentation instance</dt><dd><p>with added chains. Result, allowing for method chaining.</p>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -74,13 +74,13 @@ data (MultiChannelSignal object) and audio files.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>The updated AudioAugmentation instance</dt><dd><p>with added chains. Result, allowing for method chaining.</p>
+<dt>The updated SignalAugmentation instance</dt><dd><p>with added chains. Result, allowing for method chaining.</p>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -90,7 +90,7 @@ data (MultiChannelSignal object) and audio files.</p>
 <span class="sig-name descname"><span class="pre">amp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.amp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply amplitude control to a multichannel sound. If
 amplitude_deviation_list is defined, you can get different
-versions of tha same MultiChannelSignal data.</p>
+versions of the same MultiChannelSignal data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -109,7 +109,7 @@ values random with uniform distribution in range
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -119,7 +119,7 @@ values random with uniform distribution in range
 <span class="sig-name descname"><span class="pre">amplitude_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amplitude_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amplitude_deviation_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.amplitude_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply amplitude control to a multichannel sound. If
 amplitude_deviation_list is defined, you can get different
-versions of tha same MultiChannelSignal data.</p>
+versions of the same MultiChannelSignal data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -138,7 +138,7 @@ values random with uniform distribution in range
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,13 +146,13 @@ values random with uniform distribution in range
 <dl class="py method">
 <dt class="sig sig-object py" id="aug.SignalAugmentation.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deep copy of the AudioAugmentation object.</p>
+<dd><p>Deep copy of the SignalAugmentation object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="aug.SignalAugmentation.cpy">
 <span class="sig-name descname"><span class="pre">cpy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation"><span class="pre">SignalAugmentation</span></a></span></span><a class="headerlink" href="#aug.SignalAugmentation.cpy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deep copy of the AudioAugmentation object.</p>
+<dd><p>Deep copy of the SignalAugmentation object.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -176,7 +176,7 @@ longer. Values of delay will be converted to count of samples.</p>
 <dd class="field-even"><p>Object with delayed multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -202,7 +202,7 @@ longer. Values of delay will be converted to count of samples.</p>
 <dd class="field-even"><p>Object with delayed multichannel sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -235,7 +235,7 @@ deviation of reflection amplitude.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -268,7 +268,7 @@ deviation of reflection amplitude.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -282,11 +282,11 @@ deviation of reflection amplitude.</p></li>
 <dd class="field-odd"><p><strong>none</strong> – </p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated AudioAugmentation instance
+<dd class="field-even"><p>The updated SignalAugmentation instance
 with added chains. Result, allowing for method chaining.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -309,10 +309,11 @@ duration, sample rate, and mode.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Object with generated multichannel sound.</p>
+<dd class="field-even"><p>Object with generated multichannel
+sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -335,10 +336,11 @@ duration, sample rate, and mode.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Object with generated multichannel sound.</p>
+<dd class="field-even"><p>Object with generated multichannel
+sound.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -361,7 +363,7 @@ instance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="aug.SignalAugmentation.info">
 <span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#aug.SignalAugmentation.info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dictionary containing information about the AudioAugmentation
+<dd><p>Returns a dictionary containing information about the SignalAugmentation
 object.</p>
 <p>The dictionary includes the information returned by the <cite>info()</cite> method
 of the <cite>signal</cite> attribute of the object, as well as a key-value pair
@@ -395,7 +397,7 @@ the object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -418,7 +420,7 @@ the object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -440,7 +442,7 @@ to each channel.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -462,7 +464,7 @@ to each channel.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -512,7 +514,7 @@ each channel.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -538,7 +540,7 @@ each channel in samples.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -577,10 +579,10 @@ MultiChannelSignal instance.</p>
 <dd class="field-odd"><p><strong>signal</strong> (<a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal"><em>MultiChannelSignal</em></a>) – source of multichannel sound data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated AudioAugmentation instance.</p>
+<dd class="field-even"><p>The updated SignalAugmentation instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -595,7 +597,8 @@ rate and data attributes and applies chains if they exist in object.</p>
 <dd class="field-odd"><p><strong>source_path</strong> (<em>str</em>) – Path to the file containing the data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated AudioAugmentation data field.</p>
+<dd class="field-even"><p>The updated SignalAugmentation data
+field.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[<a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>]</p>
@@ -613,7 +616,8 @@ rate and data attributes and applies chains if they exist in object.</p>
 <dd class="field-odd"><p><strong>source_path</strong> (<em>str</em>) – Path to the file containing the data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated AudioAugmentation data field.</p>
+<dd class="field-even"><p>The updated SignalAugmentation data
+field.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[<a class="reference internal" href="mcs.html#mcs.MultiChannelSignal" title="mcs.MultiChannelSignal">MultiChannelSignal</a>]</p>
@@ -637,7 +641,7 @@ rate and data attributes and applies chains if they exist in object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -664,7 +668,7 @@ rate and data attributes and applies chains if they exist in object.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -687,7 +691,7 @@ into.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -710,7 +714,7 @@ into.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -725,13 +729,13 @@ into.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>The sum of self._data and signal2</dt><dd><p>signals as AudioAugmentation object.</p>
+<dt>The sum of self._data and signal2</dt><dd><p>signals as SignalAugmentation object.</p>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>self (AudioAugmentation)</p>
+<dd class="field-odd"><p>self (<a class="reference internal" href="#aug.SignalAugmentation" title="aug.SignalAugmentation">SignalAugmentation</a>)</p>
 </dd>
 </dl>
 </dd></dl>
