@@ -111,32 +111,6 @@ def print_help_and_info():
     print(APPLICATION_INFO)
 
 
-def chain_hdr_old(args):
-    """
-    Processes the chain code from the given arguments and executes the
-    corresponding WaChain commands.
-
-    Args:
-        args: The arguments containing the chain code to be executed.
-
-    Returns:
-        None
-
-    Raises:
-        SystemExit: Exits the program with a status code of 0 after
-        successful execution.
-    """
-    if args.chain_code is None:
-        return
-    chain = args.chain_code.strip()
-    print("chain:", chain)
-    aug_obj = SignalAugmentation()
-    cmd_prefix = "aug_obj."
-    str(eval(cmd_prefix + chain.strip()))  # It is need for chain commands.
-    print(ms.SUCCESS_MARK)
-    aug_obj.info()
-
-
 def chain_hdr(args):
     """
     Processes the chain code from the given arguments and executes the
