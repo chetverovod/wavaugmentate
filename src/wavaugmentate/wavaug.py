@@ -577,8 +577,6 @@ def augmentate(args):
         delay_hdr(args)
     elif args.echo_list is not None:
         echo_hdr(args)
-    else:
-        return
 
 
 def main():
