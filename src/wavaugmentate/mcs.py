@@ -106,7 +106,7 @@ class MultiChannelSignal:
         """
         Calculate the root mean square (RMS) of a single channel signal.
 
-        Args
+        Args:
             chan_index (int): Index of the channel to calculate the RMS of.
             last_index_of_sample (int): The last index to consider when
               calculating RNS.  If -1, consider the entire array.
@@ -186,15 +186,15 @@ class MultiChannelSignal:
         corresponding channel, it should be in interval 600..300.
 
         Args:
-        frequency_list (list): A list of frequencies to generate sound for.
-        duration (float): The duration of the sound in seconds.
-        sampling_rate (int): The sample rate of the sound. Defaults to -1.
-        mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
+            frequency_list (list): A list of frequencies to generate sound for.
+            duration (float): The duration of the sound in seconds.
+            sampling_rate (int): The sample rate of the sound. Defaults to -1.
+            mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
         Defaults to 'sine'. Mode 'speech' generates speech like signals.
 
         Returns:
-        self (MultiChannelSignal): representing the generated multichannel
-          sound.
+            self (MultiChannelSignal): representing the generated multichannel
+         sound.
         """
 
         if sampling_rate > 0:
