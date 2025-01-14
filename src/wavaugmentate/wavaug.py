@@ -129,13 +129,13 @@ def chain_hdr(args):
 
     chain = args.chain_code.strip()
     print(f'chain:\n{chain}')
-    s = chain.split(").")
-    s = [f'{e})' for e in s]
+    chunks = chain.split(").")
+    chunks = [f'{e})' for e in chunks]
     prog = []
-    for e in s:
-        cmd, brekets = e.split('(')
-        brekets = brekets.strip(')')
-        prog.append([cmd, brekets])
+    for element in chunks:
+        cmd, brackets = element.split('(')
+        brackets = brackets.strip(')')
+        prog.append([cmd, brackets])
     aug_obj = SignalAugmentation()
     i = 1
     # print(f'steps:{len(prog)}')
@@ -156,7 +156,7 @@ def chain_hdr(args):
         # print(f'arg type: ({type(unpacked)})')
         # print(f'cmd {step[0]}({unpacked})')
 
-        if isinstance(unpacked, tuple) or isinstance(unpacked, list):
+        if isinstance(unpacked, (tuple, list)):
             aug_obj = getattr(aug_obj, step[0])(*unpacked)
         elif isinstance(unpacked, str):
             aug_obj = getattr(aug_obj, step[0])(unpacked)
@@ -344,11 +344,11 @@ def echo_args_validation(echo_list) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(echo_list)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(echo_list)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     lists = echo_list.split("/")
     if len(lists) != 2:
@@ -382,11 +382,11 @@ def delay_args_validation(delay_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(delay_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(delay_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     delay_list = delay_list_str.split(",")
     validate_delay_list(delay_list)
@@ -403,11 +403,11 @@ def amp_args_validation(amplitude_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(amplitude_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(amplitude_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     amplitude_list = amplitude_list_str.split(",")
     validate_amp_list(amplitude_list)
@@ -424,11 +424,11 @@ def noise_args_validation(noise_list_str) -> str:
         raise argparse.ArgumentTypeError(msg)
 
     try:
-        s = str(noise_list_str)
-        if len(s) == 0:
-            raise ValueError(f"{s} must be a not empty string")
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(str(e))
+        arg_string = str(noise_list_str)
+        if len(arg_string) == 0:
+            raise ValueError(f"{arg_string} must be a not empty string")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error))
 
     noise_list = noise_list_str.split(",")
     validate_amp_list(noise_list)
@@ -565,30 +565,19 @@ def augmentate(args):
 
     if args.chain_code is not None:
         chain_hdr(args)
-        return
-
-    if args.info_path is not None:
+    elif args.info_path is not None:
         file_info_hdr(args)
-        return
-
-    if args.in_path is None:
+    elif args.in_path is None:
         print_help_and_info()
-        return
-
-    if args.amplitude_list is not None:
+    elif args.amplitude_list is not None:
         amplitude_hdr(args)
-        return
-
-    if args.noise_list is not None:
+    elif args.noise_list is not None:
         noise_hdr(args)
-        return
-
-    if args.delay_list is not None:
+    elif args.delay_list is not None:
         delay_hdr(args)
-        return
-
-    if args.echo_list is not None:
+    elif args.echo_list is not None:
         echo_hdr(args)
+    else:
         return
 
 
