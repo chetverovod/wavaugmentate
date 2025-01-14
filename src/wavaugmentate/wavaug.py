@@ -163,7 +163,7 @@ def chain_hdr(args):
         else:
             raise ValueError(f"Unsupported object type: {type(unpacked)}")
     print(ms.SUCCESS_MARK)
-    #aug_obj.info()
+    aug_obj.info()
 
 
 def input_path_validation(in_path) -> str:
