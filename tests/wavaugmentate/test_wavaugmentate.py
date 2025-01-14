@@ -464,13 +464,13 @@ def test_chain_option():
     """
 
     temp_test_file_name, _ = temp_ref_signal()
-    os.remove(temp_test_file_name)
+
+    chain_head = 'gen([100,250,100],3,44100).amp([0.1,0.2,0.3],[1.,1.,1.]).get()'
+
     cmd = [
         ctf.PROG_NAME,
         "-c",
-        'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3]).get().wr("'
-        + temp_test_file_name
-        + '")',
+        f'{chain_head}.wr("{temp_test_file_name}")',
     ]
     print("\n", " ".join(cmd))
     res = sp.run(cmd, capture_output=True, text=True, check=False)
@@ -478,10 +478,8 @@ def test_chain_option():
     print('response_string:', response_string)
     out = ctf.shrink(response_string)
     full_ref = (
-        'chain:gen([100,250,100],3,44100).amp([0.1,0.2,0.3]).get().wr("'
-        + temp_test_file_name
-        + '")\n'
-        + f"{ms.SUCCESS_MARK}\n"
+        f'chain:{chain_head}.wr("{temp_test_file_name}")'
+        f'{ms.SUCCESS_MARK}'
     )
     ref = ctf.shrink(full_ref)
     print("out:", out)

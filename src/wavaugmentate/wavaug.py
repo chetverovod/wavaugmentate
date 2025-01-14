@@ -111,7 +111,7 @@ def print_help_and_info():
     print(APPLICATION_INFO)
 
 
-def chain_hdr(args):
+def chain_hdr_old(args):
     """
     Processes the chain code from the given arguments and executes the
     corresponding WaChain commands.
@@ -137,7 +137,7 @@ def chain_hdr(args):
     aug_obj.info()
 
 
-def chain_hdr2(args):
+def chain_hdr(args):
     """
     Processes the chain code from the given arguments and executes the
     corresponding WaChain commands.
@@ -154,32 +154,42 @@ def chain_hdr2(args):
     """
 
     chain = args.chain_code.strip()
-    print("chain:", chain)
+    print(f'chain:\n{chain}')
     s = chain.split(").")
     s = [f'{e})' for e in s]
-    #print(s)
     prog = []
     for e in s:
         cmd, brekets = e.split('(')
         brekets = brekets.strip(')')
         prog.append([cmd, brekets])
-    #print(prog)
     aug_obj = SignalAugmentation()
-    #cmd_prefix = "aug_obj."
-    #str(eval(cmd_prefix + chain))  # It is need for chain commands.
+    i = 1
+    # print(f'steps:{len(prog)}')
     for step in prog:
         input_string = step[1]
-        #parts = input_string.strip().strip("[]").split(",")
-        #arguments = [ast.literal_eval(part) for part in parts]
-        arguments = ast.literal_eval(input_string)
+        # print(f'input string {i}: {input_string}')
+        i += 1
+        if len(input_string) > 0:
+            arguments = ast.literal_eval(input_string)
+        else:
+            arguments = ()
 
-        #print(f'{step[0]}({step[1]})')
-        print(f'{step[0]}({arguments})')
-        getattr(aug_obj, step[0])(*arguments)
-    # exit(0)
-    
+        if isinstance(arguments, tuple):
+            unpacked = list(arguments)
+        else:
+            unpacked = arguments
+
+        # print(f'arg type: ({type(unpacked)})')
+        # print(f'cmd {step[0]}({unpacked})')
+
+        if isinstance(unpacked, tuple) or isinstance(unpacked, list):
+            aug_obj = getattr(aug_obj, step[0])(*unpacked)
+        elif isinstance(unpacked, str):
+            aug_obj = getattr(aug_obj, step[0])(unpacked)
+        else:
+            raise ValueError(f"Unsupported object type: {type(unpacked)}")
     print(ms.SUCCESS_MARK)
-    aug_obj.info()
+    #aug_obj.info()
 
 
 def input_path_validation(in_path) -> str:

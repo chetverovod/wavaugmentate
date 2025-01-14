@@ -144,7 +144,7 @@ class SignalAugmentation:
     def amplitude_ctrl(
         self,
         amplitude_list: list[float],
-        amplitude_deviation_list: list[float] = None,
+        amplitude_deviation_list: list[float] = None
     ) -> SignalAugmentation:
         """
         Apply amplitude control to a multichannel sound. If
@@ -559,7 +559,8 @@ class SignalAugmentation:
             source_path (str): Path to the file containing the data.
 
         Returns:
-            list[MultiChannelSignal]: The updated SignalAugmentation data field.
+            list[MultiChannelSignal]: The updated SignalAugmentation data
+            field.
         """
 
         self.signal.read(source_path)

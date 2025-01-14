@@ -188,9 +188,9 @@ class MultiChannelSignal:
         Args:
         frequency_list (list): A list of frequencies to generate sound for.
         duration (float): The duration of the sound in seconds.
-        samoling_rate (int): The sample rate of the sound. Defaults to -1.
+        sampling_rate (int): The sample rate of the sound. Defaults to -1.
         mode (str): The mode of sound generation. Can be 'sine' or 'speech'.
-        Defaults to 'sine'. Mode 'spech' generates speech like signals.
+        Defaults to 'sine'. Mode 'speech' generates speech like signals.
 
         Returns:
         self (MultiChannelSignal): representing the generated multichannel
