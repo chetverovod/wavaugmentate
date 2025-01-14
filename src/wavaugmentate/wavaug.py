@@ -509,7 +509,7 @@ def parse_args():
         type=str,
         help="Execute chain of transformations."
         " example:\n\t"
-        '-c \'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3])'
+        '-c \'gen([100,250,100], 3, 44100).amp([0.1, 0.2, 0.3], None)'
         '.wr("./sines.wav")"\'',
     )
 
