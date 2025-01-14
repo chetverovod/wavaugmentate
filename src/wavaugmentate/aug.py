@@ -149,7 +149,7 @@ class SignalAugmentation:
         """
         Apply amplitude control to a multichannel sound. If
         amplitude_deviation_list is defined, you can get different
-        versions of tha same MultiChannelSignal data.
+        versions of the same MultiChannelSignal data.
 
         Args:
             amplitude_list (list[float]): The list of amplitude coefficients to
